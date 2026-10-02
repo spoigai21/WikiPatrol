@@ -9,24 +9,25 @@ implies it acts, and WikiCurator, which is the wrong verb entirely.)*
 what each tier of a cheap-to-expensive model ladder is actually worth — in accuracy, in latency,
 and in dollars per thousand edits at list prices.
 
-**The question:** you cannot call a frontier model on 1.7 million edits a day. So where exactly do
+**The question:** you cannot call a frontier model on every edit — roughly 1.7 million a day across all wikis
+(unverified until Phase 0). So where exactly do
 you put the cutoffs, and what does each step up the ladder buy?
 
 ---
 
-## Why this project and not the last one
+## Why each component is here
 
-The previous draft scored saved job postings. It was honest work, but **Kafka and Kubernetes were
-decoration** — 450 model calls a night is a `for` loop and a cron job, and an interviewer would
-say so in ten seconds. Every component here is forced by a constraint that exists whether you like
-it or not:
+Kafka and Kubernetes are easy to add as decoration — a few hundred model calls a night is a `for`
+loop and a cron job, and anyone reviewing it would say so in ten seconds. Every component here has
+to be forced by a constraint that exists whether you like it or not, and Phase 0 has to confirm
+that the constraint is real:
 
 | Component | The constraint that forces it |
 |---|---|
 | **Kafka** | The SSE connection is **killed every 15 minutes by design**. Without a durable buffer you lose events on every reconnect. The classifier is also far slower than the feed — that gap is backpressure, the textbook case. And **replay is the experiment**: every configuration must see identical events, which offsets give you and a live socket cannot. |
 | **Kubernetes** | Edit volume swings several-fold between US daytime and overnight, so **HPA on consumer lag is a real trigger**, not a staged load test. The ingester must survive a forced disconnect every 15 minutes. The nightly re-eval is a CronJob. Classifier and ingester scale independently. |
-| **The model ladder** | Economically mandatory, not a study. At ~20 edits/second a frontier model is hundreds of dollars a day. The routing work is what makes the system exist at all. |
-| **TypeScript / Node** | The services. Closes the gap that `CLAUDE.md` has carried for weeks, and earns back the `Node.js` line removed from the résumé on 2026-10-02. |
+| **The model ladder** | Economically mandatory, not a study. At ~20 edits/second (all wikis; unverified until Phase 0) a frontier model is hundreds of dollars a day. The routing work is what makes the system exist at all. |
+| **TypeScript / Node** | The services. A long-lived streaming client and async I/O-bound consumers are what Node is good at, and Zod gives a typed boundary on untrusted event JSON. |
 
 ---
 
@@ -37,16 +38,22 @@ it or not:
 - `stream.wikimedia.org`, the **`recentchange`** stream, **Server-Sent Events** over plain HTTP
 - **No API key, no auth, no payment card.** Free.
 - **Replay** via `since` or `Last-Event-ID`, with **7–31 days** of history
-- **Connections are terminated at 15 minutes** by WMF's HTTP layer; clients must auto-resume
-- Wikimedia runs it on Kafka internally and offers it to external tool developers
+- **Connections are terminated at 15 minutes** by WMF's HTTP layer; clients must reconnect automatically
+- Wikimedia runs it on Kafka in its own infrastructure and offers it to external tool developers
 
 **Not verified — Phase 0 settles both before a line of system code is written:**
 
-1. **The actual event rate.** If it is 2/second, Kafka is not justified and the honest move is to
-   say so and stop. Measure it.
-2. **Whether revert tags are reliably present** in the stream (`mw-reverted`, `mw-rollback`,
-   `mw-undo`, `mw-manual-revert`). The free-label mechanism depends on it. Two documentation
-   fetches did not confirm it; go and look.
+1. **The actual event rate — for the scope actually classified.** The ~20/second figure is the
+   global stream across every wiki; English Wikipedia alone is a fraction of that. The Kafka
+   argument has to hold for the enwiki rate, not the global one (or the ingester captures all
+   wikis and only classification is enwiki-scoped — decide this from the number). If it is
+   2/second, Kafka is not justified and the honest move is to say so and stop. Measure it.
+2. **Whether revert tags are reliably available, and where.** `mw-rollback`, `mw-undo` and
+   `mw-manual-revert` sit on the *reverting* edit, so they can arrive in `recentchange`. But
+   `mw-reverted` is added to the *original* edit after the fact, and a tag added later does not
+   produce a new `recentchange` event. Check whether `mediawiki.revision-tags-change` (or the
+   Action API) is needed to attach the label to the edit that was reverted. The free-label
+   mechanism depends on it. Two documentation fetches did not confirm it; go and look.
 
 ---
 
@@ -62,19 +69,22 @@ it or not:
 - **Delayed labels.** You classify now; the truth arrives minutes to hours later. Anything
   unreverted after the window is *assumed* good, which is survivorship bias. State the window.
 - **English Wikipedia only**, at least to start. Do not generalise across languages.
-- **Local cluster, not production.** See the wording rules in Phase 8.
+- **Local cluster, not production.** See "Describe it honestly" in Phase 8.
 
 ---
 
 ## Phase 0 — measure and predict before building anything
 
-Nothing is built until this is done. It is the same move as predicting the speedup before renting
-the A100 on Fusion Bench.
+Nothing is built until this is done. Predict first, then measure, so the prediction can be wrong.
 
 - connect to the stream for **one hour** and count: events/second, by wiki, by anonymous vs
-  registered vs bot, and the diurnal pattern if you can sample twice
-- confirm revert tags are present and queryable
-- hand-label **100 edits** and measure how often "later reverted" agrees with "actually vandalism"
+  registered vs bot, and the diurnal pattern if you can sample twice — Phase 8's HPA argument
+  depends on the swing being real, so sample at least one US-daytime and one overnight hour
+- confirm revert tags are present and queryable, and from which stream (see above)
+- hand-label **100 edits** and measure how often "later reverted" agrees with "actually vandalism".
+  Stratify it — e.g. 50 that were reverted and 50 that were not — because a uniform random 100 at
+  a low vandalism base rate contains only a handful of vandalism cases and cannot estimate the
+  noise in either direction. Report both disagreement rates, not one blended number
 - **git-tag predictions before any run:** the vandalism base rate, the cheap model's accuracy, how
   much the expensive model adds, what fraction of traffic the heuristics can safely drop, and how
   many of these you expect to be wrong
@@ -85,9 +95,12 @@ a system built on a false premise.
 
 ## Phase 1 — the ingester, in TypeScript and Node
 
-- SSE client that resumes with `Last-Event-ID` after the 15-minute cut
+- SSE client that reconnects with `Last-Event-ID` after the 15-minute cut
 - writes **raw events only** to Kafka — no parsing, no model, no opinions
+- dedupes on the event's own id/offset across reconnects, so reconnecting after the cut is idempotent
 - strict TS, Zod at the boundary, Vitest from the first commit
+- topic retention set so captured events are never aged out (Redpanda defaults will delete
+  them); the dev and sealed offset ranges must still exist in Phase 5 and Phase 9
 
 **Done when:** a forced disconnect loses nothing and duplicates nothing, proven by a test that
 kills the connection mid-stream and diffs the output.
@@ -95,7 +108,10 @@ kills the connection mid-stream and diffs the output.
 ## Phase 2 — Kafka, and proving it earns its place
 
 - one raw topic, one scored topic, one dead-letter topic; consumer groups; explicit offsets
-- **replay from an arbitrary offset reproduces byte-identical output**
+- **replay from an arbitrary offset reproduces byte-identical output** for every deterministic
+  stage (raw capture, parsing, the Phase 3 filter). Model outputs are not guaranteed
+  deterministic even at temperature 0 — replay guarantees identical *inputs* to every
+  configuration, and run-to-run model variance is measured, not assumed away
 - **backpressure demo:** run a consumer deliberately slower than the feed, show lag growing and
   nothing lost — this is the artifact that justifies the whole component
 
@@ -108,10 +124,13 @@ is the user a bot, are they autoconfirmed, how large is the diff, does it touch 
 
 - measure **what fraction of traffic survives the filter**
 - measure **what fraction of vandalism the filter throws away** — the recall you are paying for
-  the cost saving
+  the cost saving. This needs labels: use the Phase 0 hand-labelled sample immediately, and the
+  revert labels from Phase 4 once they exist. Build the filter here; the M% is finalised after
+  Phase 4.
+- filter rules are tuned on the development range only, like everything else
 
 **Done when:** you can state the trade: "the filter removes N% of volume and loses M% of
-vandalism."
+vandalism" — M measured against Phase 4 labels, with the label-noise estimate beside it.
 
 ## Phase 4 — labels, for free, from reverts
 
@@ -126,7 +145,9 @@ vandalism."
 Three prompts x three models — **local Ollama**, **Gemini free tier**, **Groq free tier** — scored
 against revert labels on a **sealed replay set** of captured edits.
 
-- split: develop prompts on one offset range, score **once** on a sealed range
+- split: develop prompts on one offset range, score **once** on a sealed range. Both ranges are
+  fixed in time **after** the label window has closed on them, and the sealed range is exported
+  to a committed, checksummed snapshot file so it survives a cluster rebuild
 - all three prompts written and tagged **before** any of them runs
 - **no judge model.** The label is the revert. An LLM grading an LLM is circular.
 - baselines in the table: the Phase 3 heuristics alone, and ORES/LiftWing if reachable
@@ -156,35 +177,42 @@ latency.
 which is a free and faithful simulation of the real constraint. But **report money from published
 list prices, dated** — writing "$0 because free tier" would destroy the finding.
 
-**Done when:** you can state the trade honestly, e.g. *"the ladder held 92% recall at 5% of
-cloud-only cost"* — or that it did not beat local-only, which is equally worth publishing.
+**Done when:** you can state the trade honestly, in the shape *"the ladder held Y% of
+cloud-only recall at Z% of cloud-only cost"* — or that it did not beat local-only, which is equally worth publishing.
 
 ## Phase 8 — Kubernetes, driven by the real load
 
 - Deployments for ingester and classifier, scaled independently
 - **HPA on consumer lag**, demonstrated against the genuine diurnal swing rather than a synthetic
-  load test
+  load test. This needs the ingester and classifier up for at least 24 hours straight; the
+  classifier tier during that run is the heuristics plus a small local model, not the cloud APIs
 - liveness and readiness probes that actually fail when the service is sick
 - `kind` in GitHub Actions: CI provisions a cluster, applies manifests, waits for readiness, runs
   smoke tests, tears it down — on every push
 
-### Say it honestly
+### Describe it honestly
 
 - **True:** *"Ingester and classifier on Kubernetes, autoscaled on Kafka consumer lag, with a CI
   job that provisions a throwaway cluster and verifies the deployment on every push."*
-- **Never write:** production · managed cluster · live traffic at scale · served users.
+- **Not true here:** production · managed cluster · live traffic at scale · served users.
 
 ## Phase 9 — drift
 
 - nightly CronJob re-runs the **sealed** range against every configuration
 - results stored as a time series; **a regression trips an alert**
 - providers change models silently behind the same name; this is the system noticing
+- these reruns are **monitoring, not tuning**: they repeat configurations that were already
+  scored, unchanged. If drift prompts a prompt or model change, that is a new configuration — it
+  is developed on the dev range and gets its own single score on the sealed range, never tuned
+  against nightly sealed results
 
 **Done when:** a deliberately degraded config is caught by the alert without you looking.
 
 ## Phase 10 — ship it and write the postmortem
 
-- a public dashboard or feed someone other than you actually watches
+- a public dashboard or feed someone other than you actually watches. A laptop cluster cannot
+  keep it live, so the dashboard reads published results (and, if a free always-on host is
+  found, a live feed); it must say plainly when it is showing a replay rather than live data
 - README carries: the Phase 5 table, the Phase 6 calibration curve, the Phase 7 policy comparison,
   the label-noise estimate, and the dated price table
 - a write-up naming **where the model failed, how you noticed, and what you changed**
@@ -201,18 +229,21 @@ cloud-only cost"* — or that it did not beat local-only, which is equally worth
 | Language / runtime | **TypeScript** strict, **Node 22** | free |
 | Transport | **Redpanda** (Kafka API) in-cluster | **$0** |
 | Orchestration | **Kubernetes** — `k3d` locally, `kind` in GitHub Actions | **$0, no card** |
-| Results store | **Neon** or **Supabase** Postgres free tier | **$0** |
-| Cheap model | **local Ollama** — no rate limit, proven on the MCP/ChromaDB work | **$0** |
+| Results store | **Neon** or **Supabase** Postgres free tier — working store; every reported number is also exported to a committed result file | **$0** |
+| Cheap model | **local Ollama** — no rate limit | **$0** |
 | Expensive model | **Gemini** and **Groq** free tiers — rate limits act as the cost ceiling | **$0** |
 | Scheduling | Kubernetes **CronJob** | free |
 | CI | Vitest + GitHub Actions | free |
+| Dashboard | **Vercel** Hobby tier, reading published results | **$0, no card** |
 
 **Why this is affordable at all:** the stream is captured into Kafka with **zero model calls**, and
 every experiment runs offline by replaying stored offsets. Model spend is a bounded function of
 how many experiments you run, not of the live edit rate.
 
 **Laptop warning:** k3d + Redpanda + Postgres + two Node services + Ollama is real load. Keep the
-local model small and do not run it continuously; you do not need to.
+local model small and do not run it continuously, with two exceptions that are scheduled, not
+standing: the 24-hour Phase 8 diurnal run, and the Phase 9 nightly CronJob (which only needs the
+laptop up at its scheduled time).
 
 ## Measurement discipline
 
@@ -224,45 +255,47 @@ local model small and do not run it continuously; you do not need to.
 
 ## Deliverables that are not code — these do more work than the code does
 
-Most of what converts a project into an interview is not the repository. Build these deliberately.
+Most people who look at this will never open the code. Build these deliberately.
 
 | Artifact | Why it earns its keep |
 |---|---|
-| **A live dashboard** on Vercel: the feed arriving, each edit's ladder decision, the running cost counter | *"Here it is running right now"* beats every description. ShopBack's req asks for "a repository, demo, video, or write-up" — this is the strongest of the four and the cheapest to host. |
-| **The write-up** — the cost curve, the calibration plot, the honest negatives | Most readers never open the code. This is the thing that circulates and gets quoted. |
-| **A 2-minute video** of the live feed being classified | Cheap, memorable, and the one artifact a busy recruiter actually finishes. |
-| **`DECISIONS.md`** — every architectural choice with the measured number that forced it | **This is the single highest-value document in the repo.** It turns *"why Kafka?"* from a trap into the best answer in the interview: "the connection dies every 15 minutes, the classifier runs at N/sec against a feed at M/sec, and every experiment has to replay identical events." Judgment, shown. |
-| **`POSTMORTEM.md`** — where the model failed, how you noticed, what you changed | ShopBack asks for this in almost exactly those words. Write it as you go, not at the end. |
-| **An architecture diagram** | One image. Goes in the README, the write-up and the interview. |
+| **A dashboard** on Vercel: the feed arriving, each edit's ladder decision, the running cost counter | *"Here it is running"* beats every description, and it is the cheapest of these to host. Label replayed data as replay. |
+| **The write-up** — the cost curve, the calibration plot, the honest negatives | This is the thing that circulates and gets quoted. |
+| **A 2-minute video** of the feed being classified | Cheap, memorable, and the artifact people actually finish. |
+| **`DECISIONS.md`** — every architectural choice with the measured number that forced it | **The single highest-value document in the repo.** It turns *"why Kafka?"* from a weak point into the strongest answer: "the connection dies every 15 minutes, the classifier runs at N/sec against a feed at M/sec, and every experiment has to replay identical events." |
+| **`POSTMORTEM.md`** — where the model failed, how you noticed, what you changed | Write it as you go, not at the end. |
+| **An architecture diagram** | One image. Goes in the README and the write-up. |
 | **`docker compose up`** path alongside the Kubernetes one | Anyone can run it in 60 seconds without a cluster. Reproducibility is a quality signal in itself. |
 
 **Lead the README with the finding, not the architecture.** Almost every project README opens with
-"a system for X built with Y" and loses the reader. Open with the number: *"A frontier model costs
-$380/day to run on Wikipedia's edit feed. A three-tier ladder held 92% of its recall for $19."*
-Then explain how.
+"a system for X built with Y" and loses the reader. Open with the measured number, in the shape:
+*"A frontier model costs $X/day to run on Wikipedia's edit feed. A three-tier ladder held Y% of its
+recall for $Z."* Then explain how. The X, Y and Z come from Phase 7 at dated list prices — no
+figure goes in before it is measured.
 
-**Give it one quotable sentence.** One number, one comparison. That is what an interviewer repeats
-to the next person in the loop, and it is what you lead with when someone asks "tell me about a
-project."
+**Give it one quotable sentence.** One number, one comparison.
 
-## Fastest path to something usable on a résumé
+## Order of work
 
-The phases are ordered by dependency, not by urgency, and **he is applying now**. A measured result
-in three weeks is worth more than a perfect system in three months.
+The phases are numbered by dependency, not by urgency. A measured result in three weeks is worth
+more than a perfect system in three months.
 
 **Minimum path: Phases 0 → 1 → 3 → 4 → 5.** That is the ingester, the free filter, revert labels,
-and the grid — which produces the table, which is the bullet. Kafka can be a simple durable queue
-at first; the formal replay/backpressure proof is Phase 2 and can follow.
+and the grid — which produces the table. Phase 2's formal replay and backpressure proofs can
+follow, but Phase 5's sealed range depends on replaying fixed offsets, so from Phase 1 onward the
+raw topic must already keep its offsets and its data (see Phase 1 retention). Phase 3's vandalism-
+loss number is completed once Phase 4's labels exist.
 
 **Then, in order of marginal value:** Phase 7 (the ladder — the strongest single result), Phase 6
-(calibration), Phase 8 (Kubernetes), Phase 9 (drift).
+(calibration), Phase 8 (Kubernetes), Phase 9 (drift). Phase 7 routes on confidence only if Phase 6
+says confidence is usable; if Phase 7 is built first, treat its routing signal as provisional
+until Phase 6 is done.
 
-**Do not do Phase 8 first** because Kubernetes is on the job description. Infrastructure with no
-result attached reads as a tutorial, and it is the part of this project an intern is least likely
-to be asked to own.
+**Do not do Phase 8 first.** Infrastructure with no result attached reads as a tutorial.
 
-## What goes on a résumé, and when
+## Claims, and when they can be made
 
-**Nothing until Phase 5 produces the table.** After Phase 7 there are three bullets — the ladder's
-cost result, the calibration finding, and the filter trade-off — and after Phase 9 a fourth about
-catching silent model drift. All measured, all in his register, none of them claiming production.
+**Nothing is claimed until Phase 5 produces the table.** After Phase 7 there are three headline
+results — the ladder's cost result, the calibration finding, and the filter trade-off — and after
+Phase 9 a fourth about catching silent model drift. All measured, none of them claiming
+production.
