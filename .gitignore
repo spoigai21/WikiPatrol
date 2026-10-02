@@ -1,2 +1,5 @@
 # Local working notes; not part of the project.
 MOTIVATION.md
+node_modules/
+# Raw stream captures: large, and reproducible from the stream's own replay window.
+data/

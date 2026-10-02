@@ -1,0 +1,27 @@
+{
+  "name": "wikipatrol",
+  "version": "0.0.0",
+  "private": true,
+  "description": "What does an expensive model buy you on Wikipedia's edit feed, when you cannot afford to call it?",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "phase0:rate": "tsx src/phase0/measure-rate.ts",
+    "phase0:tags": "tsx src/phase0/probe-tags.ts",
+    "phase0:sample": "tsx src/phase0/build-sample.ts",
+    "phase0:noise": "tsx src/phase0/score-sample.ts"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}
