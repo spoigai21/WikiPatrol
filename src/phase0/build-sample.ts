@@ -1,12 +1,12 @@
 // Phase 0, step 3a: draw the stratified label-noise sample from captured edits.
 //
-// Takes main-namespace, non-bot enwiki edits that are at least --min-age-hours old
-// (so reverts have had time to happen), asks the Action API for each revision's
+// Takes main-namespace, non-bot enwiki edits aged between --min-age-hours (the label
+// window, DECISIONS.md D4) and --max-age-hours, asks the Action API for each revision's
 // current tags, and writes:
 //   labels/sample.csv                 the sheet to hand-label (no revert column)
 //   results/phase0/sample-key.json    which rows were reverted, plus population stats
 //
-//   npm run phase0:sample -- --min-age-hours 24
+//   npm run phase0:sample
 
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { USER_AGENT } from '../stream/sse.ts';
@@ -17,7 +17,10 @@ import { isReverted, stratify, type Candidate } from './sample.ts';
 import { mulberry32, round, shuffled, wilson } from './stats.ts';
 
 const opts = args({
-  'min-age-hours': { type: 'string', default: '24' },
+  'min-age-hours': { type: 'string', default: '72' },
+  // The API says whether a revision is tagged now, not when the tag was added. Querying
+  // close to the window keeps "reverted now" close to "reverted within the window".
+  'max-age-hours': { type: 'string', default: '96' },
   'per-stratum': { type: 'string', default: '50' },
   'max-query': { type: 'string', default: '3000' },
   seed: { type: 'string', default: '20261002' },
@@ -25,6 +28,7 @@ const opts = args({
   api: { type: 'string', default: 'https://en.wikipedia.org/w/api.php' },
 });
 const minAgeHours = Number(opts['min-age-hours']);
+const maxAgeHours = Number(opts['max-age-hours']);
 const perStratum = Number(opts['per-stratum']);
 const maxQuery = Number(opts['max-query']);
 const seed = Number(opts.seed);
@@ -34,6 +38,7 @@ const now = Date.now();
 const captures = readdirSync('data/phase0').filter((f) => f.startsWith('capture-') && f.endsWith('.jsonl'));
 const eligible = new Map<number, Omit<Candidate, 'revertTags'>>();
 let tooYoung = 0;
+let tooOld = 0;
 for (const file of captures) {
   for (const line of readFileSync(`data/phase0/${file}`, 'utf8').split('\n')) {
     if (!line) continue;
@@ -46,6 +51,10 @@ for (const file of captures) {
       tooYoung++;
       continue;
     }
+    if (now - ts > maxAgeHours * 3_600_000) {
+      tooOld++;
+      continue;
+    }
     eligible.set(rc.revision.new, {
       revId: rc.revision.new,
       title: rc.title ?? '',
@@ -54,7 +63,7 @@ for (const file of captures) {
     });
   }
 }
-log(`${captures.length} capture files, ${eligible.size} eligible edits, ${tooYoung} younger than ${minAgeHours}h`);
+log(`${captures.length} capture files, ${eligible.size} eligible edits, ${tooYoung} younger than ${minAgeHours}h, ${tooOld} older than ${maxAgeHours}h`);
 if (eligible.size === 0) {
   log('nothing eligible yet; wait until captures are old enough');
   process.exit(1);
@@ -115,7 +124,7 @@ writeFileSync(
 writeJson('results/phase0/sample-key.json', {
   builtAt: new Date(now).toISOString(),
   seed,
-  revertWindowHours: `at least ${minAgeHours} (each edit's age at query time varies; see timestamps)`,
+  revertWindowHours: `${minAgeHours}–${maxAgeHours} (edit age when its tags were queried)`,
   population: {
     eligibleEdits: eligible.size,
     queried: toQuery.length,

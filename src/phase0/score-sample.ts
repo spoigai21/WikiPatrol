@@ -10,6 +10,9 @@ import { scoreNoise, type Judgement, type LabelledRow } from './sample.ts';
 const opts = args({
   sheet: { type: 'string', default: 'labels/sample.csv' },
   key: { type: 'string', default: 'results/phase0/sample-key.json' },
+  // Who judged the sheet. Reported beside the noise numbers, because a model's labels are
+  // not hand labels and the write-up has to say which it was.
+  labeller: { type: 'string', default: 'hand' },
 });
 
 const key = JSON.parse(readFileSync(String(opts.key), 'utf8')) as {
@@ -37,6 +40,7 @@ if (problems.length) {
 const result = {
   scoredAt: new Date().toISOString(),
   revertWindowHours: key.revertWindowHours,
+  labeller: String(opts.labeller),
   ...scoreNoise(rows, key.population.revertRate.rate),
 };
 writeJson('results/phase0/label-noise.json', result);

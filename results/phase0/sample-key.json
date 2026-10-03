@@ -1,0 +1,833 @@
+{
+  "builtAt": "2026-10-03T17:38:24.239Z",
+  "seed": 20261002,
+  "revertWindowHours": "72–96 (edit age when its tags were queried)",
+  "population": {
+    "eligibleEdits": 4697,
+    "queried": 3000,
+    "deletedOrSuppressed": 11,
+    "withTags": 2989,
+    "reverted": 186,
+    "revertRate": {
+      "rate": 0.0622,
+      "low": 0.0541,
+      "high": 0.0715,
+      "n": 2989
+    },
+    "deletedOrSuppressedRate": 0.0037
+  },
+  "blindingNote": "labels/sample.csv omits the revert column, but Wikipedia diff pages display a \"Reverted\" tag. Judge the content, not the tag.",
+  "rows": [
+    {
+      "row": 1,
+      "revId": 1377662845,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:19:27.362Z"
+    },
+    {
+      "row": 2,
+      "revId": 1377665732,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:43:51.603Z"
+    },
+    {
+      "row": 3,
+      "revId": 1377663452,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:25:24.447Z"
+    },
+    {
+      "row": 4,
+      "revId": 1377663095,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:22:02.808Z"
+    },
+    {
+      "row": 5,
+      "revId": 1377664848,
+      "reverted": true,
+      "revertTags": [
+        "mw-undo",
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:35:16.223Z"
+    },
+    {
+      "row": 6,
+      "revId": 1377665610,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:42:26.483Z"
+    },
+    {
+      "row": 7,
+      "revId": 1377663682,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:26:48.415Z"
+    },
+    {
+      "row": 8,
+      "revId": 1377665300,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:40:06.378Z"
+    },
+    {
+      "row": 9,
+      "revId": 1377666587,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:51:15.076Z"
+    },
+    {
+      "row": 10,
+      "revId": 1377661857,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:10:58.186Z"
+    },
+    {
+      "row": 11,
+      "revId": 1377667546,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:59:04.083Z"
+    },
+    {
+      "row": 12,
+      "revId": 1377663340,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:24:27.042Z"
+    },
+    {
+      "row": 13,
+      "revId": 1377660754,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:00:48.945Z"
+    },
+    {
+      "row": 14,
+      "revId": 1377663406,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:25:14.224Z"
+    },
+    {
+      "row": 15,
+      "revId": 1377664014,
+      "reverted": true,
+      "revertTags": [
+        "mw-undo",
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:29:37.559Z"
+    },
+    {
+      "row": 16,
+      "revId": 1377667323,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:57:20.000Z"
+    },
+    {
+      "row": 17,
+      "revId": 1377664688,
+      "reverted": true,
+      "revertTags": [
+        "mw-undo",
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:33:54.442Z"
+    },
+    {
+      "row": 18,
+      "revId": 1377663800,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:27:37.756Z"
+    },
+    {
+      "row": 19,
+      "revId": 1377662193,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:12:40.049Z"
+    },
+    {
+      "row": 20,
+      "revId": 1377666250,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:48:38.198Z"
+    },
+    {
+      "row": 21,
+      "revId": 1377662405,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:14:47.427Z"
+    },
+    {
+      "row": 22,
+      "revId": 1377666508,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:50:26.907Z"
+    },
+    {
+      "row": 23,
+      "revId": 1377665167,
+      "reverted": true,
+      "revertTags": [
+        "mw-rollback",
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:38:35.225Z"
+    },
+    {
+      "row": 24,
+      "revId": 1377663854,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:28:06.659Z"
+    },
+    {
+      "row": 25,
+      "revId": 1377661462,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:07:51.400Z"
+    },
+    {
+      "row": 26,
+      "revId": 1377664637,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:33:30.100Z"
+    },
+    {
+      "row": 27,
+      "revId": 1377663964,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:29:01.515Z"
+    },
+    {
+      "row": 28,
+      "revId": 1377662368,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:14:23.926Z"
+    },
+    {
+      "row": 29,
+      "revId": 1377664702,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:34:01.010Z"
+    },
+    {
+      "row": 30,
+      "revId": 1377666968,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:54:21.847Z"
+    },
+    {
+      "row": 31,
+      "revId": 1377664057,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:30:04.734Z"
+    },
+    {
+      "row": 32,
+      "revId": 1377664915,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:35:50.454Z"
+    },
+    {
+      "row": 33,
+      "revId": 1377666413,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:49:34.076Z"
+    },
+    {
+      "row": 34,
+      "revId": 1377662389,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:14:37.439Z"
+    },
+    {
+      "row": 35,
+      "revId": 1377665283,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:39:55.392Z"
+    },
+    {
+      "row": 36,
+      "revId": 1377662876,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:19:48.872Z"
+    },
+    {
+      "row": 37,
+      "revId": 1377666095,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:47:18.241Z"
+    },
+    {
+      "row": 38,
+      "revId": 1377665461,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:40:57.122Z"
+    },
+    {
+      "row": 39,
+      "revId": 1377661045,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:03:46.706Z"
+    },
+    {
+      "row": 40,
+      "revId": 1377663515,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:25:38.727Z"
+    },
+    {
+      "row": 41,
+      "revId": 1377663605,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:26:20.286Z"
+    },
+    {
+      "row": 42,
+      "revId": 1377665232,
+      "reverted": true,
+      "revertTags": [
+        "mw-undo",
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:39:27.762Z"
+    },
+    {
+      "row": 43,
+      "revId": 1377664030,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:29:55.163Z"
+    },
+    {
+      "row": 44,
+      "revId": 1377662129,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:12:25.045Z"
+    },
+    {
+      "row": 45,
+      "revId": 1377665265,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:39:44.084Z"
+    },
+    {
+      "row": 46,
+      "revId": 1377663346,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:24:30.541Z"
+    },
+    {
+      "row": 47,
+      "revId": 1377660932,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:02:29.850Z"
+    },
+    {
+      "row": 48,
+      "revId": 1377663814,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:27:42.850Z"
+    },
+    {
+      "row": 49,
+      "revId": 1377664529,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:33:00.931Z"
+    },
+    {
+      "row": 50,
+      "revId": 1377665284,
+      "reverted": true,
+      "revertTags": [
+        "mw-undo",
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:39:55.242Z"
+    },
+    {
+      "row": 51,
+      "revId": 1377667354,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:57:46.348Z"
+    },
+    {
+      "row": 52,
+      "revId": 1377664292,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:31:26.137Z"
+    },
+    {
+      "row": 53,
+      "revId": 1377666482,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:50:10.733Z"
+    },
+    {
+      "row": 54,
+      "revId": 1377660777,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:01:00.770Z"
+    },
+    {
+      "row": 55,
+      "revId": 1377667107,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:55:53.445Z"
+    },
+    {
+      "row": 56,
+      "revId": 1377664611,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:33:12.456Z"
+    },
+    {
+      "row": 57,
+      "revId": 1377662938,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:20:27.175Z"
+    },
+    {
+      "row": 58,
+      "revId": 1377664847,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:35:18.031Z"
+    },
+    {
+      "row": 59,
+      "revId": 1377661440,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:07:35.292Z"
+    },
+    {
+      "row": 60,
+      "revId": 1377664448,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:32:33.106Z"
+    },
+    {
+      "row": 61,
+      "revId": 1377661249,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:05:58.996Z"
+    },
+    {
+      "row": 62,
+      "revId": 1377661873,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:11:07.181Z"
+    },
+    {
+      "row": 63,
+      "revId": 1377661966,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:11:32.539Z"
+    },
+    {
+      "row": 64,
+      "revId": 1377661071,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:04:10.323Z"
+    },
+    {
+      "row": 65,
+      "revId": 1377664467,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:32:24.955Z"
+    },
+    {
+      "row": 66,
+      "revId": 1377662874,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:19:49.734Z"
+    },
+    {
+      "row": 67,
+      "revId": 1377666342,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:48:56.927Z"
+    },
+    {
+      "row": 68,
+      "revId": 1377663221,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:23:24.504Z"
+    },
+    {
+      "row": 69,
+      "revId": 1377667128,
+      "reverted": true,
+      "revertTags": [
+        "mw-manual-revert",
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:56:08.448Z"
+    },
+    {
+      "row": 70,
+      "revId": 1377661508,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:08:23.266Z"
+    },
+    {
+      "row": 71,
+      "revId": 1377666477,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:50:07.375Z"
+    },
+    {
+      "row": 72,
+      "revId": 1377667396,
+      "reverted": false,
+      "revertTags": [
+        "mw-rollback"
+      ],
+      "timestamp": "2026-09-30T12:58:11.183Z"
+    },
+    {
+      "row": 73,
+      "revId": 1377661369,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:06:53.815Z"
+    },
+    {
+      "row": 74,
+      "revId": 1377666307,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:48:51.819Z"
+    },
+    {
+      "row": 75,
+      "revId": 1377660695,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:00:23.351Z"
+    },
+    {
+      "row": 76,
+      "revId": 1377665452,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:40:53.577Z"
+    },
+    {
+      "row": 77,
+      "revId": 1377664834,
+      "reverted": true,
+      "revertTags": [
+        "mw-undo",
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:35:05.944Z"
+    },
+    {
+      "row": 78,
+      "revId": 1377663859,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:28:10.553Z"
+    },
+    {
+      "row": 79,
+      "revId": 1377661549,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:08:56.283Z"
+    },
+    {
+      "row": 80,
+      "revId": 1377660697,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:00:28.930Z"
+    },
+    {
+      "row": 81,
+      "revId": 1377661086,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:04:18.353Z"
+    },
+    {
+      "row": 82,
+      "revId": 1377663990,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:29:15.038Z"
+    },
+    {
+      "row": 83,
+      "revId": 1377663390,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:25:02.265Z"
+    },
+    {
+      "row": 84,
+      "revId": 1377664880,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:35:35.244Z"
+    },
+    {
+      "row": 85,
+      "revId": 1377663832,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:27:49.576Z"
+    },
+    {
+      "row": 86,
+      "revId": 1377667343,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:57:36.162Z"
+    },
+    {
+      "row": 87,
+      "revId": 1377662695,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:17:37.940Z"
+    },
+    {
+      "row": 88,
+      "revId": 1377666834,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:53:33.706Z"
+    },
+    {
+      "row": 89,
+      "revId": 1377665074,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:37:58.976Z"
+    },
+    {
+      "row": 90,
+      "revId": 1377666694,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:52:15.082Z"
+    },
+    {
+      "row": 91,
+      "revId": 1377662912,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:20:12.608Z"
+    },
+    {
+      "row": 92,
+      "revId": 1377664463,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:32:23.536Z"
+    },
+    {
+      "row": 93,
+      "revId": 1377664750,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:34:33.579Z"
+    },
+    {
+      "row": 94,
+      "revId": 1377666271,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:48:40.578Z"
+    },
+    {
+      "row": 95,
+      "revId": 1377662548,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:16:16.981Z"
+    },
+    {
+      "row": 96,
+      "revId": 1377663350,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:24:37.075Z"
+    },
+    {
+      "row": 97,
+      "revId": 1377665250,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:39:39.596Z"
+    },
+    {
+      "row": 98,
+      "revId": 1377667052,
+      "reverted": false,
+      "revertTags": [],
+      "timestamp": "2026-09-30T12:55:15.802Z"
+    },
+    {
+      "row": 99,
+      "revId": 1377666940,
+      "reverted": true,
+      "revertTags": [
+        "mw-manual-revert",
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:53:57.791Z"
+    },
+    {
+      "row": 100,
+      "revId": 1377662547,
+      "reverted": true,
+      "revertTags": [
+        "mw-reverted"
+      ],
+      "timestamp": "2026-09-30T12:16:16.746Z"
+    }
+  ]
+}

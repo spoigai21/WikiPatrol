@@ -22,6 +22,7 @@ export function stamp(d = new Date()): string {
 export function runFor(minutes: number): AbortController {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), minutes * 60_000);
+  ctl.signal.addEventListener('abort', () => clearTimeout(timer), { once: true });
   process.once('SIGINT', () => {
     clearTimeout(timer);
     ctl.abort();

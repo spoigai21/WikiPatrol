@@ -10,12 +10,15 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "ingest": "KAFKAJS_NO_PARTITIONER_WARNING=1 tsx src/ingest/main.ts",
     "phase0:rate": "tsx src/phase0/measure-rate.ts",
     "phase0:tags": "tsx src/phase0/probe-tags.ts",
     "phase0:sample": "tsx src/phase0/build-sample.ts",
-    "phase0:noise": "tsx src/phase0/score-sample.ts"
+    "phase0:noise": "tsx src/phase0/score-sample.ts",
+    "test:kafka": "KAFKA_BROKERS=localhost:19092 vitest run"
   },
   "dependencies": {
+    "kafkajs": "^2.2.4",
     "zod": "^4.6.5"
   },
   "devDependencies": {

@@ -1,0 +1,236 @@
+{
+  "wiki": "enwiki",
+  "startedAt": "2026-10-02T19:36:42.471Z",
+  "endedAt": "2026-10-02T20:21:42.503Z",
+  "parseFailures": 2,
+  "recentchange": {
+    "events": 103845,
+    "withTagsField": 0,
+    "verdict": "recentchange carries no tags; labels must come from elsewhere"
+  },
+  "revisionTagsChange": {
+    "events": 36000,
+    "focusWikiEvents": 5939,
+    "revertTagsAdded": {
+      "mw-reverted": 517,
+      "mw-rollback": 53,
+      "mw-undo": 110,
+      "mw-manual-revert": 265
+    },
+    "revertTagsAddedMainspace": {
+      "mw-reverted": 236,
+      "mw-rollback": 45,
+      "mw-undo": 95,
+      "mw-manual-revert": 35
+    },
+    "mwRevertedDelaySeconds": {
+      "n": 517,
+      "mean": 1644067.187,
+      "p50": 239269.378,
+      "p95": 3012381.637,
+      "p99": 7666580.106,
+      "max": 47883201.766
+    },
+    "mwRevertedJoinableToRecentchange": {
+      "count": 64,
+      "of": 517,
+      "share": 0.1238
+    }
+  },
+  "examples": [
+    {
+      "meta": {
+        "id": "f922d02a-f240-4208-9b48-03200ae9b9aa",
+        "dt": "2026-10-02T19:36:43.499Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/News_of_the_World_(film)",
+        "request_id": "72e68b3f-7205-4f09-9be5-1c6e3d8a02c9",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930373898
+      },
+      "database": "enwiki",
+      "rev_id": 1378045268,
+      "rev_timestamp": "2026-10-02T17:03:33Z",
+      "page_namespace": 0,
+      "tags": [
+        "mw-manual-revert",
+        "wikieditor",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "mw-manual-revert",
+          "wikieditor"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 59876111,
+      "page_title": "News_of_the_World_(film)",
+      "rev_sha1": "o5bzyiz6l6vwzkhuk471v03qhexiit5",
+      "rev_minor_edit": false,
+      "rev_len": 46593,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": false,
+      "comment": "All Wiki Sites accepted me that News Of The World came out on theaters and on DirecTV on December 25, 2020, it's because that All Movie Theaters were closed on March 16, 2020 to March 1, 2021, it's because that of The Coronavirus Pandemic.",
+      "parsedcomment": "All Wiki Sites accepted me that News Of The World came out on theaters and on DirecTV on December 25, 2020, it&#039;s because that All Movie Theaters were closed on March 16, 2020 to March 1, 2021, it&#039;s because that of The Coronavirus Pandemic.",
+      "rev_parent_id": 1378044889
+    },
+    {
+      "meta": {
+        "id": "daee3db1-58b1-40cc-8029-144880ee9b8c",
+        "dt": "2026-10-02T19:37:01.693Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/Category:B%C3%A9ni_Mellal-Kh%C3%A9nifra_geography_stubs",
+        "request_id": "d214fbdd-313e-4f83-bc91-417f00440369",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930374090
+      },
+      "database": "enwiki",
+      "rev_id": 1378065217,
+      "rev_timestamp": "2026-10-02T19:36:56Z",
+      "page_namespace": 14,
+      "tags": [
+        "wikieditor",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "wikieditor"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 47924128,
+      "page_title": "Category:Béni_Mellal-Khénifra_geography_stubs",
+      "rev_sha1": "5tzpgfukkd4d8k37l6755tjd1ql703v",
+      "rev_minor_edit": false,
+      "rev_len": 4361,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": false,
+      "comment": "Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUT",
+      "parsedcomment": "Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUT",
+      "rev_parent_id": 723973194
+    },
+    {
+      "meta": {
+        "id": "1fff332d-e174-42e0-a935-19e30573d62d",
+        "dt": "2026-10-02T19:37:13.342Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/Poultry",
+        "request_id": "228c79f4-55b0-41f5-873c-c82bedd72884",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930374216
+      },
+      "database": "enwiki",
+      "rev_id": 1378064306,
+      "rev_timestamp": "2026-10-02T19:30:43Z",
+      "page_namespace": 0,
+      "tags": [
+        "mw-manual-revert",
+        "visualeditor",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "mw-manual-revert",
+          "visualeditor"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 23197,
+      "page_title": "Poultry",
+      "rev_sha1": "hbr98639h1fg2ui1dqen58pog2v9y65",
+      "rev_minor_edit": false,
+      "rev_len": 59239,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": false,
+      "comment": "Fix for euphemisms",
+      "parsedcomment": "Fix for euphemisms",
+      "rev_parent_id": 1378059063
+    },
+    {
+      "meta": {
+        "id": "4e35bc0f-ce38-439a-b176-7140cbb09fa7",
+        "dt": "2026-10-02T19:37:21.851Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/Callus_(surname)",
+        "request_id": "ab08db18-c417-462e-b4d9-1086226e0669",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930374346
+      },
+      "database": "enwiki",
+      "rev_id": 1378065270,
+      "rev_timestamp": "2026-10-02T19:37:18Z",
+      "page_namespace": 0,
+      "tags": [
+        "possible vandalism",
+        "wikieditor",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "possible vandalism",
+          "wikieditor"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 59009376,
+      "page_title": "Callus_(surname)",
+      "rev_sha1": "7l7utnglm1jy843uiroec7xztd2fin8",
+      "rev_minor_edit": false,
+      "rev_len": 4528,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": false,
+      "comment": "Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUT",
+      "parsedcomment": "Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUT",
+      "rev_parent_id": 1371037094
+    },
+    {
+      "meta": {
+        "id": "966f8405-a710-4a0c-9bdd-76eadb2a7bf4",
+        "dt": "2026-10-02T19:37:29.943Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/George_Washington",
+        "request_id": "5de08542-ebdb-490e-9bc3-37ac4ddd68cf",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930374450
+      },
+      "database": "enwiki",
+      "rev_id": 1378058608,
+      "rev_timestamp": "2026-10-02T18:48:48Z",
+      "page_namespace": 0,
+      "tags": [
+        "wikieditor",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "wikieditor"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 11968,
+      "page_title": "George_Washington",
+      "rev_sha1": "2i0lnwkom1nv8r535veu7irzvkws5on",
+      "rev_minor_edit": false,
+      "rev_len": 145670,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": false,
+      "rev_parent_id": 1377861482
+    }
+  ]
+}

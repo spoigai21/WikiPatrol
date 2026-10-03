@@ -1,0 +1,25 @@
+# Local stack, no cluster needed: `docker compose up -d`, then `npm run ingest -- --sink kafka`.
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v26.2.3
+    command:
+      - redpanda
+      - start
+      - --mode=dev-container
+      - --smp=1
+      - --memory=1G
+      - --kafka-addr=docker://0.0.0.0:9092,host://0.0.0.0:19092
+      - --advertise-kafka-addr=docker://redpanda:9092,host://localhost:19092
+    ports:
+      - "19092:19092"
+      - "9644:9644"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health", "--exit-when-healthy"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+volumes:
+  redpanda-data:

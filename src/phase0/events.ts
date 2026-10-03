@@ -8,6 +8,7 @@ export const RecentChange = z.looseObject({
     id: z.string(),
     dt: z.string(),
     stream: z.string(),
+    topic: z.string().optional(),
     domain: z.string().optional(),
   }),
   type: z.string(),

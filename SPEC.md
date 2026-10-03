@@ -5,13 +5,13 @@ are doing "recent changes patrol" — so the name says what it does without over
 NOT moderate: it classifies and scores, and never edits Wikipedia. Rejected: WikiModerator, which
 implies it acts, and WikiCurator, which is the wrong verb entirely.)*
 
-**One line:** watch Wikipedia's live edit firehose, decide which edits are vandalism, and measure
-what each tier of a cheap-to-expensive model ladder is actually worth — in accuracy, in latency,
+**One line:** watch Wikipedia's live edit firehose, predict which edits will be reverted within
+72 hours, and measure what each tier of a cheap-to-expensive model ladder is actually worth — in accuracy, in latency,
 and in dollars per thousand edits at list prices.
 
-**The question:** you cannot call a frontier model on every edit — roughly 1.7 million a day across all wikis
-(unverified until Phase 0). So where exactly do
-you put the cutoffs, and what does each step up the ladder buy?
+**The question:** you cannot call a frontier model on every edit — about 98,000 a day on English
+Wikipedia articles alone, non-bot (Phase 0, `DECISIONS.md` D1). So where exactly do you put the
+cutoffs, and what does each step up the ladder buy?
 
 ---
 
@@ -24,9 +24,9 @@ that the constraint is real:
 
 | Component | The constraint that forces it |
 |---|---|
-| **Kafka** | The SSE connection is **killed every 15 minutes by design**. Without a durable buffer you lose events on every reconnect. The classifier is also far slower than the feed — that gap is backpressure, the textbook case. And **replay is the experiment**: every configuration must see identical events, which offsets give you and a live socket cannot. |
-| **Kubernetes** | Edit volume swings several-fold between US daytime and overnight, so **HPA on consumer lag is a real trigger**, not a staged load test. The ingester must survive a forced disconnect every 15 minutes. The nightly re-eval is a CronJob. Classifier and ingester scale independently. |
-| **The model ladder** | Economically mandatory, not a study. At ~20 edits/second (all wikis; unverified until Phase 0) a frontier model is hundreds of dollars a day. The routing work is what makes the system exist at all. |
+| **Kafka** | **Not volume:** Phase 0 measured ~1.1 non-bot enwiki article edits/s, below the 2/s line (see `DECISIONS.md` D1). Kept for what volume does not provide: the classifier tiers are rate-limited and far slower than the feed (backpressure), **consumer lag is the autoscaling signal**, independent consumer groups (live classifier, nightly re-eval, dashboard), and **replay is the experiment** — every configuration must see identical events by offset. |
+| **Kubernetes** | Edit volume swings between US daytime and overnight, so **HPA on consumer lag is a real trigger**, not a staged load test. *Phase 0 measured only ~1.5x hour to hour (`DECISIONS.md` D8) — weaker than "several-fold"; how Phase 8 argues this is open.* The ingester must survive forced disconnects, which Phase 0 saw every 2–17 minutes (D3). The nightly re-eval is a CronJob. Classifier and ingester scale independently. |
+| **The model ladder** | Economically mandatory, not a study. At ~1.1 classifiable edits/second on enwiki alone (Phase 0, D1), calling a frontier model on every one is a standing daily bill; the dollar figure is measured in Phase 7, not assumed here. The routing work is what makes the system exist at all. |
 | **TypeScript / Node** | The services. A long-lived streaming client and async I/O-bound consumers are what Node is good at, and Zod gives a typed boundary on untrusted event JSON. |
 
 ---
@@ -38,7 +38,8 @@ that the constraint is real:
 - `stream.wikimedia.org`, the **`recentchange`** stream, **Server-Sent Events** over plain HTTP
 - **No API key, no auth, no payment card.** Free.
 - **Replay** via `since` or `Last-Event-ID`, with **7–31 days** of history
-- **Connections are terminated at 15 minutes** by WMF's HTTP layer; clients must reconnect automatically
+- **Connections are terminated at 15 minutes** by WMF's HTTP layer; clients must reconnect automatically.
+  Observed in Phase 0: cuts arrive more often than that (5 in one hour, 2–17 min apart)
 - Wikimedia runs it on Kafka in its own infrastructure and offers it to external tool developers
 
 **Not verified — Phase 0 settles both before a line of system code is written:**
@@ -59,10 +60,12 @@ that the constraint is real:
 
 ## Honest limits, written before any results
 
-- **A revert is not the same thing as vandalism.** Edits get reverted over content disputes, style
-  disagreements and good-faith errors. The label is noisy **in both directions** — some vandalism
-  survives unreverted, some good edits get reverted. Quantify the noise instead of pretending it
-  is absent: hand-label a sample of 100 and report how often "reverted" and "vandalism" disagree.
+- **The target is "reverted within 72h", not "vandalism"** (`DECISIONS.md` D9). Edits get
+  reverted over content disputes, style disagreements and good-faith errors, and Phase 0 found
+  most reverts are not vandalism (78% of reverted edits in the sample). So this project predicts
+  reverts — what the label actually measures, and what ORES's `damaging` model also learns from —
+  and never calls itself a vandalism detector. The Phase 0 noise estimate says how far the two
+  differ and is quoted beside every result, so nobody reads "revert recall" as "vandalism recall".
 - **ORES / LiftWing already does this**, with more resources and better data. **Do not claim to
   beat it on accuracy.** It is the baseline. The contribution is the cost-and-routing analysis,
   which is a different question and one nobody publishes.
@@ -123,18 +126,19 @@ Most edits are bots or long-established users and are obviously fine. Cheap, exp
 is the user a bot, are they autoconfirmed, how large is the diff, does it touch references.
 
 - measure **what fraction of traffic survives the filter**
-- measure **what fraction of vandalism the filter throws away** — the recall you are paying for
-  the cost saving. This needs labels: use the Phase 0 hand-labelled sample immediately, and the
-  revert labels from Phase 4 once they exist. Build the filter here; the M% is finalised after
+- measure **what fraction of later-reverted edits the filter throws away** — the recall you are
+  paying for the cost saving. This needs labels: the revert labels from Phase 4. The Phase 0
+  sample is too small for this (50 reverted rows) but gives an early read on how much true
+  vandalism the filter drops, reported separately. Build the filter here; the M% is finalised after
   Phase 4.
 - filter rules are tuned on the development range only, like everything else
 
 **Done when:** you can state the trade: "the filter removes N% of volume and loses M% of
-vandalism" — M measured against Phase 4 labels, with the label-noise estimate beside it.
+later-reverted edits" — M measured against Phase 4 labels, with the label-noise estimate beside it.
 
 ## Phase 4 — labels, for free, from reverts
 
-- join each edit to its later revert status within a stated window
+- join each edit to its later revert status within a stated window (72h; `DECISIONS.md` D4)
 - store `(edit, prediction, label, latency, config)` as the result table
 - the sample from Phase 0 tells you how noisy this label is; carry that number everywhere
 
@@ -148,7 +152,8 @@ against revert labels on a **sealed replay set** of captured edits.
 - split: develop prompts on one offset range, score **once** on a sealed range. Both ranges are
   fixed in time **after** the label window has closed on them, and the sealed range is exported
   to a committed, checksummed snapshot file so it survives a cluster rebuild
-- all three prompts written and tagged **before** any of them runs
+- all three prompts written and tagged **before** any of them runs. Each asks the question the
+  label answers — *will this edit be reverted?* — not *is this vandalism?*
 - **no judge model.** The label is the revert. An LLM grading an LLM is circular.
 - baselines in the table: the Phase 3 heuristics alone, and ORES/LiftWing if reachable
 
@@ -251,7 +256,8 @@ laptop up at its scheduled time).
 - Every cost figure carries the date of the price table it came from.
 - The sealed offset range is scored **once per configuration**, never iterated on.
 - Phase 0's predictions are quoted in the README beside what happened, right or wrong.
-- The label-noise estimate from Phase 0 appears next to every accuracy number.
+- Every accuracy number is called what it is — revert recall/precision — with the Phase 0
+  label-noise estimate beside it.
 
 ## Deliverables that are not code — these do more work than the code does
 
@@ -283,8 +289,8 @@ more than a perfect system in three months.
 **Minimum path: Phases 0 → 1 → 3 → 4 → 5.** That is the ingester, the free filter, revert labels,
 and the grid — which produces the table. Phase 2's formal replay and backpressure proofs can
 follow, but Phase 5's sealed range depends on replaying fixed offsets, so from Phase 1 onward the
-raw topic must already keep its offsets and its data (see Phase 1 retention). Phase 3's vandalism-
-loss number is completed once Phase 4's labels exist.
+raw topic must already keep its offsets and its data (see Phase 1 retention). Phase 3's revert-loss
+number is completed once Phase 4's labels exist.
 
 **Then, in order of marginal value:** Phase 7 (the ladder — the strongest single result), Phase 6
 (calibration), Phase 8 (Kubernetes), Phase 9 (drift). Phase 7 routes on confidence only if Phase 6

@@ -1,0 +1,254 @@
+{
+  "wiki": "enwiki",
+  "startedAt": "2026-10-02T20:22:22.075Z",
+  "endedAt": "2026-10-02T21:07:22.075Z",
+  "parseFailures": 0,
+  "recentchange": {
+    "events": 103123,
+    "withTagsField": 0,
+    "verdict": "recentchange carries no tags; labels must come from elsewhere"
+  },
+  "revisionTagsChange": {
+    "events": 36324,
+    "focusWikiEvents": 6084,
+    "revertTagsAdded": {
+      "mw-reverted": 347,
+      "mw-rollback": 31,
+      "mw-undo": 98,
+      "mw-manual-revert": 98
+    },
+    "revertTagsAddedMainspace": {
+      "mw-reverted": 290,
+      "mw-rollback": 28,
+      "mw-undo": 91,
+      "mw-manual-revert": 71
+    },
+    "mwRevertedDelaySeconds": {
+      "n": 347,
+      "mean": 16446495.4952,
+      "p50": 32969.324,
+      "p95": 95124498.778,
+      "p99": 340533361.407,
+      "max": 574279235.357
+    },
+    "mwRevertedDelaySecondsMainspace": {
+      "n": 290,
+      "mean": 18219128.5225,
+      "p50": 29504.775,
+      "p95": 104341125.764,
+      "p99": 473398522.391,
+      "max": 574279235.357
+    },
+    "mainspaceRevertedWithin": {
+      "1h": 0.3655,
+      "6h": 0.4966,
+      "24h": 0.6931,
+      "72h": 0.7207,
+      "7d": 0.7414,
+      "30d": 0.7517
+    },
+    "mwRevertedJoinableToRecentchange": {
+      "count": 87,
+      "of": 347,
+      "share": 0.2507
+    }
+  },
+  "examples": [
+    {
+      "meta": {
+        "id": "8dadea4f-fdb3-4a42-8c99-3b61494a3d9c",
+        "dt": "2026-10-02T20:22:32.923Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/Talk:List_of_churches_in_Br%C3%B8nderslev_Municipality",
+        "request_id": "a25109de-880b-4298-8a3a-13c5a748ee91",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930410465
+      },
+      "database": "enwiki",
+      "rev_id": 1378071325,
+      "rev_timestamp": "2026-10-02T20:22:05Z",
+      "page_namespace": 1,
+      "tags": [
+        "wikieditor",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "wikieditor"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 64509402,
+      "page_title": "Talk:List_of_churches_in_Brønderslev_Municipality",
+      "rev_sha1": "27txawzke0ug1fc1xj6tfmvmgfdwlvq",
+      "rev_minor_edit": false,
+      "rev_len": 4274,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": false,
+      "comment": "Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss' Trinidad Chambliss PUT",
+      "parsedcomment": "Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUTS ON A SHOW vs. LSU!Ole Miss&#039; Trinidad Chambliss PUT",
+      "rev_parent_id": 1205269881
+    },
+    {
+      "meta": {
+        "id": "0827c9d9-ba4f-465d-b87d-ef01baae7660",
+        "dt": "2026-10-02T20:23:00.309Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/Talk:Shama%27il_Muhammadiyah",
+        "request_id": "4b5cabc2-297c-40f6-87a4-7c802a77801b",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930410790
+      },
+      "database": "enwiki",
+      "rev_id": 1096137198,
+      "rev_timestamp": "2022-07-02T15:22:21Z",
+      "page_namespace": 1,
+      "tags": [
+        "OAuth CID: 1841",
+        "mw-changed-redirect-target",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "OAuth CID: 1841",
+          "mw-changed-redirect-target"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 67988718,
+      "page_title": "Talk:Shama'il_Muhammadiyah",
+      "rev_sha1": "4pv6n7kf6zgun09vc7j48mgetu481ok",
+      "rev_minor_edit": true,
+      "rev_len": 47,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": true,
+      "comment": "Bot: Fixing double redirect to [[Talk:Ash-Shama'il al-Muhammadiyya]]",
+      "parsedcomment": "Bot: Fixing double redirect to <a href=\"/wiki/Talk:Ash-Shama%27il_al-Muhammadiyya\" class=\"mw-redirect\" title=\"Talk:Ash-Shama&#039;il al-Muhammadiyya\">Talk:Ash-Shama&#039;il al-Muhammadiyya</a>",
+      "rev_parent_id": 1083070480
+    },
+    {
+      "meta": {
+        "id": "5fccd8d3-f070-4a4c-b857-e1d1296a5959",
+        "dt": "2026-10-02T20:23:00.333Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/Talk:Shama%27il_Muhammadiyah",
+        "request_id": "4b5cabc2-297c-40f6-87a4-7c802a77801b",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930410791
+      },
+      "database": "enwiki",
+      "rev_id": 1186317463,
+      "rev_timestamp": "2023-11-22T09:07:08Z",
+      "page_namespace": 1,
+      "tags": [
+        "mw-changed-redirect-target",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "mw-changed-redirect-target"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 67988718,
+      "page_title": "Talk:Shama'il_Muhammadiyah",
+      "rev_sha1": "0xx32m9mjo61oeiw38er7dnpr3vsksj",
+      "rev_minor_edit": true,
+      "rev_len": 43,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": true,
+      "comment": "Bot: Fixing double redirect to [[Talk:Shama'il al-Muhammadiyya]]",
+      "parsedcomment": "Bot: Fixing double redirect to <a href=\"/wiki/Talk:Shama%27il_al-Muhammadiyya\" class=\"mw-redirect\" title=\"Talk:Shama&#039;il al-Muhammadiyya\">Talk:Shama&#039;il al-Muhammadiyya</a>",
+      "rev_parent_id": 1096137198
+    },
+    {
+      "meta": {
+        "id": "8656684c-6fdf-4d0c-912b-23b833101382",
+        "dt": "2026-10-02T20:23:09.530Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/List_of_churches_in_Br%C3%B8nderslev_Municipality",
+        "request_id": "295af72b-b8f2-415e-8ac5-5ca15ea57798",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930410882
+      },
+      "database": "enwiki",
+      "rev_id": 1378071296,
+      "rev_timestamp": "2026-10-02T20:21:49Z",
+      "page_namespace": 0,
+      "tags": [
+        "mw-undo",
+        "twinkle",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "mw-undo",
+          "twinkle"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 64509392,
+      "page_title": "List_of_churches_in_Brønderslev_Municipality",
+      "rev_sha1": "6v2jxyept0ec2hwfx8aoebhimh59jig",
+      "rev_minor_edit": true,
+      "rev_len": 6395,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": false,
+      "comment": "Reverted 1 edit by [[Special:Contributions/SpeedyRunny|SpeedyRunny]] ([[User talk:SpeedyRunny|talk]]) to last revision by ClueBot NG",
+      "parsedcomment": "Reverted 1 edit by <a href=\"/wiki/Special:Contributions/SpeedyRunny\" title=\"Special:Contributions/SpeedyRunny\">SpeedyRunny</a> (<a href=\"/wiki/User_talk:SpeedyRunny\" title=\"User talk:SpeedyRunny\">talk</a>) to last revision by ClueBot NG",
+      "rev_parent_id": 1378071250
+    },
+    {
+      "meta": {
+        "id": "7d641bb5-36e5-4881-88ee-9475541fbcc1",
+        "dt": "2026-10-02T20:23:12.482Z",
+        "stream": "mediawiki.revision-tags-change",
+        "uri": "https://en.wikipedia.org/wiki/Trichomonas_vaginalis",
+        "request_id": "3806b4b7-cf7c-4c53-8ed0-034080ee028c",
+        "domain": "en.wikipedia.org",
+        "topic": "eqiad.mediawiki.revision-tags-change",
+        "partition": 0,
+        "offset": 1930410922
+      },
+      "database": "enwiki",
+      "rev_id": 1378054830,
+      "rev_timestamp": "2026-10-02T18:18:05Z",
+      "page_namespace": 0,
+      "tags": [
+        "editcheck-newreference",
+        "visualeditor",
+        "mw-reverted"
+      ],
+      "prior_state": {
+        "tags": [
+          "editcheck-newreference",
+          "visualeditor"
+        ]
+      },
+      "$schema": "/mediawiki/revision/tags-change/1.0.0",
+      "page_id": 414259,
+      "page_title": "Trichomonas_vaginalis",
+      "rev_sha1": "7rn94kawp2wlc2tdz1fv6kg0o85fixf",
+      "rev_minor_edit": false,
+      "rev_len": 38337,
+      "rev_content_model": "wikitext",
+      "rev_content_format": "text/x-wiki",
+      "page_is_redirect": false,
+      "comment": "/* Genome sequencing and statistics */ Restructured most of the genome statistics section to contain updated information, more accurately reflect what is discussed in the papers, remove repetitive words and sentences, and remove a predictive sentence citing a article from 2007.",
+      "parsedcomment": "<span class=\"autocomment\">Genome sequencing and statistics: </span> Restructured most of the genome statistics section to contain updated information, more accurately reflect what is discussed in the papers, remove repetitive words and sentences, and remove a predictive sentence citing a article from 2007.",
+      "rev_parent_id": 1378001241
+    }
+  ]
+}

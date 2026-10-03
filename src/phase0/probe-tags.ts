@@ -29,6 +29,7 @@ let parseFailures = 0;
 const added = Object.fromEntries(REVERT_TAGS.map((t) => [t, 0])) as Record<string, number>;
 const addedInMainspace = Object.fromEntries(REVERT_TAGS.map((t) => [t, 0])) as Record<string, number>;
 const revertDelaysSec: number[] = [];
+const mainspaceRevertDelaysSec: number[] = [];
 let revertedJoinable = 0;
 const examples: unknown[] = [];
 
@@ -72,12 +73,21 @@ for await (const ev of streamEvents(`${STREAM_BASE}recentchange,mediawiki.revisi
       added[tag]!++;
       if (tc.page_namespace === 0) addedInMainspace[tag]!++;
       if (tag === 'mw-reverted') {
-        revertDelaysSec.push((Date.parse(tc.meta.dt) - Date.parse(tc.rev_timestamp)) / 1000);
+        const delay = (Date.parse(tc.meta.dt) - Date.parse(tc.rev_timestamp)) / 1000;
+        revertDelaysSec.push(delay);
+        if (tc.page_namespace === 0) mainspaceRevertDelaysSec.push(delay);
         if (rcFocusRevIds.has(tc.rev_id)) revertedJoinable++;
         if (examples.length < 5) examples.push(tc);
       }
     }
   }
+}
+
+function withinWindows(delays: number[]) {
+  const windows = { '1h': 3600, '6h': 21_600, '24h': 86_400, '72h': 259_200, '7d': 604_800, '30d': 2_592_000 };
+  return Object.fromEntries(
+    Object.entries(windows).map(([k, s]) => [k, delays.length ? round(delays.filter((d) => d <= s).length / delays.length) : null]),
+  );
 }
 
 const reverted = added['mw-reverted'] ?? 0;
@@ -96,9 +106,11 @@ const report = {
     focusWikiEvents: tcFocus,
     revertTagsAdded: added,
     revertTagsAddedMainspace: addedInMainspace,
-    // Seconds from the original edit to mw-reverted being applied. Only reverts that
-    // happened during the probe are seen, so this is biased toward fast reverts.
+    // Seconds from the original edit to mw-reverted being applied. Under a steady edit rate, the ages of revisions being reverted right now follow the
+    // time-to-revert distribution, so this also says how long a label window must be.
     mwRevertedDelaySeconds: summarise(revertDelaysSec),
+    mwRevertedDelaySecondsMainspace: summarise(mainspaceRevertDelaysSec),
+    mainspaceRevertedWithin: withinWindows(mainspaceRevertDelaysSec),
     // Reverted revisions whose original edit was also seen in recentchange during this probe.
     // Low early in a short probe because most reverted edits predate it.
     mwRevertedJoinableToRecentchange: { count: revertedJoinable, of: reverted, share: reverted ? round(revertedJoinable / reverted) : null },

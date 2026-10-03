@@ -1,0 +1,21 @@
+{
+  "scoredAt": "2026-10-03T17:43:42.069Z",
+  "revertWindowHours": "72–96 (edit age when its tags were queried)",
+  "labeller": "claude-opus-5-5 (AI model, blind to revert status; not hand-labelled)",
+  "labelled": 100,
+  "unsure": 5,
+  "revertedNotVandalism": {
+    "rate": 0.7826,
+    "low": 0.6443,
+    "high": 0.8774,
+    "n": 46
+  },
+  "keptButVandalism": {
+    "rate": 0,
+    "low": 0,
+    "high": 0.0727,
+    "n": 49
+  },
+  "populationRevertRate": 0.0622,
+  "populationAgreement": 0.9513
+}
