@@ -1,0 +1,28 @@
+{
+  "name": "heldout-2026-09-30T0400Z",
+  "capture": "data/phase0/capture-us-latenight-2026-09-30T0400Z.jsonl",
+  "editTimeRange": [
+    "2026-09-30T03:59:59.000Z",
+    "2026-09-30T04:59:58.000Z"
+  ],
+  "queriedAt": "2026-10-03T19:27:11.051Z",
+  "ageAtQueryHours": {
+    "min": 86.4536,
+    "max": 87.4536
+  },
+  "edits": 6757,
+  "labels": {
+    "reverted": 146,
+    "kept": 6609,
+    "gone": 2
+  },
+  "registeredAccounts": {
+    "asked": 735,
+    "found": 735
+  },
+  "columns": {
+    "registration": "account creation (ISO); 'null' = predates the field; empty = not a registered account",
+    "editcount": "edit count at queriedAt, not at the edit",
+    "reverted": "1 = tagged mw-reverted; 0 = not; gone = revision deleted or suppressed, excluded from rates"
+  }
+}

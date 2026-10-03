@@ -175,6 +175,71 @@ fair baseline. The 78% figure is quoted beside the results as the gap between th
 tools), and a hand-labelled gold set for the headline number. Either can be added later as a
 separate, additional measurement; neither changes the target chosen here.
 
+## D10 — The free filter uses Wikipedia's own trust levels, fixed before scoring (DECIDED 2026-10-03)
+
+Written before any filter result was computed.
+
+**Rules** (`src/filter/rules.ts`), three policies, from least to most aggressive:
+
+| Policy | Drops |
+|---|---|
+| `bots` | edits flagged bot |
+| `extendedconfirmed` (**default**) | + registered accounts at least 30 days old with at least 500 edits |
+| `autoconfirmed` | + registered accounts at least 4 days old with at least 10 edits (a looser bar, so it drops more) |
+
+*(Corrected after scoring: the first draft listed `autoconfirmed` as the middle tier. The rules
+did not change; only this ordering was wrong.)*
+
+The thresholds are the ones Wikipedia itself uses to grant trust, so there is nothing to tune and
+nothing to overfit. Temporary accounts are never dropped. The default is the conservative policy,
+chosen before scoring; the other two are reported beside it as the trade-off curve.
+
+**Inputs only from the event plus a stored user snapshot**, so the filter is deterministic on
+replay (Phase 2). Account age is measured at the time of the edit. The edit count is read when the
+snapshot is taken — a few days after the edit for the evaluation tables — so an account that
+crossed 10 or 500 edits in between is counted as trusted early. This can only make the filter
+look slightly more aggressive than it was.
+
+**Not used, though the spec lists them:** diff size and "touches references". Neither is in the
+`recentchange` event; both need the diff text, one Action API call per edit. That is cheap but not
+free, and it is a feature for the models, not a reason to drop an edit unseen.
+
+**Evaluation sets** — tables in `results/phase3/` (`npm run phase3:table`), one row per
+classifiable enwiki edit with its revert label, no usernames:
+- *dev:* 2026-09-30 12:00–13:00 UTC, the hour the Phase 0 sample came from;
+- *held-out:* 2026-09-30 04:00–05:00 UTC, replayed for this and not examined before scoring.
+
+Both are reported. Nothing is tuned on either, so "held-out" is a second sample, not a guard.
+These are Phase 0 replays, not the Kafka log; the M% is re-measured on Phase 4 labels from the
+log. **Reported:** N = share of edits removed (all, and non-bot); M = share of later-reverted
+edits removed, with a Wilson 95% interval.
+
+### D10 results — the filter removes 70–87% of volume and loses 16–24% of later-reverted edits
+
+`results/phase3/filter-eval.json`, from `results/phase3/edits-*.csv` (labels read 78–87h after
+the edits).
+
+| Table | Policy | Volume removed (all / non-bot) | Reverted edits lost (95% CI) | Revert rate before → after |
+|---|---|---|---|---|
+| dev 09-30 12:00 | `bots` | 1.2% / 0% | 0% [0, 1.4] | 5.9% → 5.9% |
+| | **`extendedconfirmed`** | **73.3% / 72.9%** | **16.3% [12.4, 21.1]** | 5.9% → 18.4% |
+| | `autoconfirmed` | 84.0% / 83.8% | 36.5% [31.0, 42.3] | 5.9% → 23.2% |
+| held-out 09-30 04:00 | `bots` | 57.2% / 0% | 0% [0, 2.6] | 2.2% → 5.1% |
+| | **`extendedconfirmed`** | **87.1% / 69.8%** | **24.0% [17.8, 31.5]** | 2.2% → 12.7% |
+| | `autoconfirmed` | 91.3% / 79.6% | 29.4% [22.7, 37.3] | 2.2% → 17.5% |
+
+**The trade, in the spec's shape:** the default filter removes **73–87% of edits** (70–73% of
+non-bot edits) and loses **16–24% of later-reverted edits**. The bot share alone swings from 1% to
+57% between the two hours (D8), which is why the non-bot column is the stable one.
+
+**What the lost reverts are.** In the Phase 0 sample (dev hour), the default filter drops 12 of
+the 50 reverted edits, and all 12 were labelled *not vandalism*; all 10 vandalism edits pass the
+filter. So the reverts it gives up look like the good-faith reverts D9 found — consistent with
+trusted accounts' edits being reverted over disputes, not damage. The sample is small and
+AI-labelled (D9); this is an indication, not a measurement.
+
+**Status:** provisional, as the spec says — M is re-measured on Phase 4 labels from the Kafka log.
+
 ## Phase 0 prediction scorecard
 
 `PREDICTIONS.md` is frozen at tag `phase0-predictions` (7a4bd72). Scored here, by its own rule:
@@ -185,7 +250,9 @@ wrong = measured value outside the stated range.
 | 1 | Vandalism base rate 5–15% | 1.4% point estimate (6.2% × 22% + 93.8% × 0%); the CI's upper end reaches ~9% | **Wrong on the point estimate**; not settled given the kept-side CI |
 | 2 | Revert rate 10–25% | 6.2% [5.4, 7.2] | **Wrong** |
 | 3 | P(not vandalism \| reverted) < 20% | 78% [64, 88] (AI-labelled, D9) | **Wrong** |
-| 4–11 | — | Phases 3–7 | Not yet measurable |
+| 5 | Heuristics drop 30–60% of traffic | 73–87% (default policy, D10) | **Wrong** (above the range) |
+| 6 | Filter loses < 10% of vandalism | 0 of 10 vandalism rows dropped (95% CI 0–28%); 16–24% of *reverted* edits lost | **Within range** on vandalism, CI too wide to settle; the revert-target figure (D9) is above it |
+| 4, 7–11 | — | Phases 5–7 | Not yet measurable |
 
 ## Noted, not yet a decision
 

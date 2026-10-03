@@ -1,0 +1,28 @@
+{
+  "name": "dev-2026-09-30T1200Z",
+  "capture": "data/phase0/capture-us-morning-2026-09-30T1200Z.jsonl",
+  "editTimeRange": [
+    "2026-09-30T11:59:47.000Z",
+    "2026-09-30T12:59:58.000Z"
+  ],
+  "queriedAt": "2026-10-03T19:26:27.827Z",
+  "ageAtQueryHours": {
+    "min": 78.4416,
+    "max": 79.4447
+  },
+  "edits": 4756,
+  "labels": {
+    "reverted": 277,
+    "kept": 4459,
+    "gone": 20
+  },
+  "registeredAccounts": {
+    "asked": 953,
+    "found": 953
+  },
+  "columns": {
+    "registration": "account creation (ISO); 'null' = predates the field; empty = not a registered account",
+    "editcount": "edit count at queriedAt, not at the edit",
+    "reverted": "1 = tagged mw-reverted; 0 = not; gone = revision deleted or suppressed, excluded from rates"
+  }
+}

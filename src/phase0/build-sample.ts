@@ -9,7 +9,7 @@
 //   npm run phase0:sample
 
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { USER_AGENT } from '../stream/sse.ts';
+import { ENWIKI_API, fetchRevisionTags } from '../labels/action-api.ts';
 import { classifyUser, isClassifiable, RecentChange, REVERT_TAGS } from './events.ts';
 import { args, log, writeJson } from './cli.ts';
 import { toCsv } from './csv.ts';
@@ -25,7 +25,7 @@ const opts = args({
   'max-query': { type: 'string', default: '3000' },
   seed: { type: 'string', default: '20261002' },
   wiki: { type: 'string', default: 'enwiki' },
-  api: { type: 'string', default: 'https://en.wikipedia.org/w/api.php' },
+  api: { type: 'string', default: ENWIKI_API },
 });
 const minAgeHours = Number(opts['min-age-hours']);
 const maxAgeHours = Number(opts['max-age-hours']);
@@ -71,38 +71,18 @@ if (eligible.size === 0) {
 
 // 2. Current tags for a random subset (the API is free, but be polite).
 const toQuery = shuffled([...eligible.values()], mulberry32(seed)).slice(0, maxQuery);
+const tags = await fetchRevisionTags(toQuery.map((c) => c.revId), String(opts.api));
 const candidates: Candidate[] = [];
 let gone = 0;
-for (let i = 0; i < toQuery.length; i += 50) {
-  const batch = toQuery.slice(i, i + 50);
-  const url = new URL(String(opts.api));
-  url.search = new URLSearchParams({
-    action: 'query',
-    prop: 'revisions',
-    revids: batch.map((c) => c.revId).join('|'),
-    rvprop: 'ids|tags',
-    format: 'json',
-    formatversion: '2',
-    maxlag: '5',
-  }).toString();
-  const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT } });
-  if (!res.ok) throw new Error(`Action API HTTP ${res.status}`);
-  const body = (await res.json()) as {
-    query?: { pages?: { revisions?: { revid: number; tags?: string[] }[] }[]; badrevids?: Record<string, unknown> };
-  };
-  const tags = new Map<number, string[]>();
-  for (const page of body.query?.pages ?? []) for (const r of page.revisions ?? []) tags.set(r.revid, r.tags ?? []);
-  for (const c of batch) {
-    const t = tags.get(c.revId);
-    // Missing = deleted page or suppressed revision. Often vandalism, but it has no
-    // revert tag, so it belongs in neither stratum; it is counted instead.
-    if (t === undefined) {
-      gone++;
-      continue;
-    }
-    candidates.push({ ...c, revertTags: t.filter((x) => (REVERT_TAGS as readonly string[]).includes(x)) });
+for (const c of toQuery) {
+  const t = tags.get(c.revId);
+  // Missing = deleted page or suppressed revision. Often vandalism, but it has no
+  // revert tag, so it belongs in neither stratum; it is counted instead.
+  if (t === undefined) {
+    gone++;
+    continue;
   }
-  await new Promise((r) => setTimeout(r, 200));
+  candidates.push({ ...c, revertTags: t.filter((x) => (REVERT_TAGS as readonly string[]).includes(x)) });
 }
 
 const nReverted = candidates.filter(isReverted).length;

@@ -124,6 +124,8 @@ kills the connection mid-stream and diffs the output.
 
 Most edits are bots or long-established users and are obviously fine. Cheap, explainable rules:
 is the user a bot, are they autoconfirmed, how large is the diff, does it touch references.
+*(Built: bot flag plus Wikipedia's own account-trust thresholds; diff size and references need
+the diff text and are left to the models — `DECISIONS.md` D10.)*
 
 - measure **what fraction of traffic survives the filter**
 - measure **what fraction of later-reverted edits the filter throws away** — the recall you are
