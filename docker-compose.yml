@@ -1,4 +1,6 @@
 # Local stack, no cluster needed: `docker compose up -d`, then `npm run ingest -- --sink kafka`.
+# The captured log lives in the redpanda-data volume. `docker compose down` keeps it;
+# `docker compose down -v` DELETES it, and with it every replay range not yet snapshotted.
 services:
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v26.2.3

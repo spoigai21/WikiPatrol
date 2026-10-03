@@ -1,4 +1,4 @@
-import { Kafka, logLevel, type Admin, type Producer } from 'kafkajs';
+import { ConfigResourceTypes, Kafka, logLevel, type Admin, type Producer } from 'kafkajs';
 import type { RawRecord } from './envelope.ts';
 import type { RawSink } from './sink.ts';
 
@@ -6,6 +6,12 @@ import type { RawSink } from './sink.ts';
 // At ~1.1 classifiable edits/s (DECISIONS.md D1) one partition has huge headroom.
 const PARTITIONS = 1;
 const SSE_ID_HEADER = 'sse-id';
+// Never age out: the dev and sealed offset ranges must exist for Phase 5 and Phase 9.
+export const RAW_TOPIC_CONFIG = [
+  { name: 'retention.ms', value: '-1' },
+  { name: 'retention.bytes', value: '-1' },
+  { name: 'cleanup.policy', value: 'delete' },
+] as const;
 
 export interface KafkaSinkOptions {
   brokers: string[];
@@ -34,24 +40,32 @@ export class KafkaSink implements RawSink {
   private init(): Promise<void> {
     this.ready ??= (async () => {
       await this.admin.connect();
-      if (!(await this.admin.listTopics()).includes(this.opts.topic)) await this.admin.createTopics({
-        waitForLeaders: true,
-        topics: [
-          {
-            topic: this.opts.topic,
-            numPartitions: PARTITIONS,
-            // Never age out: the dev and sealed offset ranges must exist for Phase 5 and Phase 9.
-            configEntries: [
-              { name: 'retention.ms', value: '-1' },
-              { name: 'retention.bytes', value: '-1' },
-              { name: 'cleanup.policy', value: 'delete' },
-            ],
-          },
-        ],
-      });
+      if (!(await this.admin.listTopics()).includes(this.opts.topic)) {
+        await this.admin.createTopics({
+          waitForLeaders: true,
+          topics: [{ topic: this.opts.topic, numPartitions: PARTITIONS, configEntries: [...RAW_TOPIC_CONFIG] }],
+        });
+      } else {
+        await this.enforceRetention();
+      }
       await this.producer.connect();
     })();
     return this.ready;
+  }
+
+  /**
+   * A topic created some other way (auto-create, by hand) gets the broker's default
+   * retention, which deletes data after days. Correct it rather than trust it.
+   */
+  private async enforceRetention(): Promise<void> {
+    const resource = { type: ConfigResourceTypes.TOPIC, name: this.opts.topic };
+    const { resources } = await this.admin.describeConfigs({
+      resources: [{ ...resource, configNames: RAW_TOPIC_CONFIG.map((c) => c.name) }],
+      includeSynonyms: false,
+    });
+    const current = new Map(resources[0]?.configEntries.map((e) => [e.configName, e.configValue]));
+    if (RAW_TOPIC_CONFIG.every((c) => current.get(c.name) === c.value)) return;
+    await this.admin.alterConfigs({ validateOnly: false, resources: [{ ...resource, configEntries: [...RAW_TOPIC_CONFIG] }] });
   }
 
   async write(records: readonly RawRecord[], _lastEventId: string): Promise<void> {
