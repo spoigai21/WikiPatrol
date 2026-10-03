@@ -163,6 +163,8 @@ against revert labels on a **sealed replay set** of captured edits.
 
 **Done when:** the table exists, with baselines as rows, and you know which Phase 0 predictions
 were wrong.
+*(Built: frozen dev and sealed sets, three prompts in `prompts/`, a runner that enforces the
+sealed-set rules, and the scorer — `DECISIONS.md` D12. Runs start once the prompts are tagged.)*
 
 ## Phase 6 — does the model know when it is wrong?
 

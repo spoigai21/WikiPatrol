@@ -17,6 +17,8 @@ export const RecentChange = z.looseObject({
   title: z.string().optional(),
   user: z.string().optional(),
   bot: z.boolean().optional(),
+  minor: z.boolean().optional(),
+  comment: z.string().optional(),
   timestamp: z.number().optional(),
   length: z.looseObject({ old: z.number().optional(), new: z.number().optional() }).optional(),
   revision: z.looseObject({ old: z.number().optional(), new: z.number() }).optional(),

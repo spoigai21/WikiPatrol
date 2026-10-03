@@ -1,0 +1,8 @@
+Article: {{title}}
+Kind of edit: {{kind}}
+Editor: {{editor}}
+Size change: {{size_delta}} bytes
+Edit summary: {{comment}}
+
+Changes ("- " lines removed, "+ " lines added; inside a line, [-text-] was removed and {+text+} was added):
+{{diff}}

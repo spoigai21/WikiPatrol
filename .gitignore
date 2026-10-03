@@ -3,3 +3,5 @@ MOTIVATION.md
 node_modules/
 # Raw stream captures: large, and reproducible from the stream's own replay window.
 data/
+# API keys (Phase 5). Never committed.
+.env

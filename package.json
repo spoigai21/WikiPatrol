@@ -21,7 +21,10 @@
     "phase4:backfill-tags": "tsx src/phase4/backfill-tags.ts",
     "labeller": "KAFKAJS_NO_PARTITIONER_WARNING=1 tsx src/labels/main.ts",
     "phase4:validate": "tsx src/phase4/validate.ts",
-    "phase4:summary": "tsx src/phase4/summary.ts"
+    "phase4:summary": "tsx src/phase4/summary.ts",
+    "phase5:set": "tsx src/phase5/build-set.ts",
+    "phase5:run": "tsx --env-file-if-exists=.env src/phase5/run.ts",
+    "phase5:score": "tsx src/phase5/score.ts"
   },
   "dependencies": {
     "kafkajs": "^2.2.4",

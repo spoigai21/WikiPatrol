@@ -1,0 +1,22 @@
+{
+  "name": "dev",
+  "builtAt": "2026-10-03T21:32:18.695Z",
+  "capture": "data/phase0/capture-us-morning-2026-09-30T1200Z.jsonl",
+  "tags": "data/phase4/tags-enwiki-2026-09-30T0400Z-2026-10-03T1320Z.jsonl",
+  "editTimeRange": [
+    "2026-09-30T12:00:29.000Z",
+    "2026-09-30T12:59:53.000Z"
+  ],
+  "seed": 20261003,
+  "filterPolicy": "extendedconfirmed",
+  "diffMaxChars": 3000,
+  "classifiableEdits": 4756,
+  "filter": {
+    "bot": 59,
+    "trusted-account": 3425,
+    "kept": 1272
+  },
+  "sampled": 200,
+  "diffUnavailable": 3,
+  "sha256": "651c2a17ec50b7ba9a6936423b609537f3613c993d6087eb6b64349c0c2d43c0"
+}

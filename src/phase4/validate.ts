@@ -7,66 +7,49 @@
 //   npm run phase4:validate -- --capture data/phase0/capture-us-morning-2026-09-30T1200Z.jsonl \
 //     --tags data/phase4/tags-enwiki-….jsonl --table dev-2026-09-30T1200Z
 
-import { createReadStream, readFileSync } from 'node:fs';
-import { createInterface } from 'node:readline';
+import { readFileSync } from 'node:fs';
 import { args, log, writeJson } from '../phase0/cli.ts';
 import { parseCsv } from '../phase0/csv.ts';
 import { addedTags, TagsChange } from '../phase0/events.ts';
 import { round, wilson } from '../phase0/stats.ts';
-import { DEFAULT_LABELLER, Labeller, type Label } from '../labels/labeller.ts';
+import { DEFAULT_LABELLER } from '../labels/labeller.ts';
+import { labelReplay, REPLAY_LABELLER } from '../labels/replay-labels.ts';
 
 const opts = args({
   capture: { type: 'string' },
   tags: { type: 'string' },
   table: { type: 'string' },
-  // The replayed input holds one wiki's edits for one hour, then only its tag changes, which can
-  // idle for minutes at night. A real outage check needs the all-wiki feed (DEFAULT_LABELLER).
   'outage-gap-minutes': { type: 'string', default: '30' },
 });
 if (!opts.capture || !opts.tags || !opts.table) throw new Error('--capture, --tags and --table are required');
 
-const labeller = new Labeller({ ...DEFAULT_LABELLER, outageGapMs: Number(opts['outage-gap-minutes']) * 60_000 });
-const labels = new Map<number, Label>();
-let offset = 0;
-const feed = (data: string) => {
-  for (const l of labeller.feed(data, String(offset++))) labels.set(l.revId, l);
-};
-
-// The captured hour is small: load it, sorted by event time, and merge it into the tag stream.
-const captured = readFileSync(String(opts.capture), 'utf8')
-  .split('\n')
-  .filter(Boolean)
-  .map((line) => ({ line, dt: Date.parse((JSON.parse(line) as { meta: { dt: string } }).meta.dt) }))
-  .sort((a, b) => a.dt - b.dt);
-const captureRevs = new Set(
-  captured.map((c) => (JSON.parse(c.line) as { revision?: { new?: number } }).revision?.new).filter((r): r is number => r !== undefined),
-);
-let next = 0;
-
 // Every mw-reverted addition for a captured edit, at any delay: explains disagreements later.
+const captureRevs = new Set(
+  readFileSync(String(opts.capture), 'utf8')
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => (JSON.parse(line) as { revision?: { new?: number } }).revision?.new)
+    .filter((r): r is number => r !== undefined),
+);
 const revertTimes = new Map<number, number[]>();
 let tagEvents = 0;
 let tagsEndMs = -Infinity;
 const topics = new Map<string, number>();
-for await (const line of createInterface({ input: createReadStream(String(opts.tags)), crlfDelay: Infinity })) {
-  if (!line) continue;
-  const p = TagsChange.safeParse(JSON.parse(line));
-  const dt = p.success ? Date.parse(p.data.meta.dt) : NaN;
-  while (next < captured.length && captured[next]!.dt <= dt) feed(captured[next++]!.line);
-  feed(line);
+const labellerOpts = { ...REPLAY_LABELLER, outageGapMs: Number(opts['outage-gap-minutes']) * 60_000 };
+const { labels, labeller } = await labelReplay(String(opts.capture), String(opts.tags), labellerOpts, (e) => {
+  if (e.source !== 'tags') return;
   tagEvents++;
-  if (dt > tagsEndMs) tagsEndMs = dt;
-  if (p.success) {
-    const t = String((p.data.meta as { topic?: unknown }).topic ?? '?');
-    topics.set(t, (topics.get(t) ?? 0) + 1);
-    if (captureRevs.has(p.data.rev_id) && addedTags(p.data).includes('mw-reverted')) {
-      const list = revertTimes.get(p.data.rev_id) ?? [];
-      list.push(dt);
-      revertTimes.set(p.data.rev_id, list);
-    }
+  if (e.dt > tagsEndMs) tagsEndMs = e.dt;
+  const p = TagsChange.safeParse(JSON.parse(e.line));
+  if (!p.success) return;
+  const t = String((p.data.meta as { topic?: unknown }).topic ?? '?');
+  topics.set(t, (topics.get(t) ?? 0) + 1);
+  if (captureRevs.has(p.data.rev_id) && addedTags(p.data).includes('mw-reverted')) {
+    const list = revertTimes.get(p.data.rev_id) ?? [];
+    list.push(e.dt);
+    revertTimes.set(p.data.rev_id, list);
   }
-}
-while (next < captured.length) feed(captured[next++]!.line);
+});
 
 // Compare with the Action API table.
 const table = parseCsv(readFileSync(`results/phase3/edits-${opts.table}.csv`, 'utf8'));
@@ -118,7 +101,7 @@ const report = {
     tagsEnd: new Date(tagsEndMs).toISOString(),
     apiAsked: new Date(apiAskedMs).toISOString(),
   },
-  labeller: { ...DEFAULT_LABELLER, outageGapMs: Number(opts['outage-gap-minutes']) * 60_000, stats: labeller.stats, stillPending: labeller.pending },
+  labeller: { ...labellerOpts, stats: labeller.stats, stillPending: labeller.pending },
   tableRows: table.length,
   labelledByStream: table.length - unlabelled,
   // Rows the API could not see (deleted / suppressed revisions) are excluded from agreement.

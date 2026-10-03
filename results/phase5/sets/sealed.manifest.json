@@ -1,0 +1,29 @@
+{
+  "name": "sealed",
+  "builtAt": "2026-10-03T21:36:51.655Z",
+  "capture": "data/phase0/capture-sealed-2026-09-30T1000Z.jsonl",
+  "tags": "data/phase4/tags-enwiki-2026-09-30T0400Z-2026-10-03T1320Z.jsonl",
+  "editTimeRange": [
+    "2026-09-30T10:00:00.000Z",
+    "2026-09-30T10:59:55.000Z"
+  ],
+  "seed": 20261003,
+  "filterPolicy": "extendedconfirmed",
+  "diffMaxChars": 3000,
+  "classifiableEdits": 3428,
+  "filter": {
+    "bot": 97,
+    "trusted-account": 2199,
+    "kept": 1132
+  },
+  "sampled": 1000,
+  "diffUnavailable": 4,
+  "sha256": "82fe1aa9968ff3d51b4a6eede4a70cf4e28afff3a14e066bad40dda35f8b452e",
+  "repairs": [
+    {
+      "at": "2026-10-03T21:41:15.805Z",
+      "rows": 106,
+      "previousSha256": "1c423fd9302d36be9b65998067df57a831982e15cff22373c049c148e118e6ab"
+    }
+  ]
+}

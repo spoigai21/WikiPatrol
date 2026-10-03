@@ -1,0 +1,138 @@
+{
+  "scoredAt": "2026-10-03T21:38:53.900Z",
+  "set": "dev",
+  "edits": 200,
+  "target": "reverted within 72h (D9); population: edits that pass the default filter (D10, D12)",
+  "baseRate": {
+    "rate": 0.195,
+    "low": 0.1461,
+    "high": 0.2554,
+    "n": 200
+  },
+  "labelNoise": {
+    "labeller": "claude-opus-5-5 (AI model, blind to revert status; not hand-labelled)",
+    "revertedNotVandalism": {
+      "rate": 0.7826,
+      "low": 0.6443,
+      "high": 0.8774,
+      "n": 46
+    },
+    "keptButVandalism": {
+      "rate": 0,
+      "low": 0,
+      "high": 0.0727,
+      "n": 49
+    }
+  },
+  "filterLoss": "the filter itself drops 16–24% of reverted edits before any row here sees them (D10)",
+  "rows": [
+    {
+      "config": "baseline:filter-only",
+      "modelVersions": [
+        "filter:extendedconfirmed"
+      ],
+      "edits": 200,
+      "complete": true,
+      "flagged": 1,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.195,
+        "low": 0.1461,
+        "high": 0.2554,
+        "n": 200
+      },
+      "recall": {
+        "rate": 1,
+        "low": 0.9103,
+        "high": 1,
+        "n": 39
+      },
+      "f1": 0.3264,
+      "latencyMs": null,
+      "tokensPerEdit": null
+    },
+    {
+      "config": "baseline:filter+temporary",
+      "modelVersions": [
+        "filter:extendedconfirmed+temporary"
+      ],
+      "edits": 200,
+      "complete": true,
+      "flagged": 0.43,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.2326,
+        "low": 0.1559,
+        "high": 0.3321,
+        "n": 86
+      },
+      "recall": {
+        "rate": 0.5128,
+        "low": 0.362,
+        "high": 0.6614,
+        "n": 39
+      },
+      "f1": 0.32,
+      "latencyMs": null,
+      "tokensPerEdit": null
+    },
+    {
+      "config": "baseline:liftwing-enwiki-damaging",
+      "modelVersions": [
+        "enwiki-damaging@0.5.1",
+        "enwiki-damaging@?"
+      ],
+      "edits": 200,
+      "complete": true,
+      "flagged": 0.155,
+      "invalid": 0.015,
+      "precision": {
+        "rate": 0.4516,
+        "low": 0.2916,
+        "high": 0.6223,
+        "n": 31
+      },
+      "recall": {
+        "rate": 0.359,
+        "low": 0.2274,
+        "high": 0.5158,
+        "n": 39
+      },
+      "f1": 0.4,
+      "latencyMs": {
+        "p50": 523,
+        "p95": 1524
+      },
+      "tokensPerEdit": null
+    },
+    {
+      "config": "baseline:liftwing-revertrisk-language-agnostic",
+      "modelVersions": [
+        "revertrisk-language-agnostic@3",
+        "revertrisk-language-agnostic@?"
+      ],
+      "edits": 200,
+      "complete": true,
+      "flagged": 0.725,
+      "invalid": 0.02,
+      "precision": {
+        "rate": 0.2414,
+        "low": 0.179,
+        "high": 0.3171,
+        "n": 145
+      },
+      "recall": {
+        "rate": 0.8974,
+        "low": 0.7642,
+        "high": 0.9594,
+        "n": 39
+      },
+      "f1": 0.3804,
+      "latencyMs": {
+        "p50": 343,
+        "p95": 630
+      },
+      "tokensPerEdit": null
+    }
+  ]
+}

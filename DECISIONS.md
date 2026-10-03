@@ -307,6 +307,73 @@ revision suppression.
 **Phase 3 tables, re-read in this light:** their API labels over-count reverts slightly — any edit
 reverted between 72h and the query is counted as reverted. On these two hours that was 1 edit.
 
+## D12 — The Phase 5 grid: sets, prompts, models and scoring, fixed before any run (DECIDED 2026-10-03)
+
+Written before either evaluation set was built and before any prompt was run.
+
+**Evaluation sets** (`npm run phase5:set`, `results/phase5/sets/`). Replayed hours, not offset
+ranges of `wiki.raw`: the log does not yet hold an hour whose 72h window has closed. What the
+offset range was for — identical, permanent inputs for every configuration, now and in Phase 9 —
+is carried by the committed snapshot and its SHA-256 instead.
+
+| Set | Hour (UTC) | Edits | Status |
+|---|---|---|---|
+| dev | 2026-09-30 12:00–13:00 | seeded sample of 200 that pass the filter | examined (the Phase 0 sample came from it); used only to check plumbing |
+| **sealed** | 2026-09-30 10:00–11:00 | seeded sample of **1,000** that pass the filter (all, if fewer) | never examined; scored **once** per configuration |
+
+Seed 20261003. Labels from the Phase 4 labeller over the replayed tag stream (D11). Each edit's
+diff is fetched once and frozen in the snapshot (3,000-character cap, marked when truncated), so a
+later page edit or deletion cannot change what a model sees.
+
+**Repair before any run (2026-10-03).** The first sealed build froze 106 diffs as "unavailable"
+when the Action API was in fact rate-limiting (HTTP errors, while the dev baselines ran against
+the same API). The fetcher now retries transient failures and only accepts the API's own word that
+content is gone; `--repair` re-fetched exactly those 106 rows and kept every other byte, so the
+sample did not change. Unavailable diffs: 4 of 1,000 (dev: 3 of 200). The manifest records the
+repair and the previous checksum. Final sealed SHA-256: `82fe1aa9968ff3d5…` (full value in
+`results/phase5/sets/sealed.manifest.json`). No configuration had run on the sealed set.
+
+**Population.** The models see only edits that pass the default filter (D10), so the grid is
+scored on that population. The filter's own loss (D10: 16–24% of reverted edits) is carried
+beside it, and Phase 7 combines the two.
+
+**Prompts** (`prompts/`): three, all asking *will this edit be reverted within 72 hours?* (D9),
+all answering in the same JSON — `{"revert": true|false, "p_revert": 0..1}` (`p_revert` feeds
+Phase 6).
+- **p1-plain** — the task, the edit, the answer format.
+- **p2-guide** — adds a short guide to what English Wikipedia patrollers typically revert and keep.
+- **p3-reason** — p2, plus 1–3 sentences of reasoning before the answer.
+
+Written and git-tagged `phase5-prompts` before any run. The runner refuses the sealed set unless
+each prompt file is byte-identical to its tagged version. Dev runs check parsing and plumbing; if
+one shows a prompt must change, the change gets a new tag, a dev rerun, and an entry here.
+
+**Models** (one per tier, temperature 0, fixed seed where the API takes one):
+- local — Ollama **`gemma3:4b`** (installed; small enough to run beside the stack on a laptop);
+- cloud — **Gemini** and **Groq** free tiers: the exact model IDs are fixed here, before the first
+  sealed run, once API keys exist. Every result row records the model ID the API reports.
+
+Free-tier rate limits are honoured by a resumable runner (results are appended per edit and a
+restart skips what is done); a sealed run may take days. That is the cost ceiling the spec
+describes, not a reason to shrink the set.
+
+**Output handling.** Each response is parsed against the JSON contract. Anything else is
+recorded as `invalid`, counted in the table, and scored as "not flagged" — a model that cannot
+answer does not get the benefit of the doubt.
+
+**Baselines** (rows in the same table, same edits):
+- *filter only* — the Phase 3 filter flags everything it passes (recall 100% by construction;
+  precision = the base rate);
+- *filter + temporary accounts* — flag only edits from temporary accounts;
+- *LiftWing `revertrisk-language-agnostic`* — Wikimedia's revert-risk model, flag at p ≥ 0.5;
+- *LiftWing `enwiki-damaging`* (ORES) — flag at p ≥ 0.5.
+LiftWing is queried now for edits made days ago; whether its features are as-of-edit or as-of-now
+is not verified, so it may have information the LLMs do not. Not claimed beaten either way (D9).
+
+**Scoring** (`npm run phase5:score`): revert precision, recall and F1 with Wilson intervals, share
+flagged, share invalid, p50/p95 latency, tokens per edit — and the D9 label-noise estimate beside
+every number. **No judge model:** the label is the revert.
+
 ## Phase 0 prediction scorecard
 
 `PREDICTIONS.md` is frozen at tag `phase0-predictions` (7a4bd72). Scored here, by its own rule:
