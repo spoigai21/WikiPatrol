@@ -7,12 +7,13 @@
 //   npm run phase0:rate -- --minutes 60 --label us-daytime
 //   npm run phase0:rate -- --minutes 60 --label us-overnight --since 2026-10-03T09:00:00Z
 //
-// --since replays a past hour from the stream's history (7-31 days). Because counting is
-// by event time, a replayed hour measures the same thing as a live one; it ends when the
-// events pass since + minutes, not when the wall clock does.
+// --since replays a past hour from the stream's history (7-31 days, src/stream/replay.ts).
+// Because counting is by event time, a replayed hour measures the same thing as a live one;
+// it ends when the events pass since + minutes, not when the wall clock does.
 
 import { createWriteStream, mkdirSync } from 'node:fs';
 import { streamEvents } from '../stream/sse.ts';
+import { replayWindow } from '../stream/replay.ts';
 import { classifyUser, isClassifiable, RecentChange, type UserClass } from './events.ts';
 import { args, log, runFor, stamp, STREAM_BASE, writeJson } from './cli.ts';
 import { round, summarise } from './stats.ts';
@@ -28,22 +29,6 @@ const focusWiki = String(opts.wiki);
 const startedAt = new Date();
 const since = opts.since === undefined ? undefined : new Date(String(opts.since));
 if (since && Number.isNaN(since.getTime())) throw new Error(`--since is not a date: ${opts.since}`);
-const windowEnd = since ? since.getTime() + minutes * 60_000 : Infinity;
-// A replay merges one topic per datacenter, each replayed in turn: the near-idle standby
-// topic can run all the way to the present before the busy one starts. So the window
-// ends only once every topic has moved past it (plus a little slack for disorder). The
-// full topic list comes from the SSE id, which carries a position for each topic.
-const STOP_GRACE_MS = 120_000;
-const topicsAll = new Set<string>();
-const topicsPast = new Set<string>();
-function topicsInId(id: string | undefined): string[] {
-  try {
-    const pos = JSON.parse(id ?? '') as { topic?: unknown }[];
-    return pos.map((p) => p.topic).filter((t): t is string => typeof t === 'string');
-  } catch {
-    return [];
-  }
-}
 const runId = `${opts.label}-${stamp(since ?? startedAt)}`;
 
 mkdirSync('data/phase0', { recursive: true });
@@ -70,18 +55,25 @@ const bump = <K>(m: Map<K, number>, k: K) => m.set(k, (m.get(k) ?? 0) + 1);
 const ctl = runFor(since ? minutes * 2 : minutes);
 log(`measuring ${minutes} min${since ? ` replayed from ${since.toISOString()}` : ''}, run ${runId}; raw ${focusWiki} edits -> ${capturePath}`);
 
-const url = `${STREAM_BASE}recentchange${since ? `?since=${encodeURIComponent(since.toISOString())}` : ''}`;
-for await (const ev of streamEvents(url, {
+const streamOpts = {
   signal: ctl.signal,
-  onConnect: (attempt, last) => {
+  onConnect: (attempt: number, last: string | undefined) => {
     connects++;
     log(`connect #${connects} (failures ${attempt})${last ? ' resuming from Last-Event-ID' : ''}`);
   },
-  onDisconnect: (reason) => {
+  onDisconnect: (reason: string) => {
     disconnects.push(`${new Date().toISOString()} ${reason}`);
     log(`disconnect: ${reason}`);
   },
-})) {
+};
+const events = since
+  ? (async function* () {
+      const until = new Date(since.getTime() + minutes * 60_000);
+      for await (const r of replayWindow(`${STREAM_BASE}recentchange`, since, until, { ...streamOpts, onUnparseable: () => parseFailures++ })) yield r.ev;
+    })()
+  : streamEvents(`${STREAM_BASE}recentchange`, streamOpts);
+
+for await (const ev of events) {
   let rc: RecentChange;
   try {
     const parsed = RecentChange.safeParse(JSON.parse(ev.data));
@@ -93,17 +85,6 @@ for await (const ev of streamEvents(url, {
   } catch {
     parseFailures++;
     continue;
-  }
-  if (since) {
-    const t = Date.parse(rc.meta.dt);
-    const topic = rc.meta.topic ?? rc.meta.stream;
-    topicsAll.add(topic);
-    for (const x of topicsInId(ev.id)) topicsAll.add(x);
-    if (t >= windowEnd + STOP_GRACE_MS) {
-      topicsPast.add(topic);
-      if (topicsPast.size === topicsAll.size) break;
-    }
-    if (t < since.getTime() || t >= windowEnd) continue;
   }
   if (seenIds.has(rc.meta.id)) {
     duplicates++;

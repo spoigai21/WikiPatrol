@@ -1,0 +1,68 @@
+{
+  "validatedAt": "2026-10-03T20:03:03.245Z",
+  "table": "heldout-2026-09-30T0400Z",
+  "inputs": {
+    "capture": "data/phase0/capture-us-latenight-2026-09-30T0400Z.jsonl",
+    "tags": "data/phase4/tags-enwiki-2026-09-30T0400Z-2026-10-03T1320Z.jsonl",
+    "tagEvents": 601224,
+    "tagTopics": {
+      "eqiad.mediawiki.revision-tags-change": 601224
+    },
+    "tagsEnd": "2026-10-03T13:19:59.961Z",
+    "apiAsked": "2026-10-03T19:27:11.051Z"
+  },
+  "labeller": {
+    "wiki": "enwiki",
+    "windowMs": 259200000,
+    "graceMs": 600000,
+    "outageGapMs": 1800000,
+    "stats": {
+      "events": 610758,
+      "unparseable": 0,
+      "outages": []
+    },
+    "stillPending": 0
+  },
+  "tableRows": 6757,
+  "labelledByStream": 6757,
+  "compared": 6755,
+  "agreement": {
+    "rate": 0.9999,
+    "low": 0.9992,
+    "high": 1,
+    "n": 6755
+  },
+  "confusion": {
+    "api:not-reverted / stream:not-reverted": 6609,
+    "api:reverted / stream:reverted": 145,
+    "api:gone / stream:not-reverted": 2,
+    "api:reverted / stream:not-reverted": 1
+  },
+  "disagreementsByCause": {
+    "no revert tag before the replay ended (…); the API was asked later": 1
+  },
+  "disagreements": [
+    {
+      "revId": 1377608275,
+      "api": "reverted",
+      "stream": "not-reverted",
+      "explanation": "no revert tag before the replay ended (past the window); the API was asked later"
+    }
+  ],
+  "labelNoise": {
+    "source": "results/phase0/label-noise.json",
+    "labeller": "claude-opus-5-5 (AI model, blind to revert status; not hand-labelled)",
+    "revertedNotVandalism": {
+      "rate": 0.7826,
+      "low": 0.6443,
+      "high": 0.8774,
+      "n": 46
+    },
+    "keptButVandalism": {
+      "rate": 0,
+      "low": 0,
+      "high": 0.0727,
+      "n": 49
+    }
+  }
+}

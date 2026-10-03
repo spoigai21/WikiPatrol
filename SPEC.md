@@ -145,6 +145,8 @@ later-reverted edits" — M measured against Phase 4 labels, with the label-nois
 - the sample from Phase 0 tells you how noisy this label is; carry that number everywhere
 
 **Done when:** labels arrive automatically and the noise estimate is published beside them.
+*(Built: `npm run labeller`, `wiki.raw` → `wiki.labels`; validated against the Action API on
+11,491 edits — `DECISIONS.md` D11.)*
 
 ## Phase 5 — the grid
 

@@ -240,6 +240,73 @@ AI-labelled (D9); this is an indication, not a measurement.
 
 **Status:** provisional, as the spec says — M is re-measured on Phase 4 labels from the Kafka log.
 
+## D11 — Labels are computed from the raw log, in event time (DECIDED 2026-10-03)
+
+**What a label is** (`src/labels/labeller.ts`): one per classifiable enwiki edit (main namespace,
+edit or page creation, bots included — the filter decides what to drop, not the labeller):
+
+| Label | Meaning |
+|---|---|
+| `reverted` | `mw-reverted` was *added* to the revision within 72h of the edit (D4) |
+| `deleted` | not reverted, but the page was deleted within the window |
+| `incomplete` | not reverted, but the raw log has a hole inside the window, so "not reverted" is unproven |
+| `not-reverted` | none of the above |
+
+Rates use `reverted / (reverted + not-reverted)`; `deleted` and `incomplete` are counted, never
+silently folded into either side.
+
+**Why from the log and not the Action API.** The Action API says what a revision's tags are *now*,
+not when they were added, so it can only approximate a 72h window by asking at the right moment
+(the Phase 0 sample asked at 72–96h). The log has the time of every tag change, so the window is
+exact, and the labels can be recomputed from the log forever — the API's answer drifts.
+
+**Deterministic by construction.** A window closes when the log's *event time* passes edit + 72h
++ 10 min of grace for out-of-order events — never on the wall clock. Labels are emitted in source-
+offset order, and the labeller's checkpoint is the source offset on the last label written to
+`wiki.labels`, the same pattern as the ingester (D7). Replaying the same offsets, or stopping and
+restarting, gives the same labels: `test/kafka-labeller.test.ts`, which fails if resume is broken.
+
+**Outages.** A jump of more than 2 minutes in event time (the all-wiki feed never idles that long,
+D8) is a hole in the log; every edit whose window overlaps it is `incomplete`. The ingester's
+`Last-Event-ID` resume closes holes shorter than the stream's 7-day replay window, so in practice a
+hole means the ingester was down for over a week.
+
+**The result table** `(edit, prediction, label, latency, config)` needs predictions, which start
+in Phase 5. Phase 4 provides its label column, keyed by `rev_id` in `wiki.labels`; the table
+itself is built in Phase 5 (the Postgres store in the Stack is not created until then).
+
+**Running it:** `npm run ingest` and `npm run labeller` (both against `docker compose up -d`). The
+first labels appear 72 hours after the ingester first starts; `npm run phase4:summary` publishes
+counts and the revert rate with the D9 noise estimate beside them.
+
+### D11 results — the stream labeller agrees with the Action API on 11,490 of 11,491 edits
+
+`results/phase4/validation-*.json` (`npm run phase4:validate`). Input: the Phase 3 hours' edits,
+merged by event time with every enwiki `revision-tags-change` event from 2026-09-30 04:00 to
+2026-10-03 13:20 UTC, replayed from EventStreams (601,224 events, all from the active datacenter's
+topic, no gaps). Compared with the Action API labels in the Phase 3 tables, asked at 78–87h.
+
+| Hour | Compared | Agree | Disagree |
+|---|---|---|---|
+| dev 09-30 12:00 | 4,736 (277 reverted) | **4,736** | 0 |
+| held-out 09-30 04:00 | 6,755 (146 reverted per API) | **6,754** | 1 |
+
+The one disagreement is not a labeller error: the edit (rev 1377608275, *W. C. Fields*) was
+reverted at 2026-10-03 18:30, **86h** after the edit — outside the 72h window — and the API, asked
+at 87h, already showed the tag. Checked by hand against the page history. So on these two hours
+the stream labels and the API labels match wherever the 72h definition and the API's "as of now"
+answer coincide.
+
+**What this does and does not cover.** It validates the join and the window on real data. It does
+not exercise `deleted` (the Phase 0 captures hold no deletion log events) or `incomplete` (the
+replay had no holes); both are covered by unit tests only. The 20 edits the API reported deleted
+or suppressed were labelled `not-reverted` (19) and `reverted` (1) by the stream, which cannot see
+revision deletion; the live labeller would see page deletions in `recentchange`, but not
+revision suppression.
+
+**Phase 3 tables, re-read in this light:** their API labels over-count reverts slightly — any edit
+reverted between 72h and the query is counted as reverted. On these two hours that was 1 edit.
+
 ## Phase 0 prediction scorecard
 
 `PREDICTIONS.md` is frozen at tag `phase0-predictions` (7a4bd72). Scored here, by its own rule:

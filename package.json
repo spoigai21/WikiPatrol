@@ -17,7 +17,11 @@
     "phase0:noise": "tsx src/phase0/score-sample.ts",
     "test:kafka": "KAFKA_BROKERS=localhost:19092 vitest run",
     "phase3:table": "tsx src/phase3/build-table.ts",
-    "phase3:evaluate": "tsx src/phase3/evaluate-filter.ts"
+    "phase3:evaluate": "tsx src/phase3/evaluate-filter.ts",
+    "phase4:backfill-tags": "tsx src/phase4/backfill-tags.ts",
+    "labeller": "KAFKAJS_NO_PARTITIONER_WARNING=1 tsx src/labels/main.ts",
+    "phase4:validate": "tsx src/phase4/validate.ts",
+    "phase4:summary": "tsx src/phase4/summary.ts"
   },
   "dependencies": {
     "kafkajs": "^2.2.4",

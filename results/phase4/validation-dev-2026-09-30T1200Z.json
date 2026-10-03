@@ -1,0 +1,59 @@
+{
+  "validatedAt": "2026-10-03T20:02:56.379Z",
+  "table": "dev-2026-09-30T1200Z",
+  "inputs": {
+    "capture": "data/phase0/capture-us-morning-2026-09-30T1200Z.jsonl",
+    "tags": "data/phase4/tags-enwiki-2026-09-30T0400Z-2026-10-03T1320Z.jsonl",
+    "tagEvents": 601224,
+    "tagTopics": {
+      "eqiad.mediawiki.revision-tags-change": 601224
+    },
+    "tagsEnd": "2026-10-03T13:19:59.961Z",
+    "apiAsked": "2026-10-03T19:26:27.827Z"
+  },
+  "labeller": {
+    "wiki": "enwiki",
+    "windowMs": 259200000,
+    "graceMs": 600000,
+    "outageGapMs": 1800000,
+    "stats": {
+      "events": 608173,
+      "unparseable": 0,
+      "outages": []
+    },
+    "stillPending": 0
+  },
+  "tableRows": 4756,
+  "labelledByStream": 4756,
+  "compared": 4736,
+  "agreement": {
+    "rate": 1,
+    "low": 0.9992,
+    "high": 1,
+    "n": 4736
+  },
+  "confusion": {
+    "api:not-reverted / stream:not-reverted": 4459,
+    "api:reverted / stream:reverted": 277,
+    "api:gone / stream:not-reverted": 19,
+    "api:gone / stream:reverted": 1
+  },
+  "disagreementsByCause": {},
+  "disagreements": [],
+  "labelNoise": {
+    "source": "results/phase0/label-noise.json",
+    "labeller": "claude-opus-5-5 (AI model, blind to revert status; not hand-labelled)",
+    "revertedNotVandalism": {
+      "rate": 0.7826,
+      "low": 0.6443,
+      "high": 0.8774,
+      "n": 46
+    },
+    "keptButVandalism": {
+      "rate": 0,
+      "low": 0,
+      "high": 0.0727,
+      "n": 49
+    }
+  }
+}

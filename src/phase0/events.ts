@@ -20,6 +20,8 @@ export const RecentChange = z.looseObject({
   timestamp: z.number().optional(),
   length: z.looseObject({ old: z.number().optional(), new: z.number().optional() }).optional(),
   revision: z.looseObject({ old: z.number().optional(), new: z.number() }).optional(),
+  log_type: z.string().nullish(),
+  log_action: z.string().nullish(),
 });
 export type RecentChange = z.infer<typeof RecentChange>;
 
