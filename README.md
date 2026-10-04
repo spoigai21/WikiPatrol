@@ -11,7 +11,48 @@ latency, and in dollars per thousand edits at published list prices.
 > cloud model's recall a ladder keeps, and at what share of its cost — is **not measured yet** and
 > is not stated anywhere until it is. Everything below is measured, with its source file.
 
-## What is measured so far
+## The short version
+
+**The problem.** People edit Wikipedia all the time, and some of those edits get undone — "reverted" —
+because they were vandalism, mistakes, or arguments. You could ask an AI model to look at every edit
+and guess which ones will be undone. But good AI models cost money for every question you ask, and
+English Wikipedia gets about 100,000 edits a day. So the real question is: **how little of the
+expensive model can you get away with?**
+
+**The idea.** Don't send everything to the expensive model. First, throw out edits that are
+obviously fine — bots, and people who have been editing for a long time. Then let a small free model
+running on a laptop look at what is left. Only when the small model is unsure, ask the expensive
+one. That chain is the "ladder". The project measures how much each step catches and what it costs.
+
+**What has been found so far.**
+
+- *An undone edit is usually not vandalism.* In a sample of 100 edits, about 4 out of 5 undone edits
+  were honest edits caught up in someone else's cleanup. So the project predicts "will this be
+  undone?", and says so plainly, instead of claiming to catch vandals.
+- *The cheap first step does most of the work.* Just skipping bots and long-time editors removes
+  three-quarters or more of all edits, for free. It misses about one in five of the edits that later
+  get undone — mostly the honest ones.
+- *A small free model is not good at this on its own.* It flags far too many edits, and its
+  confidence is unreliable: when it says "90% sure", it is right about 20% of the time. It is still
+  better than guessing at telling likely-undone edits apart from the rest, which may be enough to
+  decide when to ask the bigger model.
+- *The pipeline needs a waiting room.* A rate-limited AI model falls behind even the quietest stream
+  of edits, so edits queue up in Kafka until the model gets to them — and nothing is lost or counted
+  twice while they wait.
+- *Guesses made at the start were often wrong — on purpose, on the record.* Predictions were saved
+  before any results existed, and three of them turned out wrong.
+
+**What is still running.** The two cloud models (Groq and Google Gemini) are being tested on the
+free plans, which only allow a few hundred questions a day, so they take about a week. When they
+finish, the main answer — *how much of the expensive model's accuracy the ladder keeps, and for what
+share of its cost* — goes at the top of this page. Until then, that number is not written anywhere.
+
+**How to trust it.** The test edits were frozen before any model saw them. The questions given to
+the models were saved and locked before the first one ran. Each model gets one try at the final test
+set, so nothing was tweaked until it looked good. Every number links to the file it came from, and
+everything that went wrong is written up in [`POSTMORTEM.md`](POSTMORTEM.md).
+
+## What is measured so far, in detail
 
 **1. Most reverts are not vandalism — so this predicts reverts, and says so.**
 In a sample of 100 edits (50 reverted, 50 kept), **78% of the reverted edits were not vandalism**

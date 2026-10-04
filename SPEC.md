@@ -240,7 +240,8 @@ join once their sealed runs finish.)*
 *(Started 2026-10-04: `README.md` leads with what is measured and marks the headline as pending;
 `POSTMORTEM.md` is written as it happens; `docs/architecture.svg`; a static dashboard built from
 the committed results — `npm run dashboard:build`, served by Vercel via `vercel.json`, labelled as
-replayed data. Waiting on Phase 7 for the headline, the cost counter and the video.)*
+replayed data. Waiting on Phase 7 for the headline and the cost counter. No video, by the owner's
+decision (2026-10-04); the plain-language write-up lives in the README instead.)*
 
 ---
 
@@ -287,7 +288,7 @@ Most people who look at this will never open the code. Build these deliberately.
 |---|---|
 | **A dashboard** on Vercel: the feed arriving, each edit's ladder decision, the running cost counter | *"Here it is running"* beats every description, and it is the cheapest of these to host. Label replayed data as replay. |
 | **The write-up** — the cost curve, the calibration plot, the honest negatives | This is the thing that circulates and gets quoted. |
-| **A 2-minute video** of the feed being classified | Cheap, memorable, and the artifact people actually finish. |
+| ~~**A 2-minute video** of the feed being classified~~ | Dropped (owner's decision, 2026-10-04): the README's plain-language write-up does this job. |
 | **`DECISIONS.md`** — every architectural choice with the measured number that forced it | **The single highest-value document in the repo.** It turns *"why Kafka?"* from a weak point into the strongest answer: "the connection dies every 15 minutes, the classifier runs at N/sec against a feed at M/sec, and every experiment has to replay identical events." |
 | **`POSTMORTEM.md`** — where the model failed, how you noticed, what you changed | Write it as you go, not at the end. |
 | **An architecture diagram** | One image. Goes in the README and the write-up. |
