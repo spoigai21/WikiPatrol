@@ -1,0 +1,44 @@
+# The nightly drift check (Phase 9, D15) for the laptop cluster. Not in the default kustomization:
+# it reads the frozen sealed set and the Phase 5 answers from the repo checkout and writes its
+# results back there, so the cluster must mount that checkout. With k3d:
+#
+#   k3d cluster create wikipatrol --volume "$PWD/results:/wikipatrol-results@all"
+#   kubectl -n wikipatrol create secret generic wikipatrol-keys --from-env-file=.env   # optional: cloud configs
+#   kubectl apply -f deploy/k8s/optional/drift-cronjob.yaml
+#
+# A drift alert makes the Job fail (exit 1), appends to results/phase9/alerts.jsonl, and POSTs to
+# DRIFT_WEBHOOK if it is set in the secret. The laptop only has to be up at 03:00.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: drift
+  namespace: wikipatrol
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 14
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: drift
+              image: wikipatrol:local
+              imagePullPolicy: IfNotPresent
+              args: ["src/phase9/main.ts"]
+              env:
+                # The host's Ollama, as k3d exposes it to pods.
+                - { name: OLLAMA_HOST, value: "http://host.k3d.internal:11434" }
+              envFrom:
+                - secretRef: { name: wikipatrol-keys, optional: true }
+              # Files in the mounted checkout belong to the host user; root in this one-shot Job
+              # can write the results. Local cluster only.
+              securityContext: { runAsUser: 0 }
+              volumeMounts:
+                - { name: results, mountPath: /app/results }
+          volumes:
+            - name: results
+              hostPath: { path: /wikipatrol-results, type: Directory }

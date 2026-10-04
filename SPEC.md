@@ -119,6 +119,8 @@ kills the connection mid-stream and diffs the output.
   nothing lost — this is the artifact that justifies the whole component
 
 **Done when:** the replay test passes and the lag graph exists.
+*(Done: `test/kafka-replay.test.ts`; lag graph `results/phase2/backpressure-2026-10-04T0534Z.svg` —
+514 messages behind after 20 minutes at 10/min, drained, every offset exactly once. `DECISIONS.md` D13.)*
 
 ## Phase 3 — the free filter, before any AI
 
@@ -201,6 +203,10 @@ cloud-only recall at Z% of cloud-only cost"* — or that it did not beat local-o
 - `kind` in GitHub Actions: CI provisions a cluster, applies manifests, waits for readiness, runs
   smoke tests, tears it down — on every push
 
+*(Built: `deploy/k8s/`, `deploy/ci-smoke.sh`, `.github/workflows/ci.yml`; the classifier scales 1 → 6 on
+lag over a 6-partition `wiki.scored`; CI validated on a local `kind` cluster — `DECISIONS.md` D14.
+Not yet done: the 24-hour run on the real diurnal swing.)*
+
 ### Describe it honestly
 
 - **True:** *"Ingester and classifier on Kubernetes, autoscaled on Kafka consumer lag, with a CI
@@ -218,6 +224,9 @@ cloud-only recall at Z% of cloud-only cost"* — or that it did not beat local-o
   against nightly sealed results
 
 **Done when:** a deliberately degraded config is caught by the alert without you looking.
+*(Built and shown: a 50-edit subset per configuration, because a nightly full rerun does not fit
+the free tiers; a 30%-degraded config tripped the alert — `DECISIONS.md` D15. Cloud configurations
+join once their sealed runs finish.)*
 
 ## Phase 10 — ship it and write the postmortem
 

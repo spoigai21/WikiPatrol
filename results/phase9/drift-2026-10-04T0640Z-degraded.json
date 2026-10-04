@@ -1,0 +1,139 @@
+{
+  "checkedAt": "2026-10-04T06:41:15.927Z",
+  "degradedTest": 30,
+  "subset": 50,
+  "thresholds": {
+    "minAgreement": 0.9,
+    "maxInvalidRise": 0.05,
+    "measuredAt": "2026-10-04T06:40:08.699Z",
+    "basis": {
+      "baseline:liftwing-enwiki-damaging": {
+        "vsOriginal": [
+          1,
+          1
+        ],
+        "runToRun": 1
+      },
+      "baseline:liftwing-revertrisk-language-agnostic": {
+        "vsOriginal": [
+          1,
+          1
+        ],
+        "runToRun": 1
+      },
+      "ollama:gemma3:4b__p1-plain": {
+        "vsOriginal": [
+          1,
+          1
+        ],
+        "runToRun": 1
+      },
+      "ollama:gemma3:4b__p2-guide": {
+        "vsOriginal": [
+          1,
+          1
+        ],
+        "runToRun": 1
+      },
+      "ollama:gemma3:4b__p3-reason": {
+        "vsOriginal": [
+          0.98,
+          0.98
+        ],
+        "runToRun": 1
+      }
+    },
+    "rule": "min(0.90, lowest agreement with Phase 5 over two reruns - 0.05) (D15)"
+  },
+  "checks": [
+    {
+      "config": "ollama:gemma3:4b__p1-plain",
+      "edits": 50,
+      "agreement": 0.72,
+      "flips": [
+        {
+          "revId": 1377649607,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377651541,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377652692,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377653626,
+          "was": false,
+          "now": true
+        },
+        {
+          "revId": 1377654715,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377654132,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377652908,
+          "was": false,
+          "now": true
+        },
+        {
+          "revId": 1377651750,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377650195,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377650292,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377651131,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377654929,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377653616,
+          "was": true,
+          "now": false
+        },
+        {
+          "revId": 1377649739,
+          "was": false,
+          "now": true
+        }
+      ],
+      "meanAbsDeltaP": 0.214,
+      "invalidBefore": 0,
+      "invalidNow": 0,
+      "versionsBefore": [
+        "gemma3:4b"
+      ],
+      "versionsNow": [
+        "gemma3:4b"
+      ],
+      "alerts": [
+        "agreement 72.0% is below 90% (14 of 50 decisions changed)"
+      ]
+    }
+  ]
+}

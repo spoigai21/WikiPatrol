@@ -1,5 +1,5 @@
 import { Kafka, logLevel, type Admin, type Producer } from 'kafkajs';
-import { ensureKeptTopic, KEEP_FOREVER, readTail } from '../kafka/topics.ts';
+import { chunkBySize, ensureKeptTopic, KEEP_FOREVER, readTail } from '../kafka/topics.ts';
 import type { RawRecord } from './envelope.ts';
 import type { RawSink } from './sink.ts';
 
@@ -45,15 +45,14 @@ export class KafkaSink implements RawSink {
   async write(records: readonly RawRecord[], _lastEventId: string): Promise<void> {
     await this.init();
     if (records.length === 0) return;
-    await this.producer.send({
-      topic: this.opts.topic,
-      acks: -1,
-      messages: records.map((r) => ({
-        key: r.id,
-        value: r.data,
-        headers: r.eventId === undefined ? {} : { [SSE_ID_HEADER]: r.eventId },
-      })),
-    });
+    const messages = records.map((r) => ({
+      key: r.id,
+      value: r.data,
+      headers: r.eventId === undefined ? {} : { [SSE_ID_HEADER]: r.eventId },
+    }));
+    // In order, in chunks under the broker's request limit. A crash between chunks leaves the last
+    // written message as the checkpoint, so the rest is replayed and deduped (D7).
+    for (const chunk of chunkBySize(messages)) await this.producer.send({ topic: this.opts.topic, acks: -1, messages: chunk });
   }
 
   async checkpoint(): Promise<string | undefined> {

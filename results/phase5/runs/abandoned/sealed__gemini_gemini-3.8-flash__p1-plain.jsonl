@@ -1,0 +1,2 @@
+{"revId":1377650298,"latencyMs":1976,"tokensIn":188,"tokensOut":18,"modelVersion":"gemini-3.8-flash","raw":"{\"revert\": false, \"p_revert\": 0.04}","revert":false,"pRevert":0.04,"config":"gemini:gemini-3.8-flash__p1-plain","set":"sealed","at":"2026-10-04T00:42:04.649Z"}
+{"revId":1377654829,"latencyMs":5336,"tokensIn":856,"tokensOut":18,"modelVersion":"gemini-3.8-flash","raw":"{\"revert\": false, \"p_revert\": 0.09}","revert":false,"pRevert":0.09,"config":"gemini:gemini-3.8-flash__p1-plain","set":"sealed","at":"2026-10-04T03:58:07.073Z"}

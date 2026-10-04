@@ -103,8 +103,11 @@ if (import.meta.main) {
     '',
     '| Configuration | Precision | Recall | F1 | Flagged | Invalid | Latency p50 / p95 | Tokens in / out | Complete |',
     '|---|---|---|---|---|---|---|---|---|',
+    // A run still in progress would score its missing edits as "not flagged": show no numbers yet.
     ...scores.map((s) =>
-      `| ${s.config} | ${ci(s.precision)} | ${ci(s.recall)} | ${s.f1.toFixed(3)} | ${pct(s.flagged)} | ${pct(s.invalid)} | ${s.latencyMs ? `${s.latencyMs.p50} / ${s.latencyMs.p95} ms` : '—'} | ${s.tokensPerEdit ? `${s.tokensPerEdit.in} / ${s.tokensPerEdit.out}` : '—'} | ${s.complete ? 'yes' : `${s.edits}/${edits.length}`} |`,
+      s.complete
+        ? `| ${s.config} | ${ci(s.precision)} | ${ci(s.recall)} | ${s.f1.toFixed(3)} | ${pct(s.flagged)} | ${pct(s.invalid)} | ${s.latencyMs ? `${s.latencyMs.p50} / ${s.latencyMs.p95} ms` : '—'} | ${s.tokensPerEdit ? `${s.tokensPerEdit.in} / ${s.tokensPerEdit.out}` : '—'} | yes |`
+        : `| ${s.config} | | | | | | | | running: ${s.edits}/${edits.length} |`,
     ),
     '',
   ];

@@ -24,7 +24,13 @@
     "phase4:summary": "tsx src/phase4/summary.ts",
     "phase5:set": "tsx src/phase5/build-set.ts",
     "phase5:run": "tsx --env-file-if-exists=.env src/phase5/run.ts",
-    "phase5:score": "tsx src/phase5/score.ts"
+    "phase5:score": "tsx src/phase5/score.ts",
+    "phase5:resume": "tsx --env-file-if-exists=.env src/phase5/resume-all.ts",
+    "phase6:calibration": "tsx src/phase6/calibration.ts",
+    "pipeline": "KAFKAJS_NO_PARTITIONER_WARNING=1 tsx src/pipeline/main.ts",
+    "phase2:backpressure": "tsx src/phase2/backpressure.ts",
+    "classifier": "KAFKAJS_NO_PARTITIONER_WARNING=1 tsx --env-file-if-exists=.env src/classifier/main.ts",
+    "phase9:drift": "tsx --env-file-if-exists=.env src/phase9/main.ts"
   },
   "dependencies": {
     "kafkajs": "^2.2.4",

@@ -1,0 +1,1 @@
+{"at":"2026-10-04T06:41:15.927Z","degradedTest":30,"config":"ollama:gemma3:4b__p1-plain","alerts":["agreement 72.0% is below 90% (14 of 50 decisions changed)"]}

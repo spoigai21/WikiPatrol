@@ -19,7 +19,8 @@ export interface FakeStream {
   reconnectIds: (string | undefined)[];
 }
 
-export function startFakeStream(seed: number, extra: (i: number) => string | undefined = () => undefined): Promise<FakeStream> {
+/** `paceMs` spaces events out, for tests that must stop a consumer partway through the stream. */
+export function startFakeStream(seed: number, extra: (i: number) => string | undefined = () => undefined, paceMs = 0): Promise<FakeStream> {
   const rand = mulberry32(seed);
   const state: FakeStream = { url: '', server: undefined as unknown as Server, connections: 0, reconnectIds: [] };
   state.server = createServer((req, res) => {
@@ -45,7 +46,8 @@ export function startFakeStream(seed: number, extra: (i: number) => string | und
       res.write(frame(i));
       i++;
       sent++;
-      setImmediate(tick);
+      if (paceMs > 0) setTimeout(tick, paceMs);
+      else setImmediate(tick);
     };
     tick();
   });

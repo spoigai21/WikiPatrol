@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Redpanda for the Kafka tests
+        run: |
+          docker run -d --name redpanda -p 19092:19092 docker.redpanda.com/redpandadata/redpanda:v26.2.3 \
+            redpanda start --mode=dev-container --smp=1 --memory=1G \
+            --kafka-addr=0.0.0.0:19092 --advertise-kafka-addr=localhost:19092
+          for i in $(seq 1 30); do docker exec redpanda rpk cluster health --exit-when-healthy && break; sleep 2; done
+      - run: npm run test:kafka
+
+  kubernetes:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: kind
+        run: |
+          curl -sSLo kind https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64
+          chmod +x kind && sudo mv kind /usr/local/bin/kind
+      - name: Provision a cluster, deploy, smoke-test, tear down
+        run: deploy/ci-smoke.sh

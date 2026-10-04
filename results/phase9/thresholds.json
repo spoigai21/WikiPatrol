@@ -1,0 +1,43 @@
+{
+  "measuredAt": "2026-10-04T06:40:08.699Z",
+  "minAgreement": 0.9,
+  "maxInvalidRise": 0.05,
+  "basis": {
+    "baseline:liftwing-enwiki-damaging": {
+      "vsOriginal": [
+        1,
+        1
+      ],
+      "runToRun": 1
+    },
+    "baseline:liftwing-revertrisk-language-agnostic": {
+      "vsOriginal": [
+        1,
+        1
+      ],
+      "runToRun": 1
+    },
+    "ollama:gemma3:4b__p1-plain": {
+      "vsOriginal": [
+        1,
+        1
+      ],
+      "runToRun": 1
+    },
+    "ollama:gemma3:4b__p2-guide": {
+      "vsOriginal": [
+        1,
+        1
+      ],
+      "runToRun": 1
+    },
+    "ollama:gemma3:4b__p3-reason": {
+      "vsOriginal": [
+        0.98,
+        0.98
+      ],
+      "runToRun": 1
+    }
+  },
+  "rule": "min(0.90, lowest agreement with Phase 5 over two reruns - 0.05) (D15)"
+}

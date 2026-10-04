@@ -1,0 +1,47 @@
+{
+  "retrievedAt": "2026-10-04",
+  "currency": "USD",
+  "unit": "per 1,000,000 tokens",
+  "note": "Published list prices for the paid tier of each model, as read on the date above. The Phase 5 runs used free tiers; cost is reported from these prices, never as $0 (SPEC Phase 7).",
+  "models": {
+    "groq:openai/gpt-oss-120b": {
+      "input": 0.15,
+      "output": 0.6,
+      "outputIncludesReasoning": true,
+      "source": "https://console.groq.com/docs/model/openai/gpt-oss-120b",
+      "sourceNote": "Groq model page. The August 2025 launch blog listed $0.75 output; the model page is current."
+    },
+    "gemini:gemini-3.8-flash": {
+      "input": 0.75,
+      "output": 3.75,
+      "outputIncludesReasoning": true,
+      "validThrough": "2026-12-31",
+      "scheduledChange": {
+        "from": "2027-01-01",
+        "input": 1.5,
+        "output": 7.5
+      },
+      "tier": "Standard (paid); Batch/Flex and Priority tiers priced differently",
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "sourceNote": "Page last updated 2026-10-01 UTC."
+    },
+    "ollama:gemma3:4b": {
+      "input": 0,
+      "output": 0,
+      "note": "Runs locally; no per-token price exists. Hardware and electricity are not priced. Its cost is latency and laptop load, reported separately."
+    },
+    "baseline:liftwing-*": {
+      "input": 0,
+      "output": 0,
+      "note": "Wikimedia's public LiftWing API; no price, rate-limited."
+    },
+    "gemini:gemini-3.5-flash-lite": {
+      "input": 0.3,
+      "output": 2.5,
+      "outputIncludesReasoning": true,
+      "tier": "Standard (paid)",
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "sourceNote": "Page last updated 2026-10-01 UTC; no end date listed. Replaced gemini-3.8-flash in the grid (D12): free tier is 20 requests/day."
+    }
+  }
+}

@@ -1,0 +1,27 @@
+# Scale the classifier on its consumer lag over wiki.scored (D14). KEDA turns this into an HPA
+# fed by the lag metric. wiki.scored has 6 partitions, so 6 replicas is the useful ceiling.
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: classifier
+  namespace: wikipatrol
+spec:
+  scaleTargetRef:
+    name: classifier
+  minReplicaCount: 1
+  maxReplicaCount: 6
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        # Scale up as soon as lag says so; scale down only after five calm minutes.
+        scaleDown:
+          stabilizationWindowSeconds: 300
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: redpanda.wikipatrol.svc.cluster.local:9092
+        consumerGroup: wikipatrol-classifier
+        topic: wiki.scored
+        # Target lag per replica: 50 waiting edits each before another replica is added.
+        lagThreshold: "50"
+        offsetResetPolicy: earliest

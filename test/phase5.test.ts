@@ -130,6 +130,21 @@ describe('runner', () => {
   });
 });
 
+describe('runner lock', () => {
+  it('refuses a second runner on the same file while the first is writing', async () => {
+    const out = tmp();
+    let release!: () => void;
+    const gate = new Promise<void>((r) => { release = r; });
+    const slow: Predictor = { config: 'fake:slow__p1-plain', minIntervalMs: 0, usesPrompt: true, predict: async (e) => { await gate; return answer(e, false); } };
+    const first = runPredictor({ set: 'dev', edits: [edit(1)], predictor: slow, out, sleep: noSleep });
+    await new Promise((r) => setTimeout(r, 20));
+    await expect(runPredictor({ set: 'dev', edits: [edit(1)], predictor: fake((e) => answer(e, true)), out, sleep: noSleep })).rejects.toThrow(/another runner/);
+    release();
+    await first;
+    expect(readRun(out)).toHaveLength(1);
+  });
+});
+
 describe('scoring', () => {
   it('computes revert precision and recall, counting invalid answers as not flagged', () => {
     const edits = [edit(1, 'reverted'), edit(2, 'reverted'), edit(3, 'reverted'), edit(4), edit(5), edit(6)];

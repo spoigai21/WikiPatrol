@@ -1,0 +1,56 @@
+# Single-node Redpanda for a local or CI cluster (k3d, kind). Not a production broker.
+apiVersion: v1
+kind: Service
+metadata:
+  name: redpanda
+  namespace: wikipatrol
+spec:
+  selector: { app: redpanda }
+  ports:
+    - { name: kafka, port: 9092, targetPort: 9092 }
+    - { name: admin, port: 9644, targetPort: 9644 }
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redpanda
+  namespace: wikipatrol
+spec:
+  serviceName: redpanda
+  replicas: 1
+  selector:
+    matchLabels: { app: redpanda }
+  template:
+    metadata:
+      labels: { app: redpanda }
+    spec:
+      containers:
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v26.2.3
+          args:
+            - redpanda
+            - start
+            - --mode=dev-container
+            - --smp=1
+            - --memory=1G
+            - --kafka-addr=internal://0.0.0.0:9092
+            - --advertise-kafka-addr=internal://redpanda.wikipatrol.svc.cluster.local:9092
+          ports:
+            - { containerPort: 9092 }
+            - { containerPort: 9644 }
+          readinessProbe:
+            exec: { command: ["rpk", "cluster", "health", "--exit-when-healthy"] }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 15
+          resources:
+            requests: { cpu: 250m, memory: 1Gi }
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/redpanda/data }
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests: { storage: 5Gi }

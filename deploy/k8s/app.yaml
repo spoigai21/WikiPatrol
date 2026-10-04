@@ -1,0 +1,101 @@
+# The services, one image (wikipatrol). Every container answers /livez and /readyz on :8080, and
+# those fail when the service is stuck, not merely when the process is gone (src/ops/health.ts).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wikipatrol
+  namespace: wikipatrol
+data:
+  # Fully qualified: KEDA's operator runs in another namespace and must resolve it too.
+  KAFKA_BROKERS: redpanda.wikipatrol.svc.cluster.local:9092
+  CLASSIFIER_CONFIG: heuristic
+---
+# Exactly one ingester: two would each write the same events (dedupe is per process).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingester
+  namespace: wikipatrol
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector:
+    matchLabels: { app: ingester }
+  template:
+    metadata:
+      labels: { app: ingester }
+    spec:
+      initContainers:
+        - name: wait-for-redpanda
+          image: busybox:1.37
+          command: ["sh", "-c", "until nc -z redpanda.wikipatrol.svc.cluster.local 9092; do echo waiting for redpanda; sleep 2; done"]
+      containers:
+        - name: ingester
+          image: wikipatrol:local
+          imagePullPolicy: IfNotPresent
+          args: ["src/ingest/main.ts", "--sink", "kafka"]
+          envFrom: [{ configMapRef: { name: wikipatrol } }]
+          ports: [{ containerPort: 8080 }]
+          readinessProbe: { httpGet: { path: /readyz, port: 8080 }, periodSeconds: 10, failureThreshold: 30 }
+          livenessProbe: { httpGet: { path: /livez, port: 8080 }, initialDelaySeconds: 120, periodSeconds: 30, failureThreshold: 3 }
+          resources: { requests: { cpu: 100m, memory: 256Mi } }
+---
+# The pipeline stages, one Deployment each. Each reads a single-partition topic, so one replica
+# is all a stage can use; the classifier is the part that scales.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stages
+  namespace: wikipatrol
+  labels: { app: stages }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: stages }
+  template:
+    metadata:
+      labels: { app: stages }
+    spec:
+      initContainers:
+        - name: wait-for-redpanda
+          image: busybox:1.37
+          command: ["sh", "-c", "until nc -z redpanda.wikipatrol.svc.cluster.local 9092; do echo waiting for redpanda; sleep 2; done"]
+      containers:
+        - name: stages
+          image: wikipatrol:local
+          imagePullPolicy: IfNotPresent
+          args: ["src/pipeline/main.ts"]
+          env: [{ name: STAGES, value: "parse,dlq,enrich,filter,labeller" }]
+          envFrom: [{ configMapRef: { name: wikipatrol } }]
+          ports: [{ containerPort: 8080 }]
+          readinessProbe: { httpGet: { path: /readyz, port: 8080 }, periodSeconds: 10, failureThreshold: 30 }
+          livenessProbe: { httpGet: { path: /livez, port: 8080 }, initialDelaySeconds: 120, periodSeconds: 30, failureThreshold: 3 }
+          resources: { requests: { cpu: 200m, memory: 512Mi } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: classifier
+  namespace: wikipatrol
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: classifier }
+  template:
+    metadata:
+      labels: { app: classifier }
+    spec:
+      initContainers:
+        - name: wait-for-redpanda
+          image: busybox:1.37
+          command: ["sh", "-c", "until nc -z redpanda.wikipatrol.svc.cluster.local 9092; do echo waiting for redpanda; sleep 2; done"]
+      containers:
+        - name: classifier
+          image: wikipatrol:local
+          imagePullPolicy: IfNotPresent
+          args: ["src/classifier/main.ts"]
+          envFrom: [{ configMapRef: { name: wikipatrol } }]
+          ports: [{ containerPort: 8080 }]
+          readinessProbe: { httpGet: { path: /readyz, port: 8080 }, periodSeconds: 10, failureThreshold: 30 }
+          livenessProbe: { httpGet: { path: /livez, port: 8080 }, initialDelaySeconds: 120, periodSeconds: 30, failureThreshold: 3 }
+          resources: { requests: { cpu: 100m, memory: 256Mi } }

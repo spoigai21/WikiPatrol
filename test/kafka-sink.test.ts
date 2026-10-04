@@ -81,7 +81,7 @@ describe.skipIf(!brokers)('KafkaSink (Redpanda)', () => {
   });
 
   it('survives random disconnects and a process restart: every event once, in order, byte-identical', async () => {
-    const stream = (fake = await startFakeStream(11));
+    const stream = (fake = await startFakeStream(11, undefined, 5));
     const topic = `test.raw.${Date.now()}`;
     topics.push(topic);
     const run = async (stopAt: number) => {

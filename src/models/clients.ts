@@ -31,9 +31,18 @@ export class RetryLater extends Error {
 
 const SEED = 42;
 const MAX_TOKENS = 400;
+// Models that reason before answering spend output tokens on it; give them room and keep the
+// reasoning short, so the answer is never cut off (D12).
+const REASONING_MAX_TOKENS = 1024;
 
 async function postJson(url: string, body: unknown, headers: Record<string, string>): Promise<{ status: number; json: unknown; headers: Headers }> {
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) });
+  let res: Response;
+  try {
+    res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) });
+  } catch (err) {
+    // No response at all: the network is down (a laptop waking from sleep, a dropped Wi-Fi link).
+    throw new RetryLater(`network: ${err instanceof Error ? err.message : String(err)}`, 15_000);
+  }
   const text = await res.text();
   let json: unknown = text;
   try {
@@ -46,10 +55,15 @@ async function postJson(url: string, body: unknown, headers: Record<string, stri
 
 function throwForStatus(provider: string, status: number, json: unknown, headers: Headers): void {
   if (status < 400) return;
-  const detail = JSON.stringify(json).slice(0, 400);
+  const full = JSON.stringify(json);
+  const detail = full.slice(0, 400);
   if (status === 429) {
-    // Daily caps are reported in the error body; per-minute caps clear on their own.
-    if (/per.?day|daily|RPD|quota.*day/i.test(detail)) throw new QuotaExhausted(`${provider} daily quota: ${detail}`);
+    // Daily caps are reported somewhere in the error body (Gemini puts it in a quota id deep in
+    // `details`, and says "retry in 19h…"); per-minute caps clear on their own.
+    const retryHours = /retry in (\d+)h/i.exec(full);
+    if (/per.?day|PerDay|daily|RPD|TPD/i.test(full) || (retryHours && Number(retryHours[1]) >= 1)) {
+      throw new QuotaExhausted(`${provider} daily quota: ${detail}`);
+    }
     const after = Number(headers.get('retry-after'));
     throw new RetryLater(`${provider} 429: ${detail}`, Number.isFinite(after) && after > 0 ? after * 1000 : 20_000);
   }
@@ -91,7 +105,13 @@ export class GeminiClient implements ModelClient {
       {
         systemInstruction: { parts: [{ text: m.system }] },
         contents: [{ role: 'user', parts: [{ text: m.user }] }],
-        generationConfig: { temperature: 0, seed: SEED, maxOutputTokens: MAX_TOKENS, responseMimeType: 'application/json' },
+        generationConfig: {
+          temperature: 0,
+          seed: SEED,
+          maxOutputTokens: REASONING_MAX_TOKENS,
+          responseMimeType: 'application/json',
+          thinkingConfig: { thinkingLevel: 'low' },
+        },
       },
       { 'x-goog-api-key': this.key },
     );
@@ -128,11 +148,18 @@ export class GroqClient implements ModelClient {
         messages: [{ role: 'system', content: m.system }, { role: 'user', content: m.user }],
         temperature: 0,
         seed: SEED,
-        max_tokens: MAX_TOKENS,
         response_format: { type: 'json_object' },
+        ...(this.model.startsWith('openai/gpt-oss') ? { max_tokens: REASONING_MAX_TOKENS, reasoning_effort: 'low' } : { max_tokens: MAX_TOKENS }),
       },
       { Authorization: `Bearer ${this.key}` },
     );
+    // Groq's JSON mode rejects a malformed answer with a 400 instead of returning it. That is the
+    // model failing the answer contract, not a request error: hand back what it generated, so it
+    // is recorded and scored as invalid (D12) and the run continues.
+    const err = (json as { error?: { code?: string; failed_generation?: string } }).error;
+    if (status === 400 && err?.code === 'json_validate_failed') {
+      return { text: err.failed_generation ?? '', modelVersion: this.model, tokensIn: null, tokensOut: null, latencyMs: performance.now() - t0 };
+    }
     throwForStatus('groq', status, json, headers);
     const r = json as { model?: string; choices?: { message?: { content?: string } }[]; usage?: { prompt_tokens?: number; completion_tokens?: number } };
     return {

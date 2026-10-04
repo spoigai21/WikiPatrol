@@ -353,6 +353,42 @@ one shows a prompt must change, the change gets a new tag, a dev rerun, and an e
 - cloud — **Gemini** and **Groq** free tiers: the exact model IDs are fixed here, before the first
   sealed run, once API keys exist. Every result row records the model ID the API reports.
 
+**Cloud models, fixed 2026-10-03 before any sealed cloud run** (from the models each key could
+use that day; the Llama models are no longer offered on Groq, `gemini-2.5-flash` is closed to new
+users):
+- **Groq `openai/gpt-oss-120b`** — the largest model offered; `reasoning_effort: low`.
+  Free-tier limits on this account (response headers): 1,000 requests/day, 8,000 tokens/minute.
+- **Gemini `gemini-3.8-flash`** — the current Flash model; `thinkingLevel: low`. *(Replaced by
+  `gemini-3.5-flash-lite` before it ran on the sealed set — see below.)*
+
+Both reason before answering, and reasoning counts as output, so these two get a 1,024-token
+output cap instead of 400; "low" keeps the reasoning short and the free-tier budget intact. Both
+are deliberate cost settings, reported with the results. The local model does not reason, so its
+cap (400) never binds — its sealed answers average under 100 tokens.
+
+Dev check (8 edits per prompt, prompts as tagged): no invalid answers from either; ~600 tokens
+and ~0.5 s per call on Groq, ~450 tokens and 5–7 s on Gemini (with 503 "high demand" retries).
+At these free-tier limits the six sealed cloud runs (6,000 calls) take several days.
+
+**Gemini model replaced (2026-10-04, owner's decision).** `gemini-3.8-flash`'s free tier allows
+**20 requests per day** (quota `GenerateRequestsPerDayPerProjectPerModel-FreeTier`, read from the
+429), against the 3,000 the grid needs — about 150 days. It is replaced by
+**`gemini-3.5-flash-lite`** (`thinkingLevel: low`; it does not reason in practice). The two sealed
+answers `gemini-3.8-flash` gave are kept in `results/phase5/runs/abandoned/` and not scored. The
+replacement had not been run on the sealed set; its dev check (8 edits per prompt) gave no invalid
+answers, ~0.6 s per call. List price $0.30 / $2.50 per million tokens (`results/prices/2026-10-04.json`).
+Its own free tier turned out to be **500 requests a day** (read from its 429 on 2026-10-04), so its
+three sealed runs take about six days — paced, like Groq's, by the free quota.
+The runner also failed to recognise this cap as a daily one (it is named only deep in the error
+body) and kept retrying for 25 minutes; it now reads the whole body and the "retry in …h" hint.
+
+**Two runner fixes during the sealed runs (2026-10-04), neither changing any answer already
+recorded:** (1) a request that gets no response at all (the laptop slept and woke without network)
+is now retried instead of stopping the run; (2) when Groq's JSON mode rejects a malformed answer
+with a 400 (`json_validate_failed`, e.g. `"p_revert":0. nine`), the rejected text is now recorded as
+the model's answer and scored `invalid`, as this section always specified, instead of stopping the
+run. Rows are appended one complete line at a time, so the stopped runs resumed where they were.
+
 Free-tier rate limits are honoured by a resumable runner (results are appended per edit and a
 restart skips what is done); a sealed run may take days. That is the cost ceiling the spec
 describes, not a reason to shrink the set.
@@ -373,6 +409,160 @@ is not verified, so it may have information the LLMs do not. Not claimed beaten 
 **Scoring** (`npm run phase5:score`): revert precision, recall and F1 with Wilson intervals, share
 flagged, share invalid, p50/p95 latency, tokens per edit — and the D9 label-noise estimate beside
 every number. **No judge model:** the label is the revert.
+
+## D13 — The pipeline: one-in, one-out stages, and why Kafka earns its place (DECIDED 2026-10-04)
+
+**Topics** (all one partition, kept forever — D5, `src/kafka/topics.ts`):
+
+```
+wiki.raw ─┬─ parse  ─> wiki.edits ── enrich ─> wiki.enriched ── filter ─> wiki.scored ─> (model tiers)
+          ├─ dlq    ─> wiki.dlq
+          └─ labeller ─> wiki.labels
+```
+
+The spec asks for a raw, a scored and a dead-letter topic; there are two more because of one fact:
+the filter needs each editor's account age and edit count, which only a live Action API lookup
+gives, and that lookup is not repeatable. So `enrich` is its own stage, the only non-deterministic
+one, and it *records* what it saw (and when) in `wiki.enriched`. Everything else — `parse`, `dlq`,
+`filter`, the labeller — is a pure function of its input topic, and replays byte-for-byte.
+
+**Stage semantics** (`src/kafka/stage.ts`). Each stage reads one topic and writes one; every output
+carries its input's offset. Live, a stage is a consumer group that commits its input offset only
+after the outputs are durable; a crash in between means re-reading, and re-read outputs are
+recognised by their source offset and not written again. Replay mode reads an exact offset range,
+with no group. `npm run pipeline` runs every stage under a supervisor that restarts a failed stage
+with backoff, so one stage failing never stops the others — the shape Phase 8's restart policy
+takes over.
+
+**Proved** (`test/kafka-replay.test.ts`, real Redpanda):
+- replaying `parse`, `dlq` and `filter` over the same range into a fresh topic gives byte-identical
+  output, and an arbitrary middle range gives exactly the matching slice of a full run;
+- a live stage stopped mid-stream and restarted writes every output exactly once — including after
+  its committed offset is wiped, the worst case of a crash before a commit — and fails if the
+  source-offset check is removed;
+- on real data: after the parse stage re-read 1.34 million events it had already processed,
+  `wiki.edits` held 64,511 messages, 64,511 distinct edits, in source order.
+
+**Backpressure** (`npm run phase2:backpressure`, `results/phase2/backpressure-2026-10-04T0534Z.{json,svg}`).
+With the ingester and every stage caught up to the live feed (2026-10-04 05:34–05:55 UTC), a
+consumer standing in for a free-tier cloud model — 6 s per edit the filter keeps, 10 a minute
+(D12) — read `wiki.scored` while ~74 edits a minute arrived (1.2/s, D1). Lag rose steadily, about
+25 messages a minute, to **514 after 20 minutes**; switched to full speed it drained to zero in
+under 15 seconds, and every offset from 204,978 to 206,542 (1,565) was handled **exactly once** —
+no gap, no duplicate. A model tier this slow cannot keep up with even the quietest English
+Wikipedia hour without a buffer that holds what it has not reached yet, and the lag itself is the
+number that says how far behind it is: Phase 8's autoscaling signal, measured here first.
+
+**Dead letters.** Two sources: events the ingester cannot key (it sends them straight to
+`wiki.dlq`), and events no stage can read (schema failures). 7 in the first 2.05 million raw events.
+
+**Found while building it, all fixed with a test that fails without the fix:**
+1. `kafkajs` is CommonJS; a named import (`ConfigResourceTypes`) that the test runner accepted
+   crashed under Node — so `npm run ingest` and `npm run labeller` had been broken since the
+   Phase 1 retention fix. `test/runtime-imports.test.ts` now loads every Kafka module the way Node
+   runs it.
+2. Offsets were never committed (`commitOffsetsIfNecessary` is a no-op without auto-commit); the
+   source-offset check kept outputs exactly-once regardless, but every restart re-read from zero.
+3. A routine consumer-group rebalance stopped a stage and, with it, the whole pipeline process —
+   in the middle of the first backpressure run. Rebalances are now ridden out and stages are
+   supervised.
+4. A stage sent a whole batch's outputs in one request; a batch of enriched records exceeded the
+   broker's 1 MB limit, and the filter stage failed on the same batch every restart — in the middle
+   of the second backpressure run. Every producer (stages, labeller, ingester) now sends in ordered
+   chunks under 512 KB.
+5. On restart, two stages in one process sometimes hung forever: the helper that reads a topic's
+   last message named its temporary consumer group by process id and millisecond, so two stages
+   starting in the same millisecond, reading different topics, shared a group and one never got
+   its partition. Groups are now unique per call.
+
+Both interrupted backpressure runs flattened out where the stalled stage stopped feeding
+`wiki.scored`; they are kept in `results/phase2/superseded/` and not reported.
+
+## D14 — Kubernetes: one image, a partitioned scored topic, and a classifier that scales on lag (DECIDED 2026-10-04)
+
+**Why `wiki.scored` is the one partitioned topic.** Autoscaling the model tier only helps if
+several replicas can share its input, and a consumer group gives each partition to one member.
+So `wiki.scored` has **6 partitions** (keyed by rev id) and the classifier scales **1 → 6** on
+its consumer lag (KEDA `ScaledObject`, which drives an HPA; target 50 waiting edits per
+replica). Every other topic stays at one partition, where the stages are exactly-once (D13). The
+fan-out is **at-least-once**: after a crash or rebalance an edit can be classified twice;
+`wiki.predictions` is keyed by rev id, and readers keep one. The filter stage's restart check for a
+partitioned output takes the *smallest* last-written source offset over the partitions, so a
+crash can rewrite a few outputs but never skip one (`src/kafka/stage.ts`); a stage refuses a
+partitioned *input*.
+
+**The classifier** (`src/classifier/`) passes filter-dropped edits through as "not flagged" and
+sends kept edits to one tier: `heuristic` (flag temporary accounts — the default, needs no model,
+used in CI), a model (`ollama:<model>:<prompt>`, or a cloud one), or `slow-heuristic:<ms>` (the
+heuristic at a fixed pace, standing in for a rate-limited model in scaling demos). The full
+ladder routing is wired in once Phase 7 is tuned.
+
+**Probes that fail when the service is sick** (`src/ops/health.ts`): `/livez` fails when a
+service has made no progress for 5 minutes *while work is waiting* — a stuck consumer, a dead
+stream — not merely when the process is gone; `/readyz` once it has started. The ingester counts
+as stuck after 5 quiet minutes (the all-wiki feed never idles that long, D8).
+
+**Manifests** (`deploy/k8s/`): Redpanda (single node, dev mode — not a production broker), one
+ingester (`Recreate`: two would write every event twice), the stages, the classifier and its
+`ScaledObject`. Brokers are addressed by full cluster DNS name so KEDA's operator, in another
+namespace, can reach them; an init container waits for Redpanda so pods never crash-loop on a cold
+start. `docker compose up -d --build` runs the same services without a cluster.
+
+**CI** (`.github/workflows/ci.yml`, `deploy/ci-smoke.sh`): every push runs the typecheck and all
+tests against a real Redpanda, then provisions a `kind` cluster, installs KEDA, deploys, waits for
+every rollout, checks that live Wikipedia edits reach `wiki.predictions`, that `wiki.scored` has 6
+partitions, that the `ScaledObject` is reading lag, and that no container restarted — then tears
+the cluster down. Validated end to end on a local `kind` cluster (2026-10-04) before any push.
+
+**Observed** on that local cluster with the classifier slowed to 10 kept edits a minute: the HPA
+scaled it from 1 to 6 replicas on lag within minutes and held 6 while the average lag sat at the
+target. A smoke demonstration, not the Phase 8 result — that is the HPA following the real
+diurnal swing over 24 hours, which needs the laptop up for a day.
+
+## D15 — Drift: a fixed subset, nightly, against each configuration's own sealed answers (DECIDED 2026-10-04)
+
+Written before any drift run.
+
+**Why not the whole sealed set.** The spec's nightly rerun of the sealed range against every
+configuration is ~9,000 calls a night; Groq's free tier allows ~330 a day (D12). So the nightly
+check reruns a **fixed subset of 50 sealed edits** per configuration — chosen once by seeded
+shuffle and committed (`results/phase9/subset.json`) — and compares each answer with the answer
+the same configuration gave on the same edit in Phase 5. The inputs are byte-identical (the frozen
+snapshot), so a change in answers is a change in the model, the provider, or the prompt plumbing.
+
+**What trips the alert**, per configuration: agreement with its own Phase 5 decisions below the
+threshold, a different model version reported by the API, or the invalid-answer rate up by more
+than 5 points. The agreement threshold is set from **measured run-to-run variance**, not assumed:
+before the first nightly run, the subset is run twice back to back per configuration, and the
+threshold is the lower of 90% and that baseline agreement minus 5 points. Recorded here when
+measured.
+
+**These runs are monitoring, never tuning** (SPEC Phase 9): they are written to
+`results/phase9/`, never appended to the Phase 5 run files, and a prompt or model change prompted
+by drift is a new configuration with its own dev work and its own single sealed score.
+
+**Alert channel.** A non-zero exit (a failed Kubernetes Job), an entry in
+`results/phase9/alerts.jsonl`, and a POST to `DRIFT_WEBHOOK` if set (e.g. an ntfy.sh or Slack
+URL). **Proof it works:** a deliberately degraded configuration (`degraded:<config>:<percent>`,
+which flips that share of answers deterministically) must trip the alert with nobody looking.
+
+**When.** Cloud configurations join the nightly check after their sealed runs finish, so drift
+calls never compete with sealed calls for the free quota.
+
+### D15 results — run-to-run variance is near zero, and a degraded config is caught
+
+**Variance** (`results/phase9/thresholds.json`, 2026-10-04): the 50-edit subset rerun twice, back to
+back, on the five configurations with a complete sealed run that can drift (the three local-model
+prompts and both LiftWing models). Four matched their own Phase 5 decisions on all 50 edits in
+both reruns; `gemma3:4b` with `p3-reason` matched on 49 of 50 — the same edit both times, so it is
+stable now but one answer differs from the sealed run made the day before. Threshold: the lower of
+90% and (98% − 5 points) = **90% agreement**.
+
+**The alert works** (`results/phase9/drift-2026-10-04T0640Z-degraded.json`): `gemma3:4b`/`p1-plain`
+with 30% of its decisions flipped scored 72% agreement (14 of 50 changed); the run exited 1 and
+wrote `results/phase9/alerts.jsonl` with nobody watching. The CronJob that runs this nightly is
+`deploy/k8s/optional/drift-cronjob.yaml`, for the laptop's k3d cluster (it mounts the repo's
+`results/`); it has not yet run on a schedule.
 
 ## Phase 0 prediction scorecard
 

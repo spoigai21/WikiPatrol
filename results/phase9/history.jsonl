@@ -1,0 +1,1 @@
+{"at":"2026-10-04T06:41:15.927Z","degradedTest":30,"checks":[{"config":"ollama:gemma3:4b__p1-plain","edits":50,"agreement":0.72,"meanAbsDeltaP":0.214,"invalidBefore":0,"invalidNow":0,"versionsBefore":["gemma3:4b"],"versionsNow":["gemma3:4b"],"alerts":["agreement 72.0% is below 90% (14 of 50 decisions changed)"]}]}

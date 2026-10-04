@@ -1,0 +1,262 @@
+{
+  "scoredAt": "2026-10-03T22:31:06.150Z",
+  "set": "sealed",
+  "edits": 1000,
+  "target": "reverted within 72h (D9); population: edits that pass the default filter (D10, D12)",
+  "baseRate": {
+    "rate": 0.167,
+    "low": 0.1452,
+    "high": 0.1914,
+    "n": 1000
+  },
+  "labelNoise": {
+    "labeller": "claude-opus-5-5 (AI model, blind to revert status; not hand-labelled)",
+    "revertedNotVandalism": {
+      "rate": 0.7826,
+      "low": 0.6443,
+      "high": 0.8774,
+      "n": 46
+    },
+    "keptButVandalism": {
+      "rate": 0,
+      "low": 0,
+      "high": 0.0727,
+      "n": 49
+    }
+  },
+  "filterLoss": "the filter itself drops 16–24% of reverted edits before any row here sees them (D10)",
+  "rows": [
+    {
+      "config": "baseline:filter-only",
+      "modelVersions": [
+        "filter:extendedconfirmed"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 1,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.167,
+        "low": 0.1452,
+        "high": 0.1914,
+        "n": 1000
+      },
+      "recall": {
+        "rate": 1,
+        "low": 0.9775,
+        "high": 1,
+        "n": 167
+      },
+      "f1": 0.2862,
+      "latencyMs": null,
+      "tokensPerEdit": null
+    },
+    {
+      "config": "baseline:filter+temporary",
+      "modelVersions": [
+        "filter:extendedconfirmed+temporary"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.458,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.2424,
+        "low": 0.2054,
+        "high": 0.2836,
+        "n": 458
+      },
+      "recall": {
+        "rate": 0.6647,
+        "low": 0.5901,
+        "high": 0.7319,
+        "n": 167
+      },
+      "f1": 0.3552,
+      "latencyMs": null,
+      "tokensPerEdit": null
+    },
+    {
+      "config": "baseline:liftwing-enwiki-damaging",
+      "modelVersions": [
+        "enwiki-damaging@?",
+        "enwiki-damaging@0.5.1"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.121,
+      "invalid": 0.004,
+      "precision": {
+        "rate": 0.405,
+        "low": 0.3217,
+        "high": 0.494,
+        "n": 121
+      },
+      "recall": {
+        "rate": 0.2934,
+        "low": 0.2296,
+        "high": 0.3665,
+        "n": 167
+      },
+      "f1": 0.3403,
+      "latencyMs": {
+        "p50": 524,
+        "p95": 1915
+      },
+      "tokensPerEdit": null
+    },
+    {
+      "config": "baseline:liftwing-revertrisk-language-agnostic",
+      "modelVersions": [
+        "revertrisk-language-agnostic@?",
+        "revertrisk-language-agnostic@3"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.666,
+      "invalid": 0.013,
+      "precision": {
+        "rate": 0.2222,
+        "low": 0.1923,
+        "high": 0.2553,
+        "n": 666
+      },
+      "recall": {
+        "rate": 0.8862,
+        "low": 0.8291,
+        "high": 0.9259,
+        "n": 167
+      },
+      "f1": 0.3553,
+      "latencyMs": {
+        "p50": 346,
+        "p95": 904
+      },
+      "tokensPerEdit": null
+    },
+    {
+      "config": "groq:openai/gpt-oss-120b__p1-plain",
+      "modelVersions": [
+        "openai/gpt-oss-120b"
+      ],
+      "edits": 3,
+      "complete": false,
+      "flagged": 0,
+      "invalid": 0,
+      "precision": {
+        "rate": null,
+        "low": null,
+        "high": null,
+        "n": 0
+      },
+      "recall": {
+        "rate": 0,
+        "low": 0,
+        "high": 0.0225,
+        "n": 167
+      },
+      "f1": 0,
+      "latencyMs": {
+        "p50": 436,
+        "p95": 465
+      },
+      "tokensPerEdit": {
+        "in": 485,
+        "out": 62
+      }
+    },
+    {
+      "config": "ollama:gemma3:4b__p1-plain",
+      "modelVersions": [
+        "gemma3:4b"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.746,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.1944,
+        "low": 0.1676,
+        "high": 0.2243,
+        "n": 746
+      },
+      "recall": {
+        "rate": 0.8683,
+        "low": 0.8086,
+        "high": 0.9114,
+        "n": 167
+      },
+      "f1": 0.3176,
+      "latencyMs": {
+        "p50": 1006,
+        "p95": 2083
+      },
+      "tokensPerEdit": {
+        "in": 479,
+        "out": 18
+      }
+    },
+    {
+      "config": "ollama:gemma3:4b__p2-guide",
+      "modelVersions": [
+        "gemma3:4b"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.585,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.2137,
+        "low": 0.1824,
+        "high": 0.2487,
+        "n": 585
+      },
+      "recall": {
+        "rate": 0.7485,
+        "low": 0.6776,
+        "high": 0.8082,
+        "n": 167
+      },
+      "f1": 0.3324,
+      "latencyMs": {
+        "p50": 1082,
+        "p95": 2500
+      },
+      "tokensPerEdit": {
+        "in": 652,
+        "out": 18
+      }
+    },
+    {
+      "config": "ollama:gemma3:4b__p3-reason",
+      "modelVersions": [
+        "gemma3:4b"
+      ],
+      "edits": 52,
+      "complete": false,
+      "flagged": 0.5385,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.2143,
+        "low": 0.1021,
+        "high": 0.3954,
+        "n": 28
+      },
+      "recall": {
+        "rate": 0.0359,
+        "low": 0.0166,
+        "high": 0.0762,
+        "n": 167
+      },
+      "f1": 0.0615,
+      "latencyMs": {
+        "p50": 2943,
+        "p95": 4059
+      },
+      "tokensPerEdit": {
+        "in": 689,
+        "out": 96
+      }
+    }
+  ]
+}

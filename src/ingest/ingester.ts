@@ -19,6 +19,8 @@ export interface IngestOptions {
   /** ...or when the oldest buffered record is this old. */
   flushMs?: number;
   dedupeWindow?: number;
+  /** Called after each batch is durably written (health probes track progress with it). */
+  onWritten?: (count: number) => void;
   /** Invalid payloads go here instead of the sink; Phase 2 makes this the dead-letter topic. */
   onInvalid?: (data: string, reason: string) => void;
   log?: (msg: string) => void;
@@ -52,6 +54,7 @@ export async function runIngester(opts: IngestOptions): Promise<IngestStats> {
     buffer = [];
     await sink.write(batch, lastEventId);
     stats.written += batch.length;
+    if (batch.length) opts.onWritten?.(batch.length);
     flushedEventId = lastEventId;
   };
 

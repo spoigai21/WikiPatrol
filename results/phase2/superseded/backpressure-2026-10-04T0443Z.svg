@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300" role="img" aria-label="Consumer lag of a rate-limited tier">
+<style>
+  :root { --surface-1: #fcfcfb; --surface-2: #f1f0ec; --text-primary: #0b0b0b; --text-secondary: #52514e; --grid: #e4e3df; --series-1: #2a78d6; }
+  @media (prefers-color-scheme: dark) { :root { --surface-1: #1a1a19; --surface-2: #242422; --text-primary: #ffffff; --text-secondary: #c3c2b7; --grid: #3a3a37; --series-1: #3987e5; } }
+  text { font: 11px system-ui, sans-serif; fill: var(--text-secondary); }
+  .title { font-size: 13px; font-weight: 600; fill: var(--text-primary); }
+</style>
+<rect width="640" height="300" fill="var(--surface-1)"/>
+<text class="title" x="72" y="22">Consumer lag: a 10/min model tier behind the feed, then draining</text>
+<rect x="602.7692307692308" y="40" width="21.23076923076917" height="216" fill="var(--surface-2)"/>
+<text x="596.7692307692308" y="70" text-anchor="end">drain at full speed →</text>
+<text x="78" y="54">rate-limited (10 kept edits/min)</text>
+<line x1="72" x2="624" y1="256" y2="256" stroke="var(--grid)" stroke-width="1"/><text x="64" y="260" text-anchor="end">0</text>
+<line x1="72" x2="624" y1="148" y2="148" stroke="var(--grid)" stroke-width="1"/><text x="64" y="152" text-anchor="end">45,000</text>
+<line x1="72" x2="624" y1="40" y2="40" stroke="var(--grid)" stroke-width="1"/><text x="64" y="44" text-anchor="end">90,000</text>
+<text x="72" y="272" text-anchor="middle">0 min</text>
+<text x="348" y="272" text-anchor="middle">13 min</text>
+<text x="624" y="272" text-anchor="middle">26 min</text>
+<polyline fill="none" stroke="var(--series-1)" stroke-width="2" points="77.3,208.5 82.6,207.9 87.9,206.7 93.2,205.2 98.5,203.7 103.8,202.5 109.2,200.8 114.5,199.8 119.8,198.2 125.1,197.3 130.4,195.6 135.7,194.6 141.0,193.6 146.3,192.8 151.6,191.8 156.9,191.0 162.2,189.7 167.5,188.8 172.8,187.5 178.2,186.3 183.5,185.4 188.8,183.7 194.1,182.4 199.4,181.7 204.7,180.7 210.0,179.2 215.3,177.3 220.6,174.4 225.9,172.1 231.2,171.9 236.5,172.1 241.8,165.2 247.2,163.0 252.5,160.8 257.8,157.9 263.1,155.3 268.4,152.1 273.7,150.2 279.0,145.3 284.3,142.3 289.6,139.4 294.9,136.8 300.2,133.2 305.5,129.8 310.8,126.6 316.2,124.1 321.5,120.4 326.8,117.1 332.1,111.1 337.4,106.6 342.7,101.3 348.0,97.5 353.3,92.5 358.6,88.4 363.9,81.9 369.2,76.2 374.5,70.7 379.8,64.8 385.2,58.6 390.5,53.9 395.8,48.8 401.1,45.5 406.4,45.6 411.7,45.6 417.0,45.6 422.3,45.7 427.6,45.7 432.9,45.7 438.2,45.8 443.5,45.9 448.8,45.9 454.2,46.0 459.5,46.1 464.8,46.1 470.1,46.1 475.4,46.2 480.7,46.2 486.0,46.3 491.3,46.3 496.6,46.3 501.9,46.4 507.2,46.4 512.5,46.5 517.8,46.5 523.2,46.6 528.5,46.6 533.8,46.6 539.1,46.7 544.4,46.7 549.7,46.8 555.0,46.8 560.3,46.8 565.6,46.9 570.9,47.0 576.2,47.1 581.5,47.1 586.8,47.2 592.2,47.2 597.5,47.2 602.8,47.3 608.1,137.8 613.4,255.4 618.7,256.0 624.0,256.0"/>
+<circle cx="77.3" cy="208.5" r="6" fill="transparent"><title>0 min: lag 19782 messages (slow)</title></circle>
+<circle cx="82.6" cy="207.9" r="6" fill="transparent"><title>1 min: lag 20054 messages (slow)</title></circle>
+<circle cx="87.9" cy="206.7" r="6" fill="transparent"><title>1 min: lag 20538 messages (slow)</title></circle>
+<circle cx="93.2" cy="205.2" r="6" fill="transparent"><title>1 min: lag 21160 messages (slow)</title></circle>
+<circle cx="98.5" cy="203.7" r="6" fill="transparent"><title>1 min: lag 21783 messages (slow)</title></circle>
+<circle cx="103.8" cy="202.5" r="6" fill="transparent"><title>2 min: lag 22299 messages (slow)</title></circle>
+<circle cx="109.2" cy="200.8" r="6" fill="transparent"><title>2 min: lag 22994 messages (slow)</title></circle>
+<circle cx="114.5" cy="199.8" r="6" fill="transparent"><title>2 min: lag 23432 messages (slow)</title></circle>
+<circle cx="119.8" cy="198.2" r="6" fill="transparent"><title>2 min: lag 24091 messages (slow)</title></circle>
+<circle cx="125.1" cy="197.3" r="6" fill="transparent"><title>3 min: lag 24474 messages (slow)</title></circle>
+<circle cx="130.4" cy="195.6" r="6" fill="transparent"><title>3 min: lag 25162 messages (slow)</title></circle>
+<circle cx="135.7" cy="194.6" r="6" fill="transparent"><title>3 min: lag 25563 messages (slow)</title></circle>
+<circle cx="141.0" cy="193.6" r="6" fill="transparent"><title>3 min: lag 25991 messages (slow)</title></circle>
+<circle cx="146.3" cy="192.8" r="6" fill="transparent"><title>4 min: lag 26314 messages (slow)</title></circle>
+<circle cx="151.6" cy="191.8" r="6" fill="transparent"><title>4 min: lag 26743 messages (slow)</title></circle>
+<circle cx="156.9" cy="191.0" r="6" fill="transparent"><title>4 min: lag 27094 messages (slow)</title></circle>
+<circle cx="162.2" cy="189.7" r="6" fill="transparent"><title>4 min: lag 27608 messages (slow)</title></circle>
+<circle cx="167.5" cy="188.8" r="6" fill="transparent"><title>5 min: lag 28016 messages (slow)</title></circle>
+<circle cx="172.8" cy="187.5" r="6" fill="transparent"><title>5 min: lag 28554 messages (slow)</title></circle>
+<circle cx="178.2" cy="186.3" r="6" fill="transparent"><title>5 min: lag 29032 messages (slow)</title></circle>
+<circle cx="183.5" cy="185.4" r="6" fill="transparent"><title>5 min: lag 29435 messages (slow)</title></circle>
+<circle cx="188.8" cy="183.7" r="6" fill="transparent"><title>6 min: lag 30134 messages (slow)</title></circle>
+<circle cx="194.1" cy="182.4" r="6" fill="transparent"><title>6 min: lag 30670 messages (slow)</title></circle>
+<circle cx="199.4" cy="181.7" r="6" fill="transparent"><title>6 min: lag 30969 messages (slow)</title></circle>
+<circle cx="204.7" cy="180.7" r="6" fill="transparent"><title>6 min: lag 31374 messages (slow)</title></circle>
+<circle cx="210.0" cy="179.2" r="6" fill="transparent"><title>7 min: lag 32004 messages (slow)</title></circle>
+<circle cx="215.3" cy="177.3" r="6" fill="transparent"><title>7 min: lag 32810 messages (slow)</title></circle>
+<circle cx="220.6" cy="174.4" r="6" fill="transparent"><title>7 min: lag 34017 messages (slow)</title></circle>
+<circle cx="225.9" cy="172.1" r="6" fill="transparent"><title>7 min: lag 34978 messages (slow)</title></circle>
+<circle cx="231.2" cy="171.9" r="6" fill="transparent"><title>8 min: lag 35040 messages (slow)</title></circle>
+<circle cx="236.5" cy="172.1" r="6" fill="transparent"><title>8 min: lag 34975 messages (slow)</title></circle>
+<circle cx="241.8" cy="165.2" r="6" fill="transparent"><title>8 min: lag 37815 messages (slow)</title></circle>
+<circle cx="247.2" cy="163.0" r="6" fill="transparent"><title>8 min: lag 38744 messages (slow)</title></circle>
+<circle cx="252.5" cy="160.8" r="6" fill="transparent"><title>9 min: lag 39647 messages (slow)</title></circle>
+<circle cx="257.8" cy="157.9" r="6" fill="transparent"><title>9 min: lag 40871 messages (slow)</title></circle>
+<circle cx="263.1" cy="155.3" r="6" fill="transparent"><title>9 min: lag 41948 messages (slow)</title></circle>
+<circle cx="268.4" cy="152.1" r="6" fill="transparent"><title>9 min: lag 43285 messages (slow)</title></circle>
+<circle cx="273.7" cy="150.2" r="6" fill="transparent"><title>10 min: lag 44081 messages (slow)</title></circle>
+<circle cx="279.0" cy="145.3" r="6" fill="transparent"><title>10 min: lag 46114 messages (slow)</title></circle>
+<circle cx="284.3" cy="142.3" r="6" fill="transparent"><title>10 min: lag 47369 messages (slow)</title></circle>
+<circle cx="289.6" cy="139.4" r="6" fill="transparent"><title>10 min: lag 48597 messages (slow)</title></circle>
+<circle cx="294.9" cy="136.8" r="6" fill="transparent"><title>11 min: lag 49656 messages (slow)</title></circle>
+<circle cx="300.2" cy="133.2" r="6" fill="transparent"><title>11 min: lag 51164 messages (slow)</title></circle>
+<circle cx="305.5" cy="129.8" r="6" fill="transparent"><title>11 min: lag 52568 messages (slow)</title></circle>
+<circle cx="310.8" cy="126.6" r="6" fill="transparent"><title>11 min: lag 53934 messages (slow)</title></circle>
+<circle cx="316.2" cy="124.1" r="6" fill="transparent"><title>12 min: lag 54957 messages (slow)</title></circle>
+<circle cx="321.5" cy="120.4" r="6" fill="transparent"><title>12 min: lag 56484 messages (slow)</title></circle>
+<circle cx="326.8" cy="117.1" r="6" fill="transparent"><title>12 min: lag 57871 messages (slow)</title></circle>
+<circle cx="332.1" cy="111.1" r="6" fill="transparent"><title>12 min: lag 60379 messages (slow)</title></circle>
+<circle cx="337.4" cy="106.6" r="6" fill="transparent"><title>13 min: lag 62241 messages (slow)</title></circle>
+<circle cx="342.7" cy="101.3" r="6" fill="transparent"><title>13 min: lag 64449 messages (slow)</title></circle>
+<circle cx="348.0" cy="97.5" r="6" fill="transparent"><title>13 min: lag 66027 messages (slow)</title></circle>
+<circle cx="353.3" cy="92.5" r="6" fill="transparent"><title>13 min: lag 68123 messages (slow)</title></circle>
+<circle cx="358.6" cy="88.4" r="6" fill="transparent"><title>14 min: lag 69823 messages (slow)</title></circle>
+<circle cx="363.9" cy="81.9" r="6" fill="transparent"><title>14 min: lag 72537 messages (slow)</title></circle>
+<circle cx="369.2" cy="76.2" r="6" fill="transparent"><title>14 min: lag 74936 messages (slow)</title></circle>
+<circle cx="374.5" cy="70.7" r="6" fill="transparent"><title>14 min: lag 77194 messages (slow)</title></circle>
+<circle cx="379.8" cy="64.8" r="6" fill="transparent"><title>15 min: lag 79672 messages (slow)</title></circle>
+<circle cx="385.2" cy="58.6" r="6" fill="transparent"><title>15 min: lag 82247 messages (slow)</title></circle>
+<circle cx="390.5" cy="53.9" r="6" fill="transparent"><title>15 min: lag 84193 messages (slow)</title></circle>
+<circle cx="395.8" cy="48.8" r="6" fill="transparent"><title>15 min: lag 86313 messages (slow)</title></circle>
+<circle cx="401.1" cy="45.5" r="6" fill="transparent"><title>16 min: lag 87707 messages (slow)</title></circle>
+<circle cx="406.4" cy="45.6" r="6" fill="transparent"><title>16 min: lag 87668 messages (slow)</title></circle>
+<circle cx="411.7" cy="45.6" r="6" fill="transparent"><title>16 min: lag 87656 messages (slow)</title></circle>
+<circle cx="417.0" cy="45.6" r="6" fill="transparent"><title>16 min: lag 87647 messages (slow)</title></circle>
+<circle cx="422.3" cy="45.7" r="6" fill="transparent"><title>17 min: lag 87624 messages (slow)</title></circle>
+<circle cx="427.6" cy="45.7" r="6" fill="transparent"><title>17 min: lag 87616 messages (slow)</title></circle>
+<circle cx="432.9" cy="45.7" r="6" fill="transparent"><title>17 min: lag 87605 messages (slow)</title></circle>
+<circle cx="438.2" cy="45.8" r="6" fill="transparent"><title>17 min: lag 87574 messages (slow)</title></circle>
+<circle cx="443.5" cy="45.9" r="6" fill="transparent"><title>18 min: lag 87562 messages (slow)</title></circle>
+<circle cx="448.8" cy="45.9" r="6" fill="transparent"><title>18 min: lag 87536 messages (slow)</title></circle>
+<circle cx="454.2" cy="46.0" r="6" fill="transparent"><title>18 min: lag 87516 messages (slow)</title></circle>
+<circle cx="459.5" cy="46.1" r="6" fill="transparent"><title>18 min: lag 87470 messages (slow)</title></circle>
+<circle cx="464.8" cy="46.1" r="6" fill="transparent"><title>19 min: lag 87467 messages (slow)</title></circle>
+<circle cx="470.1" cy="46.1" r="6" fill="transparent"><title>19 min: lag 87448 messages (slow)</title></circle>
+<circle cx="475.4" cy="46.2" r="6" fill="transparent"><title>19 min: lag 87419 messages (slow)</title></circle>
+<circle cx="480.7" cy="46.2" r="6" fill="transparent"><title>19 min: lag 87399 messages (slow)</title></circle>
+<circle cx="486.0" cy="46.3" r="6" fill="transparent"><title>20 min: lag 87383 messages (slow)</title></circle>
+<circle cx="491.3" cy="46.3" r="6" fill="transparent"><title>20 min: lag 87365 messages (slow)</title></circle>
+<circle cx="496.6" cy="46.3" r="6" fill="transparent"><title>20 min: lag 87362 messages (slow)</title></circle>
+<circle cx="501.9" cy="46.4" r="6" fill="transparent"><title>20 min: lag 87339 messages (slow)</title></circle>
+<circle cx="507.2" cy="46.4" r="6" fill="transparent"><title>21 min: lag 87318 messages (slow)</title></circle>
+<circle cx="512.5" cy="46.5" r="6" fill="transparent"><title>21 min: lag 87295 messages (slow)</title></circle>
+<circle cx="517.8" cy="46.5" r="6" fill="transparent"><title>21 min: lag 87284 messages (slow)</title></circle>
+<circle cx="523.2" cy="46.6" r="6" fill="transparent"><title>21 min: lag 87268 messages (slow)</title></circle>
+<circle cx="528.5" cy="46.6" r="6" fill="transparent"><title>22 min: lag 87260 messages (slow)</title></circle>
+<circle cx="533.8" cy="46.6" r="6" fill="transparent"><title>22 min: lag 87232 messages (slow)</title></circle>
+<circle cx="539.1" cy="46.7" r="6" fill="transparent"><title>22 min: lag 87204 messages (slow)</title></circle>
+<circle cx="544.4" cy="46.7" r="6" fill="transparent"><title>22 min: lag 87192 messages (slow)</title></circle>
+<circle cx="549.7" cy="46.8" r="6" fill="transparent"><title>23 min: lag 87169 messages (slow)</title></circle>
+<circle cx="555.0" cy="46.8" r="6" fill="transparent"><title>23 min: lag 87153 messages (slow)</title></circle>
+<circle cx="560.3" cy="46.8" r="6" fill="transparent"><title>23 min: lag 87149 messages (slow)</title></circle>
+<circle cx="565.6" cy="46.9" r="6" fill="transparent"><title>23 min: lag 87123 messages (slow)</title></circle>
+<circle cx="570.9" cy="47.0" r="6" fill="transparent"><title>24 min: lag 87083 messages (slow)</title></circle>
+<circle cx="576.2" cy="47.1" r="6" fill="transparent"><title>24 min: lag 87043 messages (slow)</title></circle>
+<circle cx="581.5" cy="47.1" r="6" fill="transparent"><title>24 min: lag 87026 messages (slow)</title></circle>
+<circle cx="586.8" cy="47.2" r="6" fill="transparent"><title>24 min: lag 87013 messages (slow)</title></circle>
+<circle cx="592.2" cy="47.2" r="6" fill="transparent"><title>25 min: lag 87002 messages (slow)</title></circle>
+<circle cx="597.5" cy="47.2" r="6" fill="transparent"><title>25 min: lag 86984 messages (slow)</title></circle>
+<circle cx="602.8" cy="47.3" r="6" fill="transparent"><title>25 min: lag 86966 messages (drain)</title></circle>
+<circle cx="608.1" cy="137.8" r="6" fill="transparent"><title>25 min: lag 49231 messages (drain)</title></circle>
+<circle cx="613.4" cy="255.4" r="6" fill="transparent"><title>26 min: lag 259 messages (drain)</title></circle>
+<circle cx="618.7" cy="256.0" r="6" fill="transparent"><title>26 min: lag 0 messages (drain)</title></circle>
+<circle cx="624.0" cy="256.0" r="6" fill="transparent"><title>26 min: lag 0 messages (drain)</title></circle>
+<text x="348" y="292" text-anchor="middle">time since start</text>
+<text x="16" y="148" text-anchor="middle" transform="rotate(-90 16 148)">messages waiting</text>
+</svg>

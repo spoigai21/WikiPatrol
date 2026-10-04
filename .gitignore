@@ -5,3 +5,5 @@ node_modules/
 data/
 # API keys (Phase 5). Never committed.
 .env
+# Runner locks (Phase 5): present only while a run is writing.
+results/**/*.lock

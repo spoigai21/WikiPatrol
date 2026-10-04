@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" width="360" height="360" role="img" aria-label="baseline:liftwing-enwiki-damaging">
+<style>
+  :root { --surface-1: #fcfcfb; --text-primary: #0b0b0b; --text-secondary: #52514e; --grid: #e4e3df; --series-1: #2a78d6; }
+  @media (prefers-color-scheme: dark) { :root { --surface-1: #1a1a19; --text-primary: #ffffff; --text-secondary: #c3c2b7; --grid: #3a3a37; --series-1: #3987e5; } }
+  text { font: 11px system-ui, sans-serif; fill: var(--text-secondary); }
+  .title { font-size: 13px; font-weight: 600; fill: var(--text-primary); }
+</style>
+<rect width="360" height="360" fill="var(--surface-1)"/>
+<text class="title" x="52" y="22">baseline:liftwing-enwiki-damaging</text>
+<line x1="52" x2="344" y1="312" y2="312" stroke="var(--grid)" stroke-width="1"/><text x="44" y="316" text-anchor="end">0</text><text x="52" y="328" text-anchor="middle">0</text>
+<line x1="52" x2="344" y1="244" y2="244" stroke="var(--grid)" stroke-width="1"/><text x="44" y="248" text-anchor="end">0.25</text><text x="125" y="328" text-anchor="middle">0.25</text>
+<line x1="52" x2="344" y1="176" y2="176" stroke="var(--grid)" stroke-width="1"/><text x="44" y="180" text-anchor="end">0.5</text><text x="198" y="328" text-anchor="middle">0.5</text>
+<line x1="52" x2="344" y1="108" y2="108" stroke="var(--grid)" stroke-width="1"/><text x="44" y="112" text-anchor="end">0.75</text><text x="271" y="328" text-anchor="middle">0.75</text>
+<line x1="52" x2="344" y1="40" y2="40" stroke="var(--grid)" stroke-width="1"/><text x="44" y="44" text-anchor="end">1</text><text x="344" y="328" text-anchor="middle">1</text>
+<line x1="52" y1="312" x2="344" y2="40" stroke="var(--text-secondary)" stroke-width="1" opacity="0.6"/>
+<text x="233.04" y="121.60000000000001" transform="rotate(-45 233.04 121.60000000000001)">perfectly calibrated</text>
+<polyline fill="none" stroke="var(--series-1)" stroke-width="2" points="62.5704,292.1984 95.8292,281.4816 124.7372,264.8624 153.0904,238.4784 181.7064,258.49760000000003 211.43200000000002,231.624 240.778,236.4384 267.81719999999996,168.84640000000002 297.718,148.8 326.6844,40"/>
+<circle cx="62.5704" cy="292.1984" r="10.0" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.0–0.1: 357 edits, mean stated 0.0362, reverted 7.3% [5.0, 10.5]</title></circle>
+<circle cx="95.8292" cy="281.4816" r="8.4" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.1–0.2: 196 edits, mean stated 0.1501, reverted 11.2% [7.5, 16.4]</title></circle>
+<circle cx="124.7372" cy="264.8624" r="7.9" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.2–0.3: 150 edits, mean stated 0.2491, reverted 17.3% [12.1, 24.2]</title></circle>
+<circle cx="153.0904" cy="238.4784" r="7.3" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.3–0.4: 111 edits, mean stated 0.3462, reverted 27.0% [19.6, 35.9]</title></circle>
+<circle cx="181.7064" cy="258.49760000000003" r="6.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.4–0.5: 61 edits, mean stated 0.4442, reverted 19.7% [11.6, 31.3]</title></circle>
+<circle cx="211.43200000000002" cy="231.624" r="6.1" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.5–0.6: 44 edits, mean stated 0.546, reverted 29.5% [18.2, 44.2]</title></circle>
+<circle cx="240.778" cy="236.4384" r="5.9" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.6–0.7: 36 edits, mean stated 0.6465, reverted 27.8% [15.8, 44.0]</title></circle>
+<circle cx="267.81719999999996" cy="168.84640000000002" r="5.4" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.7–0.8: 19 edits, mean stated 0.7391, reverted 52.6% [31.7, 72.7]</title></circle>
+<circle cx="297.718" cy="148.8" r="5.2" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.8–0.9: 15 edits, mean stated 0.8415, reverted 60.0% [35.8, 80.2]</title></circle>
+<circle cx="326.6844" cy="40" r="4.8" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.9–1.0: 7 edits, mean stated 0.9407, reverted 100.0% [64.6, 100.0]</title></circle>
+<text x="198" y="350" text-anchor="middle">stated probability of revert (marker area = edits)</text>
+<text x="14" y="176" text-anchor="middle" transform="rotate(-90 14 176)">share actually reverted</text>
+</svg>

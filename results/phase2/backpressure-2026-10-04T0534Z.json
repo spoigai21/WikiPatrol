@@ -1,0 +1,761 @@
+{
+  "startedAt": "2026-10-04T05:34:35.958Z",
+  "topic": "wiki.scored",
+  "slowTier": {
+    "ratePerMinute": 10,
+    "msPerKeptEdit": 6000,
+    "note": "stands in for a free-tier cloud model (D12); dropped edits cost nothing"
+  },
+  "slowMinutes": 20,
+  "keptEdits": 296,
+  "peakLag": 514,
+  "verification": {
+    "startOffset": "204978",
+    "endOffset": "206543",
+    "handled": 1565,
+    "expected": 1565,
+    "duplicates": 0,
+    "gaps": [],
+    "ok": true
+  },
+  "samples": [
+    {
+      "t": "2026-10-04T05:34:56.100Z",
+      "elapsedS": 15,
+      "phase": "slow",
+      "high": "205003",
+      "committed": "204990",
+      "lag": 13,
+      "handled": 12
+    },
+    {
+      "t": "2026-10-04T05:35:11.098Z",
+      "elapsedS": 30,
+      "phase": "slow",
+      "high": "205025",
+      "committed": "205007",
+      "lag": 18,
+      "handled": 29
+    },
+    {
+      "t": "2026-10-04T05:35:26.101Z",
+      "elapsedS": 45,
+      "phase": "slow",
+      "high": "205044",
+      "committed": "205022",
+      "lag": 22,
+      "handled": 44
+    },
+    {
+      "t": "2026-10-04T05:35:41.106Z",
+      "elapsedS": 60,
+      "phase": "slow",
+      "high": "205065",
+      "committed": "205050",
+      "lag": 15,
+      "handled": 72
+    },
+    {
+      "t": "2026-10-04T05:35:56.105Z",
+      "elapsedS": 75,
+      "phase": "slow",
+      "high": "205081",
+      "committed": "205057",
+      "lag": 24,
+      "handled": 79
+    },
+    {
+      "t": "2026-10-04T05:36:11.101Z",
+      "elapsedS": 90,
+      "phase": "slow",
+      "high": "205101",
+      "committed": "205068",
+      "lag": 33,
+      "handled": 90
+    },
+    {
+      "t": "2026-10-04T05:36:26.105Z",
+      "elapsedS": 105,
+      "phase": "slow",
+      "high": "205121",
+      "committed": "205077",
+      "lag": 44,
+      "handled": 99
+    },
+    {
+      "t": "2026-10-04T05:36:41.101Z",
+      "elapsedS": 120,
+      "phase": "slow",
+      "high": "205136",
+      "committed": "205082",
+      "lag": 54,
+      "handled": 104
+    },
+    {
+      "t": "2026-10-04T05:36:56.105Z",
+      "elapsedS": 135,
+      "phase": "slow",
+      "high": "205151",
+      "committed": "205103",
+      "lag": 48,
+      "handled": 125
+    },
+    {
+      "t": "2026-10-04T05:37:11.100Z",
+      "elapsedS": 150,
+      "phase": "slow",
+      "high": "205172",
+      "committed": "205124",
+      "lag": 48,
+      "handled": 146
+    },
+    {
+      "t": "2026-10-04T05:37:26.105Z",
+      "elapsedS": 165,
+      "phase": "slow",
+      "high": "205193",
+      "committed": "205141",
+      "lag": 52,
+      "handled": 163
+    },
+    {
+      "t": "2026-10-04T05:37:41.106Z",
+      "elapsedS": 180,
+      "phase": "slow",
+      "high": "205217",
+      "committed": "205152",
+      "lag": 65,
+      "handled": 174
+    },
+    {
+      "t": "2026-10-04T05:37:56.101Z",
+      "elapsedS": 195,
+      "phase": "slow",
+      "high": "205234",
+      "committed": "205176",
+      "lag": 58,
+      "handled": 198
+    },
+    {
+      "t": "2026-10-04T05:38:11.111Z",
+      "elapsedS": 210,
+      "phase": "slow",
+      "high": "205255",
+      "committed": "205185",
+      "lag": 70,
+      "handled": 207
+    },
+    {
+      "t": "2026-10-04T05:38:26.101Z",
+      "elapsedS": 225,
+      "phase": "slow",
+      "high": "205274",
+      "committed": "205194",
+      "lag": 80,
+      "handled": 216
+    },
+    {
+      "t": "2026-10-04T05:38:41.103Z",
+      "elapsedS": 240,
+      "phase": "slow",
+      "high": "205299",
+      "committed": "205208",
+      "lag": 91,
+      "handled": 230
+    },
+    {
+      "t": "2026-10-04T05:38:56.101Z",
+      "elapsedS": 255,
+      "phase": "slow",
+      "high": "205321",
+      "committed": "205222",
+      "lag": 99,
+      "handled": 244
+    },
+    {
+      "t": "2026-10-04T05:39:11.103Z",
+      "elapsedS": 270,
+      "phase": "slow",
+      "high": "205336",
+      "committed": "205229",
+      "lag": 107,
+      "handled": 251
+    },
+    {
+      "t": "2026-10-04T05:39:26.104Z",
+      "elapsedS": 285,
+      "phase": "slow",
+      "high": "205358",
+      "committed": "205236",
+      "lag": 122,
+      "handled": 258
+    },
+    {
+      "t": "2026-10-04T05:39:41.104Z",
+      "elapsedS": 300,
+      "phase": "slow",
+      "high": "205374",
+      "committed": "205245",
+      "lag": 129,
+      "handled": 267
+    },
+    {
+      "t": "2026-10-04T05:39:56.104Z",
+      "elapsedS": 315,
+      "phase": "slow",
+      "high": "205394",
+      "committed": "205250",
+      "lag": 144,
+      "handled": 272
+    },
+    {
+      "t": "2026-10-04T05:40:11.103Z",
+      "elapsedS": 330,
+      "phase": "slow",
+      "high": "205422",
+      "committed": "205264",
+      "lag": 158,
+      "handled": 286
+    },
+    {
+      "t": "2026-10-04T05:40:26.103Z",
+      "elapsedS": 345,
+      "phase": "slow",
+      "high": "205443",
+      "committed": "205274",
+      "lag": 169,
+      "handled": 296
+    },
+    {
+      "t": "2026-10-04T05:40:41.106Z",
+      "elapsedS": 360,
+      "phase": "slow",
+      "high": "205464",
+      "committed": "205288",
+      "lag": 176,
+      "handled": 310
+    },
+    {
+      "t": "2026-10-04T05:40:56.105Z",
+      "elapsedS": 375,
+      "phase": "slow",
+      "high": "205482",
+      "committed": "205294",
+      "lag": 188,
+      "handled": 316
+    },
+    {
+      "t": "2026-10-04T05:41:11.115Z",
+      "elapsedS": 390,
+      "phase": "slow",
+      "high": "205505",
+      "committed": "205303",
+      "lag": 202,
+      "handled": 325
+    },
+    {
+      "t": "2026-10-04T05:41:26.110Z",
+      "elapsedS": 405,
+      "phase": "slow",
+      "high": "205525",
+      "committed": "205314",
+      "lag": 211,
+      "handled": 336
+    },
+    {
+      "t": "2026-10-04T05:41:41.106Z",
+      "elapsedS": 420,
+      "phase": "slow",
+      "high": "205547",
+      "committed": "205324",
+      "lag": 223,
+      "handled": 346
+    },
+    {
+      "t": "2026-10-04T05:41:56.102Z",
+      "elapsedS": 435,
+      "phase": "slow",
+      "high": "205566",
+      "committed": "205336",
+      "lag": 230,
+      "handled": 358
+    },
+    {
+      "t": "2026-10-04T05:42:11.104Z",
+      "elapsedS": 450,
+      "phase": "slow",
+      "high": "205582",
+      "committed": "205365",
+      "lag": 217,
+      "handled": 387
+    },
+    {
+      "t": "2026-10-04T05:42:26.107Z",
+      "elapsedS": 465,
+      "phase": "slow",
+      "high": "205599",
+      "committed": "205375",
+      "lag": 224,
+      "handled": 397
+    },
+    {
+      "t": "2026-10-04T05:42:41.106Z",
+      "elapsedS": 480,
+      "phase": "slow",
+      "high": "205620",
+      "committed": "205388",
+      "lag": 232,
+      "handled": 410
+    },
+    {
+      "t": "2026-10-04T05:42:56.107Z",
+      "elapsedS": 495,
+      "phase": "slow",
+      "high": "205638",
+      "committed": "205398",
+      "lag": 240,
+      "handled": 420
+    },
+    {
+      "t": "2026-10-04T05:43:11.107Z",
+      "elapsedS": 510,
+      "phase": "slow",
+      "high": "205655",
+      "committed": "205417",
+      "lag": 238,
+      "handled": 439
+    },
+    {
+      "t": "2026-10-04T05:43:26.106Z",
+      "elapsedS": 525,
+      "phase": "slow",
+      "high": "205672",
+      "committed": "205421",
+      "lag": 251,
+      "handled": 443
+    },
+    {
+      "t": "2026-10-04T05:43:41.108Z",
+      "elapsedS": 540,
+      "phase": "slow",
+      "high": "205692",
+      "committed": "205450",
+      "lag": 242,
+      "handled": 472
+    },
+    {
+      "t": "2026-10-04T05:43:56.108Z",
+      "elapsedS": 555,
+      "phase": "slow",
+      "high": "205711",
+      "committed": "205456",
+      "lag": 255,
+      "handled": 478
+    },
+    {
+      "t": "2026-10-04T05:44:11.110Z",
+      "elapsedS": 570,
+      "phase": "slow",
+      "high": "205724",
+      "committed": "205470",
+      "lag": 254,
+      "handled": 492
+    },
+    {
+      "t": "2026-10-04T05:44:26.109Z",
+      "elapsedS": 585,
+      "phase": "slow",
+      "high": "205739",
+      "committed": "205472",
+      "lag": 267,
+      "handled": 494
+    },
+    {
+      "t": "2026-10-04T05:44:41.113Z",
+      "elapsedS": 600,
+      "phase": "slow",
+      "high": "205756",
+      "committed": "205481",
+      "lag": 275,
+      "handled": 503
+    },
+    {
+      "t": "2026-10-04T05:44:56.111Z",
+      "elapsedS": 615,
+      "phase": "slow",
+      "high": "205770",
+      "committed": "205501",
+      "lag": 269,
+      "handled": 523
+    },
+    {
+      "t": "2026-10-04T05:45:11.113Z",
+      "elapsedS": 630,
+      "phase": "slow",
+      "high": "205791",
+      "committed": "205532",
+      "lag": 259,
+      "handled": 554
+    },
+    {
+      "t": "2026-10-04T05:45:26.111Z",
+      "elapsedS": 645,
+      "phase": "slow",
+      "high": "205806",
+      "committed": "205536",
+      "lag": 270,
+      "handled": 558
+    },
+    {
+      "t": "2026-10-04T05:45:41.110Z",
+      "elapsedS": 660,
+      "phase": "slow",
+      "high": "205829",
+      "committed": "205545",
+      "lag": 284,
+      "handled": 567
+    },
+    {
+      "t": "2026-10-04T05:45:56.115Z",
+      "elapsedS": 675,
+      "phase": "slow",
+      "high": "205856",
+      "committed": "205556",
+      "lag": 300,
+      "handled": 578
+    },
+    {
+      "t": "2026-10-04T05:46:11.112Z",
+      "elapsedS": 690,
+      "phase": "slow",
+      "high": "205877",
+      "committed": "205563",
+      "lag": 314,
+      "handled": 585
+    },
+    {
+      "t": "2026-10-04T05:46:26.113Z",
+      "elapsedS": 705,
+      "phase": "slow",
+      "high": "205891",
+      "committed": "205570",
+      "lag": 321,
+      "handled": 592
+    },
+    {
+      "t": "2026-10-04T05:46:41.117Z",
+      "elapsedS": 720,
+      "phase": "slow",
+      "high": "205910",
+      "committed": "205582",
+      "lag": 328,
+      "handled": 604
+    },
+    {
+      "t": "2026-10-04T05:46:56.115Z",
+      "elapsedS": 735,
+      "phase": "slow",
+      "high": "205928",
+      "committed": "205586",
+      "lag": 342,
+      "handled": 608
+    },
+    {
+      "t": "2026-10-04T05:47:11.115Z",
+      "elapsedS": 750,
+      "phase": "slow",
+      "high": "205946",
+      "committed": "205597",
+      "lag": 349,
+      "handled": 619
+    },
+    {
+      "t": "2026-10-04T05:47:26.114Z",
+      "elapsedS": 765,
+      "phase": "slow",
+      "high": "205962",
+      "committed": "205604",
+      "lag": 358,
+      "handled": 626
+    },
+    {
+      "t": "2026-10-04T05:47:41.115Z",
+      "elapsedS": 780,
+      "phase": "slow",
+      "high": "205982",
+      "committed": "205610",
+      "lag": 372,
+      "handled": 632
+    },
+    {
+      "t": "2026-10-04T05:47:56.117Z",
+      "elapsedS": 795,
+      "phase": "slow",
+      "high": "205995",
+      "committed": "205613",
+      "lag": 382,
+      "handled": 635
+    },
+    {
+      "t": "2026-10-04T05:48:11.150Z",
+      "elapsedS": 810,
+      "phase": "slow",
+      "high": "206020",
+      "committed": "205623",
+      "lag": 397,
+      "handled": 645
+    },
+    {
+      "t": "2026-10-04T05:48:26.116Z",
+      "elapsedS": 825,
+      "phase": "slow",
+      "high": "206039",
+      "committed": "205634",
+      "lag": 405,
+      "handled": 656
+    },
+    {
+      "t": "2026-10-04T05:48:41.118Z",
+      "elapsedS": 840,
+      "phase": "slow",
+      "high": "206060",
+      "committed": "205650",
+      "lag": 410,
+      "handled": 672
+    },
+    {
+      "t": "2026-10-04T05:48:56.116Z",
+      "elapsedS": 855,
+      "phase": "slow",
+      "high": "206078",
+      "committed": "205661",
+      "lag": 417,
+      "handled": 683
+    },
+    {
+      "t": "2026-10-04T05:49:11.116Z",
+      "elapsedS": 870,
+      "phase": "slow",
+      "high": "206094",
+      "committed": "205671",
+      "lag": 423,
+      "handled": 693
+    },
+    {
+      "t": "2026-10-04T05:49:26.117Z",
+      "elapsedS": 885,
+      "phase": "slow",
+      "high": "206116",
+      "committed": "205682",
+      "lag": 434,
+      "handled": 704
+    },
+    {
+      "t": "2026-10-04T05:49:41.118Z",
+      "elapsedS": 900,
+      "phase": "slow",
+      "high": "206133",
+      "committed": "205694",
+      "lag": 439,
+      "handled": 716
+    },
+    {
+      "t": "2026-10-04T05:49:56.118Z",
+      "elapsedS": 915,
+      "phase": "slow",
+      "high": "206150",
+      "committed": "205704",
+      "lag": 446,
+      "handled": 726
+    },
+    {
+      "t": "2026-10-04T05:50:11.122Z",
+      "elapsedS": 930,
+      "phase": "slow",
+      "high": "206174",
+      "committed": "205720",
+      "lag": 454,
+      "handled": 742
+    },
+    {
+      "t": "2026-10-04T05:50:26.118Z",
+      "elapsedS": 945,
+      "phase": "slow",
+      "high": "206192",
+      "committed": "205744",
+      "lag": 448,
+      "handled": 766
+    },
+    {
+      "t": "2026-10-04T05:50:41.121Z",
+      "elapsedS": 960,
+      "phase": "slow",
+      "high": "206209",
+      "committed": "205764",
+      "lag": 445,
+      "handled": 786
+    },
+    {
+      "t": "2026-10-04T05:50:56.121Z",
+      "elapsedS": 975,
+      "phase": "slow",
+      "high": "206230",
+      "committed": "205791",
+      "lag": 439,
+      "handled": 813
+    },
+    {
+      "t": "2026-10-04T05:51:11.124Z",
+      "elapsedS": 990,
+      "phase": "slow",
+      "high": "206243",
+      "committed": "205809",
+      "lag": 434,
+      "handled": 831
+    },
+    {
+      "t": "2026-10-04T05:51:26.130Z",
+      "elapsedS": 1005,
+      "phase": "slow",
+      "high": "206260",
+      "committed": "205815",
+      "lag": 445,
+      "handled": 837
+    },
+    {
+      "t": "2026-10-04T05:51:41.119Z",
+      "elapsedS": 1020,
+      "phase": "slow",
+      "high": "206280",
+      "committed": "205825",
+      "lag": 455,
+      "handled": 847
+    },
+    {
+      "t": "2026-10-04T05:51:56.124Z",
+      "elapsedS": 1035,
+      "phase": "slow",
+      "high": "206295",
+      "committed": "205829",
+      "lag": 466,
+      "handled": 851
+    },
+    {
+      "t": "2026-10-04T05:52:11.126Z",
+      "elapsedS": 1050,
+      "phase": "slow",
+      "high": "206318",
+      "committed": "205844",
+      "lag": 474,
+      "handled": 866
+    },
+    {
+      "t": "2026-10-04T05:52:26.125Z",
+      "elapsedS": 1065,
+      "phase": "slow",
+      "high": "206340",
+      "committed": "205851",
+      "lag": 489,
+      "handled": 873
+    },
+    {
+      "t": "2026-10-04T05:52:41.129Z",
+      "elapsedS": 1080,
+      "phase": "slow",
+      "high": "206361",
+      "committed": "205870",
+      "lag": 491,
+      "handled": 892
+    },
+    {
+      "t": "2026-10-04T05:52:56.123Z",
+      "elapsedS": 1095,
+      "phase": "slow",
+      "high": "206379",
+      "committed": "205874",
+      "lag": 505,
+      "handled": 896
+    },
+    {
+      "t": "2026-10-04T05:53:11.125Z",
+      "elapsedS": 1110,
+      "phase": "slow",
+      "high": "206400",
+      "committed": "205898",
+      "lag": 502,
+      "handled": 920
+    },
+    {
+      "t": "2026-10-04T05:53:26.123Z",
+      "elapsedS": 1125,
+      "phase": "slow",
+      "high": "206418",
+      "committed": "205915",
+      "lag": 503,
+      "handled": 937
+    },
+    {
+      "t": "2026-10-04T05:53:41.125Z",
+      "elapsedS": 1140,
+      "phase": "slow",
+      "high": "206434",
+      "committed": "205943",
+      "lag": 491,
+      "handled": 965
+    },
+    {
+      "t": "2026-10-04T05:53:56.128Z",
+      "elapsedS": 1155,
+      "phase": "slow",
+      "high": "206451",
+      "committed": "205954",
+      "lag": 497,
+      "handled": 976
+    },
+    {
+      "t": "2026-10-04T05:54:11.130Z",
+      "elapsedS": 1170,
+      "phase": "slow",
+      "high": "206467",
+      "committed": "205968",
+      "lag": 499,
+      "handled": 990
+    },
+    {
+      "t": "2026-10-04T05:54:26.126Z",
+      "elapsedS": 1185,
+      "phase": "slow",
+      "high": "206486",
+      "committed": "205972",
+      "lag": 514,
+      "handled": 994
+    },
+    {
+      "t": "2026-10-04T05:54:41.129Z",
+      "elapsedS": 1200,
+      "phase": "drain",
+      "high": "206507",
+      "committed": "206004",
+      "lag": 503,
+      "handled": 1026
+    },
+    {
+      "t": "2026-10-04T05:54:56.130Z",
+      "elapsedS": 1215,
+      "phase": "drain",
+      "high": "206528",
+      "committed": "206528",
+      "lag": 0,
+      "handled": 1550
+    },
+    {
+      "t": "2026-10-04T05:55:11.121Z",
+      "elapsedS": 1230,
+      "phase": "drain",
+      "high": "206543",
+      "committed": "206543",
+      "lag": 0,
+      "handled": 1565
+    }
+  ]
+}

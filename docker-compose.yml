@@ -1,6 +1,11 @@
-# Local stack, no cluster needed: `docker compose up -d`, then `npm run ingest -- --sink kafka`.
+# The whole system, no cluster needed:
+#
+#   docker compose up -d --build        Redpanda, ingester, pipeline stages, classifier
+#   docker compose logs -f pipeline
+#
 # The captured log lives in the redpanda-data volume. `docker compose down` keeps it;
 # `docker compose down -v` DELETES it, and with it every replay range not yet snapshotted.
+# Health: each service answers /livez and /readyz on port 8080 (published below for the pipeline).
 services:
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v26.2.3
@@ -22,6 +27,47 @@ services:
       interval: 5s
       timeout: 10s
       retries: 20
+
+  ingester:
+    build: .
+    image: wikipatrol:local
+    command: ["src/ingest/main.ts", "--sink", "kafka", "--brokers", "redpanda:9092"]
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck: &probe
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8080/livez').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+
+  pipeline:
+    image: wikipatrol:local
+    command: ["src/pipeline/main.ts", "--brokers", "redpanda:9092"]
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      ingester:
+        condition: service_started
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    healthcheck: *probe
+
+  classifier:
+    image: wikipatrol:local
+    command: ["src/classifier/main.ts", "--brokers", "redpanda:9092"]
+    environment:
+      # heuristic needs nothing; for a local model, e.g. ollama:gemma3:4b:p2-guide plus OLLAMA_HOST.
+      CLASSIFIER_CONFIG: ${CLASSIFIER_CONFIG:-heuristic}
+      OLLAMA_HOST: ${OLLAMA_HOST:-http://host.docker.internal:11434}
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck: *probe
 
 volumes:
   redpanda-data:

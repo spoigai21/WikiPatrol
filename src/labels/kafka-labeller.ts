@@ -4,8 +4,9 @@
 // (D7): labels are emitted in source-offset order, so resuming after that offset reproduces the
 // rest of the stream of labels byte-for-byte. A crash mid-batch can only cause re-reading.
 
+import { randomUUID } from 'node:crypto';
 import { Kafka, logLevel } from 'kafkajs';
-import { ensureKeptTopic, readTail } from '../kafka/topics.ts';
+import { chunkBySize, ensureKeptTopic, readTail } from '../kafka/topics.ts';
 import { DEFAULT_LABELLER, Labeller, type Label, type LabellerOptions } from './labeller.ts';
 
 export const SOURCE_OFFSET_HEADER = 'source-offset';
@@ -19,6 +20,8 @@ export interface KafkaLabellerOptions {
   log?: (msg: string) => void;
   /** Called after each batch of labels is durably written (tests use it to stop mid-run). */
   onWritten?: (labels: readonly Label[]) => void;
+  /** Called after each input batch is read, with its last offset (health probes). */
+  onRead?: (lastOffset: string) => void;
 }
 
 export interface KafkaLabellerStats {
@@ -33,7 +36,7 @@ export async function runKafkaLabeller(opts: KafkaLabellerOptions): Promise<Kafk
   const admin = kafka.admin();
   const producer = kafka.producer({ idempotent: true, maxInFlightRequests: 1, allowAutoTopicCreation: false });
   // No consumer group state: the label topic itself is the checkpoint.
-  const consumer = kafka.consumer({ groupId: `wikipatrol-labeller-${process.pid}-${Date.now()}` });
+  const consumer = kafka.consumer({ groupId: `wikipatrol-labeller-${process.pid}-${randomUUID()}`, sessionTimeout: 300_000, rebalanceTimeout: 300_000, heartbeatInterval: 10_000 });
   const labeller = new Labeller(opts.labeller ?? DEFAULT_LABELLER);
   const stats: KafkaLabellerStats = { resumedFrom: undefined, read: 0, written: 0 };
 
@@ -69,13 +72,12 @@ export async function runKafkaLabeller(opts: KafkaLabellerOptions): Promise<Kafk
           if (m.value) out.push(...labeller.feed(m.value.toString(), m.offset));
           resolveOffset(m.offset);
         }
+        const lastRead = batch.messages.at(-1)?.offset;
+        if (lastRead !== undefined) opts.onRead?.(lastRead);
         if (out.length === 0 || stop.signal.aborted) return;
         try {
-          await producer.send({
-            topic: opts.labelTopic,
-            acks: -1,
-            messages: out.map((l) => ({ key: String(l.revId), value: JSON.stringify(l), headers: { [SOURCE_OFFSET_HEADER]: l.sourceOffset } })),
-          });
+          const messages = out.map((l) => ({ key: String(l.revId), value: JSON.stringify(l), headers: { [SOURCE_OFFSET_HEADER]: l.sourceOffset } }));
+          for (const chunk of chunkBySize(messages)) await producer.send({ topic: opts.labelTopic, acks: -1, messages: chunk });
         } catch (err) {
           failed = err;
           stop.abort();
@@ -83,7 +85,14 @@ export async function runKafkaLabeller(opts: KafkaLabellerOptions): Promise<Kafk
         }
         stats.written += out.length;
         opts.onWritten?.(out);
-        await heartbeat();
+        try {
+          await heartbeat();
+        } catch (err) {
+          // A rebalance would redeliver this batch to a labeller that already absorbed it. Stop
+          // instead; a restart rebuilds the state from the checkpoint.
+          failed = err;
+          stop.abort();
+        }
       },
     });
     consumer.seek({ topic: opts.rawTopic, partition: 0, offset: start });
