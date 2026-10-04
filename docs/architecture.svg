@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 560" width="1160" height="560" role="img" aria-label="WikiPatrol architecture: live pipeline through Kafka topics, and offline evaluation on a frozen sealed set">
+<style>
+  :root { --surface: #fcfcfb; --panel: #f1f0ec; --ink: #0b0b0b; --ink-2: #52514e; --line: #8a8984; --topic: #e8f0fb; --topic-edge: #2a78d6; --svc: #ffffff; --svc-edge: #52514e; --scale: #eb6834; }
+  @media (prefers-color-scheme: dark) { :root { --surface: #1a1a19; --panel: #242422; --ink: #ffffff; --ink-2: #c3c2b7; --line: #8a8984; --topic: #1d2a3a; --topic-edge: #3987e5; --svc: #1f1f1e; --svc-edge: #c3c2b7; --scale: #d95926; } }
+  text { font: 13px system-ui, -apple-system, sans-serif; fill: var(--ink); }
+  .small { font-size: 11px; fill: var(--ink-2); }
+  .h { font-size: 14px; font-weight: 600; }
+  .title { font-size: 16px; font-weight: 700; }
+  .svc { fill: var(--svc); stroke: var(--svc-edge); stroke-width: 1.5; }
+  .topic { fill: var(--topic); stroke: var(--topic-edge); stroke-width: 1.5; }
+  .ext { fill: var(--panel); stroke: var(--line); stroke-width: 1; stroke-dasharray: 4 3; }
+  .arrow { stroke: var(--line); stroke-width: 1.5; fill: none; marker-end: url(#a); }
+  .panel { fill: var(--panel); stroke: none; }
+</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--line)"/></marker></defs>
+<rect width="1160" height="560" fill="var(--surface)"/>
+
+<!-- Live pipeline -->
+<rect class="panel" x="12" y="12" width="1136" height="300" rx="10"/>
+<text class="title" x="28" y="38">Live pipeline</text>
+<text class="small" x="28" y="56">Kafka (Redpanda) topics in blue — kept forever, replayable by offset. One partition each except wiki.scored.</text>
+
+<rect class="ext" x="28" y="92" width="150" height="62" rx="8"/>
+<text class="h" x="40" y="116">Wikimedia</text>
+<text class="small" x="40" y="133">EventStreams (SSE)</text>
+<text class="small" x="40" y="147">recentchange + tags</text>
+
+<rect class="svc" x="212" y="92" width="110" height="62" rx="8"/>
+<text class="h" x="226" y="118">ingester</text>
+<text class="small" x="226" y="136">resume by id,</text>
+<text class="small" x="226" y="149">dedupe</text>
+<path class="arrow" d="M178,123 L210,123"/>
+
+<rect class="topic" x="356" y="104" width="96" height="38" rx="19"/>
+<text x="373" y="128">wiki.raw</text>
+<path class="arrow" d="M322,123 L354,123"/>
+
+<rect class="svc" x="486" y="92" width="84" height="62" rx="8"/>
+<text class="h" x="502" y="128">parse</text>
+<path class="arrow" d="M452,123 L484,123"/>
+
+<rect class="topic" x="604" y="104" width="100" height="38" rx="19"/>
+<text x="618" y="128">wiki.edits</text>
+<path class="arrow" d="M570,123 L602,123"/>
+
+<rect class="svc" x="738" y="92" width="112" height="62" rx="8"/>
+<text class="h" x="752" y="118">enrich</text>
+<text class="small" x="752" y="136">account lookup,</text>
+<text class="small" x="752" y="149">recorded</text>
+<path class="arrow" d="M704,123 L736,123"/>
+
+<rect class="topic" x="884" y="104" width="118" height="38" rx="19"/>
+<text x="898" y="128">wiki.enriched</text>
+<path class="arrow" d="M850,123 L882,123"/>
+
+<rect class="svc" x="1036" y="92" width="96" height="62" rx="8"/>
+<text class="h" x="1052" y="118">filter</text>
+<text class="small" x="1052" y="136">bots, trusted</text>
+<text class="small" x="1052" y="149">accounts</text>
+<path class="arrow" d="M1002,123 L1034,123"/>
+
+<!-- second row of the live pipeline, right to left -->
+<rect class="topic" x="996" y="206" width="136" height="38" rx="19"/>
+<text x="1010" y="230">wiki.scored ×6</text>
+<path class="arrow" d="M1084,154 L1084,204"/>
+
+<rect class="svc" x="762" y="190" width="194" height="70" rx="8" style="stroke: var(--scale)"/>
+<text class="h" x="776" y="214">classifier  1 → 6 replicas</text>
+<text class="small" x="776" y="232">scaled on consumer lag (KEDA)</text>
+<text class="small" x="776" y="246">heuristic or a model tier</text>
+<path class="arrow" d="M996,225 L958,225"/>
+
+<rect class="topic" x="578" y="206" width="144" height="38" rx="19"/>
+<text x="592" y="230">wiki.predictions</text>
+<path class="arrow" d="M762,225 L724,225"/>
+
+<rect class="svc" x="356" y="190" width="104" height="70" rx="8"/>
+<text class="h" x="370" y="214">labeller</text>
+<text class="small" x="370" y="232">reverted within</text>
+<text class="small" x="370" y="246">72 h, event time</text>
+<path class="arrow" d="M404,142 L404,188"/>
+
+<rect class="topic" x="212" y="206" width="112" height="38" rx="19"/>
+<text x="226" y="230">wiki.labels</text>
+<path class="arrow" d="M356,225 L326,225"/>
+
+<rect class="svc" x="28" y="190" width="84" height="54" rx="8"/>
+<text class="h" x="46" y="222">dlq</text>
+<rect class="topic" x="28" y="262" width="96" height="34" rx="17"/>
+<text x="44" y="284">wiki.dlq</text>
+<path class="arrow" d="M70,244 L70,260"/>
+<path class="arrow" d="M372,142 L372,170 L70,170 L70,188"/>
+<text class="small" x="120" y="186">unreadable events</text>
+
+<!-- Offline evaluation -->
+<rect class="panel" x="12" y="326" width="1136" height="222" rx="10"/>
+<text class="title" x="28" y="352">Offline evaluation (where the numbers come from)</text>
+<text class="small" x="28" y="370">Replayed hours, frozen as checksummed snapshots. The sealed set is scored once per configuration.</text>
+
+<rect class="topic" x="28" y="398" width="188" height="56" rx="12"/>
+<text class="h" x="42" y="422">sealed set</text>
+<text class="small" x="42" y="440">1,000 edits · diffs · labels</text>
+
+<rect class="svc" x="252" y="390" width="230" height="138" rx="8"/>
+<text class="h" x="266" y="414">grid  (3 prompts × 3 tiers)</text>
+<text class="small" x="266" y="434">local: Ollama gemma3:4b</text>
+<text class="small" x="266" y="452">cloud: Groq gpt-oss-120b</text>
+<text class="small" x="266" y="470">cloud: Gemini 3.5 Flash-Lite</text>
+<text class="small" x="266" y="490">baselines: filter, LiftWing</text>
+<text class="small" x="266" y="508">(revert-risk, ORES damaging)</text>
+<path class="arrow" d="M216,426 L250,426"/>
+
+<rect class="svc" x="518" y="390" width="168" height="62" rx="8"/>
+<text class="h" x="532" y="414">calibration</text>
+<text class="small" x="532" y="434">confidence usable?</text>
+<path class="arrow" d="M482,421 L516,421"/>
+
+<rect class="svc" x="518" y="466" width="168" height="62" rx="8"/>
+<text class="h" x="532" y="490">ladder</text>
+<text class="small" x="532" y="510">recall vs $ per 1k edits</text>
+<path class="arrow" d="M482,497 L516,497"/>
+
+<rect class="svc" x="722" y="390" width="200" height="62" rx="8"/>
+<text class="h" x="736" y="414">drift  (nightly CronJob)</text>
+<text class="small" x="736" y="434">50 fixed edits, alert on change</text>
+<path class="arrow" d="M440,390 L440,380 L822,380 L822,388"/>
+
+<rect class="ext" x="956" y="390" width="176" height="138" rx="8"/>
+<text class="h" x="970" y="414">results/</text>
+<text class="small" x="970" y="434">committed JSON per run</text>
+<text class="small" x="970" y="452">dated price table</text>
+<text class="small" x="970" y="470">→ README, dashboard</text>
+<path class="arrow" d="M686,497 L954,497"/>
+<path class="arrow" d="M922,421 L954,421"/>
+</svg>

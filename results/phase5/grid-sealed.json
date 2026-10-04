@@ -1,5 +1,5 @@
 {
-  "scoredAt": "2026-10-03T22:31:06.150Z",
+  "scoredAt": "2026-10-04T17:27:01.415Z",
   "set": "sealed",
   "edits": 1000,
   "target": "reverted within 72h (D9); population: edits that pass the default filter (D10, D12)",
@@ -135,19 +135,112 @@
       "tokensPerEdit": null
     },
     {
+      "config": "gemini:gemini-3.5-flash-lite__p1-plain",
+      "modelVersions": [
+        "gemini-3.5-flash-lite"
+      ],
+      "edits": 984,
+      "complete": false,
+      "flagged": 0.3079,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.2772,
+        "low": 0.2299,
+        "high": 0.3302,
+        "n": 303
+      },
+      "recall": {
+        "rate": 0.503,
+        "low": 0.428,
+        "high": 0.5779,
+        "n": 167
+      },
+      "f1": 0.3574,
+      "latencyMs": {
+        "p50": 573,
+        "p95": 727
+      },
+      "tokensPerEdit": {
+        "in": 463,
+        "out": 19
+      }
+    },
+    {
       "config": "groq:openai/gpt-oss-120b__p1-plain",
       "modelVersions": [
         "openai/gpt-oss-120b"
       ],
-      "edits": 3,
+      "edits": 507,
       "complete": false,
-      "flagged": 0,
+      "flagged": 0.497,
+      "invalid": 0.0099,
+      "precision": {
+        "rate": 0.25,
+        "low": 0.2006,
+        "high": 0.3069,
+        "n": 252
+      },
+      "recall": {
+        "rate": 0.3772,
+        "low": 0.3073,
+        "high": 0.4527,
+        "n": 167
+      },
+      "f1": 0.3007,
+      "latencyMs": {
+        "p50": 387,
+        "p95": 658
+      },
+      "tokensPerEdit": {
+        "in": 536,
+        "out": 55
+      }
+    },
+    {
+      "config": "groq:openai/gpt-oss-120b__p2-guide",
+      "modelVersions": [
+        "openai/gpt-oss-120b"
+      ],
+      "edits": 58,
+      "complete": false,
+      "flagged": 0.5172,
       "invalid": 0,
       "precision": {
-        "rate": null,
-        "low": null,
-        "high": null,
-        "n": 0
+        "rate": 0.2667,
+        "low": 0.1418,
+        "high": 0.4445,
+        "n": 30
+      },
+      "recall": {
+        "rate": 0.0479,
+        "low": 0.0245,
+        "high": 0.0917,
+        "n": 167
+      },
+      "f1": 0.0812,
+      "latencyMs": {
+        "p50": 451,
+        "p95": 970
+      },
+      "tokensPerEdit": {
+        "in": 722,
+        "out": 63
+      }
+    },
+    {
+      "config": "groq:openai/gpt-oss-120b__p3-reason",
+      "modelVersions": [
+        "openai/gpt-oss-120b"
+      ],
+      "edits": 8,
+      "complete": false,
+      "flagged": 0.125,
+      "invalid": 0,
+      "precision": {
+        "rate": 0,
+        "low": 0,
+        "high": 0.7935,
+        "n": 1
       },
       "recall": {
         "rate": 0,
@@ -157,12 +250,12 @@
       },
       "f1": 0,
       "latencyMs": {
-        "p50": 436,
-        "p95": 465
+        "p50": 465,
+        "p95": 655
       },
       "tokensPerEdit": {
-        "in": 485,
-        "out": 62
+        "in": 614,
+        "out": 90
       }
     },
     {
@@ -232,30 +325,30 @@
       "modelVersions": [
         "gemma3:4b"
       ],
-      "edits": 52,
-      "complete": false,
-      "flagged": 0.5385,
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.605,
       "invalid": 0,
       "precision": {
-        "rate": 0.2143,
-        "low": 0.1021,
-        "high": 0.3954,
-        "n": 28
+        "rate": 0.2,
+        "low": 0.1701,
+        "high": 0.2337,
+        "n": 605
       },
       "recall": {
-        "rate": 0.0359,
-        "low": 0.0166,
-        "high": 0.0762,
+        "rate": 0.7246,
+        "low": 0.6523,
+        "high": 0.7867,
         "n": 167
       },
-      "f1": 0.0615,
+      "f1": 0.3135,
       "latencyMs": {
-        "p50": 2943,
-        "p95": 4059
+        "p50": 3068,
+        "p95": 4675
       },
       "tokensPerEdit": {
-        "in": 689,
-        "out": 96
+        "in": 682,
+        "out": 94
       }
     }
   ]

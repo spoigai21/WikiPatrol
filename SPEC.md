@@ -237,6 +237,11 @@ join once their sealed runs finish.)*
   the label-noise estimate, and the dated price table
 - a write-up naming **where the model failed, how you noticed, and what you changed**
 
+*(Started 2026-10-04: `README.md` leads with what is measured and marks the headline as pending;
+`POSTMORTEM.md` is written as it happens; `docs/architecture.svg`; a static dashboard built from
+the committed results — `npm run dashboard:build`, served by Vercel via `vercel.json`, labelled as
+replayed data. Waiting on Phase 7 for the headline, the cost counter and the video.)*
+
 ---
 
 ## Stack

@@ -30,7 +30,8 @@
     "pipeline": "KAFKAJS_NO_PARTITIONER_WARNING=1 tsx src/pipeline/main.ts",
     "phase2:backpressure": "tsx src/phase2/backpressure.ts",
     "classifier": "KAFKAJS_NO_PARTITIONER_WARNING=1 tsx --env-file-if-exists=.env src/classifier/main.ts",
-    "phase9:drift": "tsx --env-file-if-exists=.env src/phase9/main.ts"
+    "phase9:drift": "tsx --env-file-if-exists=.env src/phase9/main.ts",
+    "dashboard:build": "tsx src/dashboard/build.ts"
   },
   "dependencies": {
     "kafkajs": "^2.2.4",
