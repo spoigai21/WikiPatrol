@@ -92,6 +92,8 @@ Each of these was caught, fixed, and given a test that fails without the fix.
 | A batch of outputs exceeded the broker's 1 MB request limit; the stage failed on it every restart | Second backpressure graph went flat; restart loop in the log | Every producer sends in ordered chunks under 512 KB (D13) |
 | Two stages starting in the same millisecond shared a temporary consumer group; one waited forever | Two stages never logged their start | Unique group per call; a test reproduces the hang (D13) |
 | The ingester could not start in a container (it created a local folder it did not need) | `docker compose` smoke test | Folder created only for the file sink |
+| Classifier replicas replaced during a recovery stayed in the consumer group for 5 minutes (a session length chosen for slow stages), so rebalances never finished, liveness probes restarted the live replicas, and the group never settled | 18 group members for 6 pods, backlog not moving | The classifier uses a 45-second session; it heartbeats after every model call (D16) |
+| The laptop slept on battery overnight, mid-run | A 5.4-hour hole in the Phase 8 record; `pmset` log | Run restarted; the rule is now "plugged in", because `caffeinate` cannot stop a low-battery sleep (D16) |
 | KEDA could not resolve the broker from its own namespace | `ScaledObject` not ready on the local cluster | Fully qualified broker address everywhere (D14) |
 
 Two backpressure runs were spoiled by these bugs; they are kept in `results/phase2/superseded/` and

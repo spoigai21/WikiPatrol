@@ -564,6 +564,60 @@ wrote `results/phase9/alerts.jsonl` with nobody watching. The CronJob that runs 
 `deploy/k8s/optional/drift-cronjob.yaml`, for the laptop's k3d cluster (it mounts the repo's
 `results/`); it has not yet run on a schedule.
 
+## D16 — The Phase 8 run: the autoscaler against a real day, with a paced model tier (DECIDED 2026-10-04)
+
+Written before the run started.
+
+**What it shows.** The classifier's replica count following the real feed over at least 24 hours
+— the spec's Phase 8 criterion — on a `kind` cluster on the laptop, fed live from Wikimedia.
+
+**The classifier tier** is the local model (`ollama:gemma3:4b`, prompt `p2-guide`, the best local
+configuration by F1 on the sealed set) behind the filter, as the spec asks: heuristics plus a small
+local model, no cloud APIs.
+
+**Why it is paced.** Unpaced, the local model answers in about a second, and the kept-edit stream
+is about 15–21 a minute (D8, D10): one replica would never fall behind and the autoscaler would
+have nothing to do all day. So each replica makes **at most one model call every 12 seconds**
+(5 a minute), standing in for a per-replica model quota — one API key per replica, as a rate-limited
+cloud tier would impose. The pace was chosen from the measured rates *before* the run, so that the
+real feed needs about 3 replicas at night and 4–5 by day, inside the 1–6 range. The replica count
+over the day is then the real feed's doing; the pace only sets the scale.
+
+**Recorded** once a minute (`npm run phase8:record`, `results/phase8/diurnal-*.jsonl`): HPA
+replicas and the lag metric it scales on, the classifier group's total lag, and the raw, scored and
+predictions topics' sizes (whose minute-to-minute differences are the feed rates).
+
+**Incidents during the run, logged as they happened:**
+- 2026-10-04 18:39–20:38 UTC: a first recording window, ended when Claude Code stopped the recorder
+  for low system memory; kept as `results/phase8/interrupted-diurnal-2026-10-04T1839Z.jsonl`, not
+  reported. The idle `docker compose` Redpanda was stopped to free memory, and the 24-hour window
+  restarted at 2026-10-05 00:14 UTC (`diurnal-2026-10-05T0014Z.jsonl`).
+- 2026-10-05 ~04:47–04:51 UTC: Ollama was quit on the host, so the model tier answered nothing for
+  about four minutes; the backlog grew and the HPA scaled from 3 to 6 replicas until it returned.
+  The cluster itself did not restart anything.
+- 2026-10-05 10:02–15:26 UTC: the Mac went into "Low Power Sleep" on battery (`pmset` log) and woke on
+  AC power. 5.4 hours unrecorded — the quietest US night hours. On wake, liveness probes restarted
+  the stages and classifier pods (no progress for hours: the probes doing their job), the ingester
+  resumed from its checkpoint and replayed the missed hours, and the HPA went to 6 replicas on the
+  catch-up backlog (~10,700) — a recovery burst, not the diurnal feed, and excluded as such. A second,
+  clean recording window starts automatically once that backlog has drained, to capture 24
+  continuous hours if the Mac stays on power.
+- 2026-10-05 16:45 UTC: Claude Code stopped the recorder for low memory again; restarted at 19:02 on
+  the owner's go-ahead. The post-sleep backlog had **not** drained (~24,000 messages: at 6 replicas ×
+  5 calls a minute the paced tier barely outruns the live feed), so that recording
+  (`interrupted-diurnal-2026-10-05T1902Z-backlog.jsonl`) is set aside too.
+- 2026-10-05 19:02–19:21 UTC, recovery: the backlog was drained by switching the classifier to the
+  instant `heuristic` tier for about a minute (those predictions are not used in any evaluation), then
+  the paced model was restored. This exposed a bug: the classifier's 5-minute consumer session (set
+  for the stages in Phase 2) kept replaced replicas in the group, every rebalance waited on them, the
+  live replicas made no progress, liveness probes restarted them, and the group never settled (18
+  members for 6 pods). The classifier now uses a 45-second session; the group settled within a
+  minute. **The clean 25-hour window starts at 2026-10-05 19:21 UTC** (`diurnal-2026-10-05T1921Z.jsonl`) on normal traffic.
+
+**Success** = over 24 hours, replicas rise when the feed rises and fall when it falls, with no
+container restarts and no gap in the record longer than the laptop was asleep — reported as it
+comes out, including if the swing is too small to move the replica count.
+
 ## Phase 0 prediction scorecard
 
 `PREDICTIONS.md` is frozen at tag `phase0-predictions` (7a4bd72). Scored here, by its own rule:

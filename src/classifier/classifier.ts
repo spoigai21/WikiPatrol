@@ -90,15 +90,24 @@ export interface ClassifierOptions {
   onProcessed?: (partition: number, offset: string) => void;
   /** Tests inject a predictor instead of a config. */
   predictor?: Predictor;
+  /**
+   * Minimum time between model calls in this replica, on top of the model's own limit: stands in
+   * for a per-replica quota (one API key each) in the Phase 8 run (D16).
+   */
+  paceMs?: number;
 }
 
 export async function runClassifier(opts: ClassifierOptions): Promise<void> {
   const log = opts.log ?? (() => {});
-  const predictor = opts.predictor ?? predictorFor(opts.config);
+  const base = opts.predictor ?? predictorFor(opts.config);
+  const predictor: Predictor = opts.paceMs && opts.paceMs > base.minIntervalMs ? { ...base, predict: (e) => base.predict(e), minIntervalMs: opts.paceMs } : base;
   const kafka = new Kafka({ clientId: `wikipatrol-classifier-${randomUUID().slice(0, 8)}`, brokers: opts.brokers, logLevel: logLevel.WARN });
   const admin = kafka.admin();
   const producer = kafka.producer({ idempotent: true, maxInFlightRequests: 1, allowAutoTopicCreation: false });
-  const consumer = kafka.consumer({ groupId: opts.groupId ?? 'wikipatrol-classifier', sessionTimeout: 300_000, rebalanceTimeout: 300_000, heartbeatInterval: 10_000 });
+  // Short timeouts: the classifier heartbeats after every model call (seconds apart), and its
+  // replicas come and go with the autoscaler. A long session would keep dead replicas in the group
+  // for minutes, stalling every rebalance until liveness probes restart the live ones too (D16).
+  const consumer = kafka.consumer({ groupId: opts.groupId ?? 'wikipatrol-classifier', sessionTimeout: 45_000, rebalanceTimeout: 60_000, heartbeatInterval: 5_000 });
 
   await admin.connect();
   await ensureKeptTopic(admin, opts.output);
@@ -106,7 +115,7 @@ export async function runClassifier(opts: ClassifierOptions): Promise<void> {
   await producer.connect();
   await consumer.connect();
   await consumer.subscribe({ topic: opts.input, fromBeginning: true });
-  log(`classifier (${predictor.config}): ${opts.input} -> ${opts.output}`);
+  log(`classifier (${predictor.config}${predictor.minIntervalMs ? `, at most one model call per ${predictor.minIntervalMs} ms` : ''}): ${opts.input} -> ${opts.output}`);
 
   let last = 0;
   await consumer.run({

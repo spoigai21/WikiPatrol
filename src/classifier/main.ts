@@ -39,6 +39,7 @@ health.add({ name: 'classifier', live: () => progress.live(), ready: () => progr
 const server = health.serve();
 progress.start();
 
-await runClassifier({ brokers, input: TOPICS.scored, output: TOPICS.predictions, config: String(values.config), groupId, signal: ctl.signal, log, onProcessed: () => progress.tick() });
+const pace = process.env.CLASSIFIER_PACE_MS ? { paceMs: Number(process.env.CLASSIFIER_PACE_MS) } : {};
+await runClassifier({ brokers, input: TOPICS.scored, output: TOPICS.predictions, config: String(values.config), groupId, signal: ctl.signal, log, ...pace, onProcessed: () => progress.tick() });
 server.close();
 await admin.disconnect();
