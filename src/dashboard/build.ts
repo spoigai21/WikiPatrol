@@ -27,7 +27,10 @@ const runDir = 'results/phase5/runs/sealed';
 const runs = readdirSync(runDir).filter((f) => f.endsWith('.jsonl')).map((f) => readRun(`${runDir}/${f}`)).filter((r) => r.length);
 const scores = runs.map((rows) => scoreRun(sealed, rows, rows[0]!.config)).sort((a, b) => Number(!a.config.startsWith('baseline:')) - Number(!b.config.startsWith('baseline:')) || a.config.localeCompare(b.config));
 const reverted = sealed.filter((e) => e.label === 'reverted').length;
-const llmRows = runs.filter((r) => !r[0]!.config.startsWith('baseline:')).reduce((a, r) => a + r.length, 0);
+const incomplete = scores.filter((x) => !x.complete).map((x) => x.config);
+// Phase 7: the ladder, once scored.
+type LadderPolicy = { policy: string; precision: { rate: number; low: number; high: number }; recall: { rate: number; low: number; high: number }; f1: number; escalated: number; usdPer1000ClassifiableEdits: number };
+const ladder = json<{ prices: { retrievedAt: string }; ladders: { cloudModel: string; chosenOnDev: { localPrompt: string; cloudPrompt: string; band: { lo: number; hi: number } }; sealed: LadderPolicy[] }[] }>('results/phase7/ladder.json');
 
 const filter = json<{ tables: Record<string, Record<string, { volumeRemoved: number; volumeRemovedNonBot: number; revertedLost: { rate: number; low: number; high: number } }>> }>('results/phase3/filter-eval.json')!;
 const validation = ['dev-2026-09-30T1200Z', 'heldout-2026-09-30T0400Z'].map((n) => json<{ compared: number; agreement: { rate: number } ; confusion: Record<string, number> }>(`results/phase4/validation-${n}.json`)!);
@@ -43,6 +46,12 @@ if (existsSync('results/phase6/sealed')) {
     calibImgs.push(f);
   }
 }
+// Phase 8: the final autoscaling report, once one exists (interrupted recordings are never shown).
+const p8 = existsSync('results/phase8') ? readdirSync('results/phase8').filter((f) => /^diurnal-.*\.report\.json$/.test(f)).sort().at(-1) : undefined;
+const phase8 = p8 ? json<{ from: string; to: string; hoursSpanned: number; feedVsReplicas30min: number; replicasRange: { min: number; max: number }; gaps: { minutes: number }[]; quietestHour: { start: string; feed: number; replicas: number }; busiestHour: { start: string; feed: number; replicas: number } }>(`results/phase8/${p8}`) : undefined;
+if (p8) copyFileSync(`results/phase8/${p8.replace('.report.json', '.svg')}`, `${OUT}/img/phase8.svg`);
+// Phases 3–4 on the live log, once the cluster's labels exist.
+const live = json<{ labels: { total: number; revertRate: { rate: number; low: number; high: number } }; filter: { volumeRemoved: number; revertedLost: { rate: number; low: number; high: number } } }>('results/phase4/live-labels.json');
 const drift = existsSync('results/phase9/alerts.jsonl') ? readFileSync('results/phase9/alerts.jsonl', 'utf8').trim().split('\n').map((l) => JSON.parse(l) as { at: string; degradedTest: number | null; config: string; alerts: string[] }) : [];
 const thresholds = json<{ minAgreement: number }>('results/phase9/thresholds.json');
 
@@ -93,7 +102,7 @@ const html = `<!doctype html>
 <h1>WikiPatrol</h1>
 <p class="lede">What does an expensive model buy you on Wikipedia's edit stream, when you cannot afford to call it on every edit?</p>
 
-<div class="banner"><strong>Replayed data, not a live feed.</strong> Every number here comes from Wikipedia edits replayed from the stream's history and frozen as snapshots, built from the files committed in the repository on ${new Date().toISOString().slice(0, 10)}. The model grid is still running on free tiers (${llmRows.toLocaleString('en-US')} of 9,000 answers in).</div>
+<div class="banner"><strong>Replayed data, not a live feed.</strong> Every number here comes from Wikipedia edits replayed from the stream's history and frozen as snapshots, built from the files committed in the repository on ${new Date().toISOString().slice(0, 10)}. ${incomplete.length ? `Unfinished and not counted: ${incomplete.map(esc).join(', ')} (left on a free tier).` : 'Every configuration is complete.'}</div>
 
 <h2>The target is revert, not vandalism</h2>
 <div class="cards">
@@ -110,15 +119,21 @@ ${Object.entries(filter.tables).flatMap(([hour, pols]) => Object.entries(pols).m
 </table></div>
 
 <h2>The grid — sealed set, revert prediction</h2>
-<p class="muted">Precision and recall with Wilson 95% intervals, on the 1,000 sealed edits that pass the filter (which itself drops 16–24% of reverted edits). AUROC and calibration error (ECE) from each model's stated probability.</p>
+<p class="muted">Precision and recall with Wilson 95% intervals, on the 1,000 sealed edits that pass the filter (which itself drops 13–24% of reverted edits). AUROC and calibration error (ECE) from each model's stated probability.</p>
 <div class="scroll"><table>
 <tr><th>Configuration</th><th>Precision</th><th>Recall</th><th>Flags</th><th>Invalid</th><th>AUROC</th><th>ECE</th></tr>
 ${grid}
 </table></div>
 
+${ladder ? `<h2>The ladder: filter → local → cloud</h2><p class="muted">Chosen on 200 dev edits by rules written down first, scored once. $ per 1,000 classifiable edits at list prices retrieved ${esc(ladder.prices.retrievedAt)}. The pre-registered ladder did not beat the local model alone: the local model's confidence is too weak to say which edits to send up.</p>${ladder.ladders.slice(0, 1).map((l) => `<p class="muted">Cloud step ${esc(l.cloudModel)} (${esc(l.chosenOnDev.cloudPrompt)}); escalate when the local model's p_revert is in [${l.chosenOnDev.band.lo}, ${l.chosenOnDev.band.hi}).</p><div class="scroll"><table><tr><th>Policy</th><th>Precision</th><th>Recall</th><th>F1</th><th>Sent to cloud</th><th>$ / 1,000 edits</th></tr>${l.sealed.map((r) => `<tr><td>${esc(r.policy)}</td><td>${ci(r.precision)}</td><td>${ci(r.recall)}</td><td>${r.f1.toFixed(3)}</td><td>${pct(r.escalated)}</td><td>$${r.usdPer1000ClassifiableEdits.toFixed(3)}</td></tr>`).join('')}</table></div>`).join('')}` : ''}
+
 ${calibImgs.length ? `<h2>Does the model know when it is wrong?</h2><p class="muted">Stated probability of revert against the share actually reverted. On the diagonal is calibrated.</p><div class="figs">${calibImgs.map((f) => `<img src="img/calib-${f}" alt="Reliability diagram: ${esc(f.replace('.svg', ''))}">`).join('')}</div>` : ''}
 
 ${backpressure ? `<h2>Why Kafka: backpressure</h2><p class="muted">A model tier at ${backpressure.slowTier.ratePerMinute} edits a minute fell ${backpressure.peakLag.toLocaleString('en-US')} behind in ${backpressure.slowMinutes} minutes of live traffic; drained at full speed, ${backpressure.verification.handled.toLocaleString('en-US')} messages handled ${backpressure.verification.ok ? 'exactly once' : '— verification failed'}.</p><img src="img/backpressure.svg" alt="Consumer lag over time">` : ''}
+
+${phase8 ? `<h2>Autoscaling on the real feed</h2><p class="muted">${phase8.hoursSpanned.toFixed(1)} hours (${esc(phase8.from.slice(0, 16).replace('T', ' '))} to ${esc(phase8.to.slice(0, 16).replace('T', ' '))} UTC${phase8.gaps.length ? `; ${phase8.gaps.reduce((a, g) => a + g.minutes, 0)} minutes unrecorded, shown as breaks` : ''}). Replicas ${phase8.replicasRange.min}–${phase8.replicasRange.max}; quietest hour ${Math.round(phase8.quietestHour.feed)} edits/min at ${phase8.quietestHour.replicas.toFixed(1)} replicas on average, busiest ${Math.round(phase8.busiestHour.feed)} at ${phase8.busiestHour.replicas.toFixed(1)}; feed vs replicas over 30-minute windows r = ${Number.isNaN(phase8.feedVsReplicas30min) ? '—' : phase8.feedVsReplicas30min}.</p><img src="img/phase8.svg" alt="Feed, replicas and lag over the day">` : ''}
+
+${live ? `<h2>Labels from the live log</h2><div class="cards"><div class="card"><div class="big">${live.labels.total.toLocaleString('en-US')}</div><p>edits labelled automatically 72 hours after they were made; ${ci(live.labels.revertRate)} reverted.</p></div><div class="card"><div class="big">${pct(live.filter.volumeRemoved)}</div><p>of them the filter removed, losing ${ci(live.filter.revertedLost)} of the reverted ones.</p></div></div>` : ''}
 
 <h2>Drift</h2>
 <p class="muted">Nightly reruns of 50 fixed sealed edits per configuration; alert below ${pct(thresholds?.minAgreement ?? 0.9, 0)} agreement with its own sealed answers.</p>

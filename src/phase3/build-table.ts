@@ -12,6 +12,7 @@ import { args, log, writeJson } from '../phase0/cli.ts';
 import { toCsv } from '../phase0/csv.ts';
 import { ENWIKI_API, fetchRevisionTags, fetchUsers } from '../labels/action-api.ts';
 import { round } from '../phase0/stats.ts';
+import { labelReplay } from '../labels/replay-labels.ts';
 
 const opts = args({
   capture: { type: 'string' },
@@ -20,6 +21,8 @@ const opts = args({
   // The label window (DECISIONS.md D4). Younger edits have not had their chance to be reverted.
   'min-age-hours': { type: 'string', default: '72' },
   api: { type: 'string', default: ENWIKI_API },
+  // Phase 4 labels instead of the Action API's: the stream labeller over a replayed tag stream (D11).
+  tags: { type: 'string' },
 });
 if (!opts.capture || !opts.name) throw new Error('--capture and --name are required');
 const minAgeHours = Number(opts['min-age-hours']);
@@ -51,16 +54,31 @@ if (youngest < minAgeHours) {
   throw new Error(`youngest edit is ${youngest.toFixed(1)}h old; the ${minAgeHours}h label window has not closed`);
 }
 
-log(`${all.length} classifiable edits; fetching revert tags`);
-const tags = await fetchRevisionTags(all.map((r) => r.revId), api);
+// Labels: from the Action API (current tags, read now), or from the stream labeller (Phase 4).
+let label: (revId: number) => '1' | '0' | 'gone';
+let labelSource: string;
+if (opts.tags) {
+  log(`${all.length} classifiable edits; labelling from the replayed tag stream`);
+  const { labels } = await labelReplay(String(opts.capture), String(opts.tags));
+  label = (revId) => {
+    const l = labels.get(revId);
+    if (!l) throw new Error(`rev ${revId} has no stream label: the tag replay does not cover its window`);
+    return l.label === 'reverted' ? '1' : l.label === 'not-reverted' ? '0' : 'gone';
+  };
+  labelSource = `stream labeller over ${opts.tags} (D11)`;
+} else {
+  log(`${all.length} classifiable edits; fetching revert tags`);
+  const tags = await fetchRevisionTags(all.map((r) => r.revId), api);
+  label = (revId) => {
+    const t = tags.get(revId);
+    return t === undefined ? 'gone' : t.includes('mw-reverted') ? '1' : '0';
+  };
+  labelSource = 'Action API, current tags at queriedAt';
+}
 const registered = [...new Set(all.filter((r) => r.userClass === 'registered').map((r) => r.user))];
 log(`fetching ${registered.length} registered accounts`);
 const users = await fetchUsers(registered, api);
 
-const label = (revId: number) => {
-  const t = tags.get(revId);
-  return t === undefined ? 'gone' : t.includes('mw-reverted') ? '1' : '0';
-};
 
 mkdirSync('results/phase3', { recursive: true });
 const tablePath = `results/phase3/edits-${opts.name}.csv`;
@@ -92,10 +110,11 @@ writeJson(`results/phase3/edits-${opts.name}.meta.json`, {
   edits: all.length,
   labels: counts,
   registeredAccounts: { asked: registered.length, found: users.size },
+  labelSource,
   columns: {
     registration: "account creation (ISO); 'null' = predates the field; empty = not a registered account",
     editcount: 'edit count at queriedAt, not at the edit',
-    reverted: "1 = tagged mw-reverted; 0 = not; gone = revision deleted or suppressed, excluded from rates",
+    reverted: "1 = reverted within 72h; 0 = not; gone = deleted, suppressed, or incomplete — excluded from rates",
   },
 });
 log(`wrote ${tablePath}: ${JSON.stringify(counts)}`);

@@ -139,6 +139,8 @@ the diff text and are left to the models — `DECISIONS.md` D10.)*
 
 **Done when:** you can state the trade: "the filter removes N% of volume and loses M% of
 later-reverted edits" — M measured against Phase 4 labels, with the label-noise estimate beside it.
+*(Done 2026-10-06: removes 67–87% of edits, loses 13–24% of later-reverted edits, on Phase 4 stream
+labels over three hours — `DECISIONS.md` D10.)*
 
 ## Phase 4 — labels, for free, from reverts
 
@@ -165,8 +167,10 @@ against revert labels on a **sealed replay set** of captured edits.
 
 **Done when:** the table exists, with baselines as rows, and you know which Phase 0 predictions
 were wrong.
-*(Built: frozen dev and sealed sets, three prompts in `prompts/`, a runner that enforces the
-sealed-set rules, and the scorer — `DECISIONS.md` D12. Runs start once the prompts are tagged.)*
+*(Done 2026-10-06: local `gemma3:4b`, Gemini 3.5 Flash-Lite and Gemini 3.8 Flash × 3 prompts, plus
+four baselines, on the sealed set — `results/phase5/grid-sealed.md`. Groq left unfinished on its free
+tier; the Gemini runs finished on the paid tier, $3.13 at list price. D12; predictions scored in the
+DECISIONS scorecard.)*
 
 ## Phase 6 — does the model know when it is wrong?
 
@@ -176,6 +180,7 @@ sealed-set rules, and the scorer — `DECISIONS.md` D12. Runs start once the pro
 
 **Done when:** you can say yes or no on whether confidence is usable as a routing signal, with the
 curve to prove it. A "no" is a real result and Phase 7 then has to route on something else.
+*(Done: yes for the Gemini models, no for the local model — D18, `results/phase6/sealed/`.)*
 
 ## Phase 7 — the ladder: the economic core
 
@@ -192,6 +197,8 @@ list prices, dated** — writing "$0 because free tier" would destroy the findin
 
 **Done when:** you can state the trade honestly, in the shape *"the ladder held Y% of
 cloud-only recall at Z% of cloud-only cost"* — or that it did not beat local-only, which is equally worth publishing.
+*(Done: the pre-registered ladder did not beat local-only; the cloud model alone had the best F1 at
+$0.22 per 1,000 edits — D17, `results/phase7/ladder.md`.)*
 
 ## Phase 8 — Kubernetes, driven by the real load
 

@@ -24,7 +24,7 @@ every prompt, metric and sentence now says revert prediction, never vandalism de
 **Caveat that still stands.** That sample was labelled by an AI model (blind to revert status), not
 by hand as the spec requires; a hand re-label of the 50 reverted rows would replace it (D9).
 
-## 2. Three Phase 0 predictions were wrong, and one premise was weaker than assumed
+## 2. Five Phase 0 predictions were wrong, and one premise was weaker than assumed
 
 Predictions were git-tagged before any result was read (`phase0-predictions`), so they could be
 wrong in public:
@@ -34,6 +34,8 @@ wrong in public:
 | Revert rate 10–25% | **6.2%** [5.4, 7.2] |
 | Reverted-but-not-vandalism under 20% | **78%** [64, 88] |
 | Heuristics drop 30–60% of traffic | **73–87%** |
+| The cloud model adds 10–25 points of recall | **17–36 points fewer** — it wins on precision instead |
+| Stated confidence works as a routing signal | **Not for the local model** the ladder routes on (yes for the cloud ones) |
 
 The Kubernetes argument assumed edit volume "swings several-fold" between day and night. Three
 measured hours put the swing at **about 1.5×** (D8) — English Wikipedia is edited from every time
@@ -55,6 +57,7 @@ it, read from the error, and written into D12:
 | Gemini `gemini-3.8-flash` | Free tier: **20 requests a day** — the grid needs 3,000. Replaced by `gemini-3.5-flash-lite` before it ran on the sealed set (owner's decision) |
 | Gemini `gemini-3.5-flash-lite` | Free tier: **500 requests a day** → about six days for its share of the grid |
 | Groq `gpt-oss-120b` | 1,000 requests a day, but also **200,000 tokens a day** → about 330 requests a day, about eight days |
+| — | The owner funded the Gemini runs on the paid tier: 5,671 calls, **$3.13 at list price**, done in under an hour; 3.8 Flash restored as the expensive tier; Groq left unfinished on its free tier (D12) |
 
 **What changed.** The runner resumes where it stopped, recognises a daily cap (wherever the provider
 buries it in the error) and stops cleanly instead of retrying, and a loop resumes it every 30
@@ -73,8 +76,34 @@ used as a router rather than a judge.
 frozen, so this was recorded as a result, not fixed. The reliability charts in
 `results/phase6/sealed/` show the shape.
 
-**Pending:** whether the cloud models are better calibrated, and whether the ladder can still use
-the local model's ranking (Phases 6–7, waiting on the free-tier runs).
+**Then the cloud models came in.** Gemini 3.8 Flash was the better judge (precision 31%, F1 0.39)
+and its confidence was far closer to calibrated (error 0.16–0.20, AUROC 0.72). The local model's was
+not, and that is what sank the ladder (section 4b).
+
+## 4b. The ladder's rule assumed the wrong thing about which model finds more
+
+**What went wrong.** The ladder's routing rule was fixed before the final scoring, as it should be:
+choose the cheapest escalation that keeps 95% of the cloud model's recall. It assumed the expensive
+model is the one that *finds* more reverts. It is not — the local model flags most of everything, so
+its recall was higher (72.5% against 53.9%). The rule's target was already met by the local model
+alone, so it escalated 2.6% of edits, and the "ladder" was the local model. The sentence the code
+printed — "held 132% of cloud-only recall at 2.4% of its cost" — was arithmetically true and said
+nothing.
+
+**How it was noticed.** A ladder keeping *more* than 100% of the expensive model's recall is a
+contradiction in the question itself; reading the policy table instead of the summary line made it
+plain.
+
+**What changed.** Nothing was re-tuned on the sealed set: the pre-registered result is the result
+(the ladder did not beat local-only; D17). What it teaches is in the README's first lines: a cheap
+model can only route if its confidence means something, and this one's did not (D18). A different
+rule — say, sending up the edits the local model flags, for the cloud model to confirm — would be a
+new configuration, developed on dev and scored once, and reported as post-hoc.
+
+**The other misjudgement worth naming:** asking for "95% of cloud recall" treated recall as the
+thing to protect. For revert prediction, where 78% of reverts are not vandalism, the cloud model's
+advantage was precision — being right when it flags. The objective should have been chosen with
+that in mind; it is now on the record why it was not.
 
 ## 5. Engineering failures
 

@@ -240,6 +240,21 @@ AI-labelled (D9); this is an indication, not a measurement.
 
 **Status:** provisional, as the spec says — M is re-measured on Phase 4 labels from the Kafka log.
 
+**Re-measured on Phase 4 labels (2026-10-06)** — the stream labeller (D11) over the replayed tag
+stream, instead of the Action API; three hours instead of two, adding the sealed hour (the filter's
+rules are fixed, so nothing is tuned on it). `results/phase3/filter-eval-stream-labels.json`:
+
+| Hour (2026-09-30 UTC) | Edits removed | Non-bot removed | Reverted edits lost |
+|---|---|---|---|
+| 12:00 (dev) | 73.3% | 72.9% | 16.2% [12.3, 21.0] |
+| 04:00 (held-out) | 87.1% | 69.8% | 24.1% [17.9, 31.7] |
+| 10:00 (sealed hour) | 67.0% | 66.0% | 12.6% [8.8, 17.5] |
+
+The two hours measured before agree with the Action API version to within one edit, as D11's
+validation said they would. **The filter removes 67–87% of edits (66–73% of non-bot edits) and
+loses 13–24% of later-reverted edits.** Phase 3 is done on Phase 4 labels; the same measurement on
+labels from the live cluster follows once its log is 72 hours old (`npm run phase4:live`).
+
 ## D11 — Labels are computed from the raw log, in event time (DECIDED 2026-10-03)
 
 **What a label is** (`src/labels/labeller.ts`): one per classifiable enwiki edit (main namespace,
@@ -381,6 +396,26 @@ Its own free tier turned out to be **500 requests a day** (read from its 429 on 
 three sealed runs take about six days — paced, like Groq's, by the free quota.
 The runner also failed to recognise this cap as a daily one (it is named only deep in the error
 body) and kept retrying for 25 minutes; it now reads the whole body and the "retry in …h" hint.
+
+**Cloud tiers become Gemini-only, on the paid tier (2026-10-06, owner's decision; written before any
+paid call).** The free tiers were pacing the grid to about a week (Groq: 200,000 tokens a day;
+Gemini Flash-Lite: 500 requests a day). The owner funded $5 of Gemini usage — which changes the
+SPEC's "$0, no card" target for this one provider, and is reported as such. From now:
+
+| Tier | Model | Status |
+|---|---|---|
+| cheap cloud | Gemini **3.5 Flash-Lite** | sealed runs finished on the paid tier; same model, prompts, settings |
+| expensive cloud | Gemini **3.8 Flash** (`thinkingLevel: low`) | restored — the model first chosen in this section, dropped only for its 20-a-day free cap |
+| (bonus) | Groq `gpt-oss-120b` | left running on its free tier in the background; reported if it completes, not waited on |
+
+Gemini Pro was considered and not chosen: at $2.00 / $12.00 per million tokens, with reasoning that
+cannot be switched off, three prompts would cost about $12. Estimated spend at list prices
+(`results/prices/2026-10-04.json`): Flash-Lite ~$0.66 and 3.8 Flash ~$1.45, sealed and dev together.
+
+**Disclosed:** `gemini-3.8-flash` answered 2 sealed edits on 2026-10-04 before it was set aside
+(`results/phase5/runs/abandoned/`). Those answers were never scored or examined. Its sealed run now
+starts from zero and answers those 2 edits again, once, as part of its single scoring. The prompts
+(tag `phase5-prompts`), the sealed set and the scoring rules are unchanged.
 
 **Two runner fixes during the sealed runs (2026-10-04), neither changing any answer already
 recorded:** (1) a request that gets no response at all (the laptop slept and woke without network)
@@ -613,10 +648,98 @@ predictions topics' sizes (whose minute-to-minute differences are the feed rates
   live replicas made no progress, liveness probes restarted them, and the group never settled (18
   members for 6 pods). The classifier now uses a 45-second session; the group settled within a
   minute. **The clean 25-hour window starts at 2026-10-05 19:21 UTC** (`diurnal-2026-10-05T1921Z.jsonl`) on normal traffic.
+- 2026-10-05 21:10–22:12 UTC: Claude Code stopped the recorder for low memory once more; restarted
+  on the owner's request, appending to the same file. These 62 minutes are unrecorded.
+- 2026-10-05 ~21:42–21:57 UTC, inside that gap: while the host was critically short of memory, the
+  stages and classifier pods stopped making progress (Kafka answering slowly) for over five minutes;
+  their liveness probes failed with 503 and Kubernetes restarted them (stages twice, classifiers
+  once or twice each — 10 restarts in all), after which they recovered on their own. The probes did
+  what they are for; it still breaks this window's "no restarts" bar, and is reported as such.
 
 **Success** = over 24 hours, replicas rise when the feed rises and fall when it falls, with no
 container restarts and no gap in the record longer than the laptop was asleep — reported as it
 comes out, including if the swing is too small to move the replica count.
+
+## D17 — The Phase 7 ladder: everything chosen on the dev set, then scored once (DECIDED 2026-10-06)
+
+Written after the Gemini runs finished and **before any sealed result for them, or any sealed ladder
+result, was computed or looked at.**
+
+**The ladder:** filter → local model → cloud model, escalating only when the local model is unsure
+(SPEC Phase 7). The cloud step is **Gemini 3.8 Flash**, the expensive model the project asks about.
+A second ladder with **Gemini 3.5 Flash-Lite** as the cloud step is reported beside it, as the
+cheap-cloud variant.
+
+**Chosen on dev only, by fixed rules:**
+- *Prompt for each model* — the one with the highest revert F1 on the dev set (200 edits); a tie
+  goes to the prompt with fewer tokens per edit.
+- *When to escalate* — the local model's `p_revert` band [lo, hi) with the lowest escalation rate
+  whose dev recall is at least **95% of cloud-only dev recall**, ties to higher F1; an invalid local
+  answer always escalates (`chooseBand`, `src/phase7/ladder.ts`).
+
+**Scored once on the sealed set,** four policies on the same 1,000 edits that pass the filter:
+heuristics only, local only, cloud only, ladder — recall, precision, F1, **dollars per 1,000
+classifiable edits** at the dated list prices (`results/prices/2026-10-04.json`; the filter's
+share of edits that reach a model is the sealed hour's own, 1,132 of 3,428), and p95 latency.
+The filter's own loss (D10) sits in front of every policy and is stated beside the result.
+
+**The headline takes the shape fixed in the SPEC:** "the ladder held Y% of cloud-only recall at Z%
+of cloud-only cost" — or, if it does not beat local-only, that.
+
+### D17 results — the pre-registered ladder did not beat local-only
+
+`results/phase7/ladder.{json,md}`, scored once, 2026-10-06. Chosen on dev by the rules above: local
+`gemma3:4b` with `p3-reason`; cloud `gemini-3.8-flash` with `p2-guide`; escalate when the local
+`p_revert` is in [0.6, 0.7).
+
+| Policy (1,000 sealed edits past the filter) | Precision | Recall | F1 | Sent to cloud | $ per 1,000 classifiable edits |
+|---|---|---|---|---|---|
+| heuristics only | 16.7% | 100% | 0.286 | 0% | $0 |
+| local only | 20.0% | 72.5% | 0.314 | 0% | $0 |
+| **cloud only (3.8 Flash)** | **30.6%** | 53.9% | **0.391** | 100% | **$0.22** |
+| ladder | 20.1% | 71.3% | 0.313 | 2.6% | $0.005 |
+
+**What happened.** The rule asked for the cheapest ladder that keeps 95% of cloud-only recall. It
+assumed the expensive model is the one that *finds* more reverts. It is not: the local model flags
+about 60% of everything and so has the higher recall (72.5% against 53.9%); the cloud model is the
+one that is *right* more often (precision 30.6% against 20.0%, best F1 of any model). The recall
+target was met almost without escalating, so the ladder is the local model with a sliver of cloud
+on top — "132% of cloud-only recall at 2.4% of its cost", true and useless. In the SPEC's own
+words, the honest result is that **the ladder did not beat local-only** (F1 0.313 against 0.314),
+and that the expensive model beats both on F1. The same happened with Flash-Lite as the cloud step
+(escalation 0%).
+
+**Why — Phase 6 answers it.** The ladder routes on the *local* model's confidence, and that
+confidence is close to useless: calibration error 0.40–0.54, AUROC 0.60–0.63. The cloud models'
+confidence is far better (ECE 0.16–0.20, AUROC ~0.72, level with Wikimedia's own LiftWing models at
+0.72–0.74). So: **confidence is usable as a routing signal for the Gemini models, and not for the
+small local model** — and a ladder whose first step cannot tell when it is unsure cannot route.
+
+**Not done, deliberately:** a different routing rule chosen after seeing these sealed numbers. That
+would be tuning on the sealed set (D12). A new rule is a new configuration: developed on dev, then
+scored once — and reported as a second, post-hoc result, never in place of this one.
+
+**Cost, at the 2026-10-04 list prices.** Cloud-only on 3.8 Flash costs **$0.22 per 1,000
+classifiable English Wikipedia edits** — after the filter has removed two-thirds of them for free;
+without the filter it would be about $0.68. At the 3,200–5,200 classifiable edits an hour measured
+in Phase 0 (D8), that is roughly **$17–28 a day**. The runs themselves: 5,671 Gemini calls on the paid
+tier, **$3.13 at list price**.
+
+## D18 — Phase 6 verdict: confidence routes for the cloud models, not the local one (MEASURED 2026-10-06)
+
+`results/phase6/sealed/calibration.json` and reliability charts. Expected calibration error / AUROC
+on the sealed set:
+
+| Model | ECE | AUROC |
+|---|---|---|
+| `gemma3:4b` (local) | 0.40–0.54 | 0.60–0.63 |
+| Gemini 3.5 Flash-Lite | 0.18–0.20 | 0.69–0.70 |
+| Gemini 3.8 Flash | 0.16–0.20 | 0.72 |
+| LiftWing revert-risk / damaging | 0.46 / 0.09 | 0.74 / 0.72 |
+
+**Yes** for the cloud models: their stated probability ranks reverted edits above kept ones about as
+well as Wikimedia's models, and is far closer to calibrated. **No** for the local model: when it says
+90%, about 20% are reverted. Temporary vs registered editors are broken out in the JSON.
 
 ## Phase 0 prediction scorecard
 
@@ -630,7 +753,9 @@ wrong = measured value outside the stated range.
 | 3 | P(not vandalism \| reverted) < 20% | 78% [64, 88] (AI-labelled, D9) | **Wrong** |
 | 5 | Heuristics drop 30–60% of traffic | 73–87% (default policy, D10) | **Wrong** (above the range) |
 | 6 | Filter loses < 10% of vandalism | 0 of 10 vandalism rows dropped (95% CI 0–28%); 16–24% of *reverted* edits lost | **Within range** on vandalism, CI too wide to settle; the revert-target figure (D9) is above it |
-| 4, 7–11 | — | Phases 5–7 | Not yet measurable |
+| 8 | Cloud model adds 10–25 points of recall over the local one | **−17 to −36 points**, same prompt against same prompt: the local model has *higher* recall (it over-flags); the cloud models win on precision | **Wrong** |
+| 9 | Stated confidence works as a routing signal: yes | Yes for the cloud models, **no for the local model** the ladder routes on (D18) | **Wrong** for the routing that mattered |
+| 4, 7, 10, 11 | no prediction | — | Not scored |
 
 ## Noted, not yet a decision
 

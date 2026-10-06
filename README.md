@@ -6,10 +6,13 @@ WikiPatrol watches English Wikipedia's live edit stream, predicts which edits wi
 72 hours, and measures what each step of a cheap-to-expensive model ladder is worth — in recall, in
 latency, and in dollars per thousand edits at published list prices.
 
-> **Status (2026-10-04):** the evaluation grid is running on free tiers, which cap it at a few
-> hundred calls a day, so the cloud models finish in about a week. The headline — what share of a
-> cloud model's recall a ladder keeps, and at what share of its cost — is **not measured yet** and
-> is not stated anywhere until it is. Everything below is measured, with its source file.
+> **The finding (2026-10-06):** on English Wikipedia edits, the expensive cloud model (Gemini 3.8
+> Flash) was the best judge of which edits get reverted — F1 0.39 against 0.33 for a small local
+> model — for about **$0.22 per 1,000 edits ($17–28 a day)** at list prices. But the planned
+> cost-saving ladder, which only asks the expensive model when the local one is unsure, **did not
+> beat the local model on its own**: the local model cannot tell when it is unsure (its confidence
+> is close to random), so it almost never handed anything up. A cheap model you want to route on has
+> to be good at knowing what it does not know — this one was not.
 
 ## The short version
 
@@ -24,35 +27,35 @@ obviously fine — bots, and people who have been editing for a long time. Then 
 running on a laptop look at what is left. Only when the small model is unsure, ask the expensive
 one. That chain is the "ladder". The project measures how much each step catches and what it costs.
 
-**What has been found so far.**
+**What it found.**
 
 - *An undone edit is usually not vandalism.* In a sample of 100 edits, about 4 out of 5 undone edits
   were honest edits caught up in someone else's cleanup. So the project predicts "will this be
   undone?", and says so plainly, instead of claiming to catch vandals.
-- *The cheap first step does most of the work.* Just skipping bots and long-time editors removes
-  three-quarters or more of all edits, for free. It misses about one in five of the edits that later
-  get undone — mostly the honest ones.
-- *A small free model is not good at this on its own.* It flags far too many edits, and its
-  confidence is unreliable: when it says "90% sure", it is right about 20% of the time. It is still
-  better than guessing at telling likely-undone edits apart from the rest, which may be enough to
-  decide when to ask the bigger model.
+- *The free first step does most of the work.* Just skipping bots and long-time editors removes
+  two-thirds or more of all edits, for nothing. It misses about one in five of the edits that later
+  get undone — mostly the honest ones. It also cuts the cloud bill to a third.
+- *The expensive model is the better judge.* Gemini 3.8 Flash is right about 3 times in 10 when it
+  says an edit will be undone; the small local model about 2 in 10, because it flags most of
+  everything. The cloud model's confidence also means something; the local model's does not.
+- *The ladder idea failed here, for a clear reason.* The plan was to ask the expensive model only
+  when the cheap one was unsure. But the cheap one is never usefully unsure — its confidence barely
+  tracks whether it is right — so the ladder ended up being the cheap model on its own. The rule for
+  the ladder was fixed before seeing the final results, and is reported as it came out.
 - *The pipeline needs a waiting room.* A rate-limited AI model falls behind even the quietest stream
   of edits, so edits queue up in Kafka until the model gets to them — and nothing is lost or counted
   twice while they wait.
 - *Guesses made at the start were often wrong — on purpose, on the record.* Predictions were saved
-  before any results existed, and three of them turned out wrong.
-
-**What is still running.** The two cloud models (Groq and Google Gemini) are being tested on the
-free plans, which only allow a few hundred questions a day, so they take about a week. When they
-finish, the main answer — *how much of the expensive model's accuracy the ladder keeps, and for what
-share of its cost* — goes at the top of this page. Until then, that number is not written anywhere.
+  before any results existed; five of them turned out wrong, including that the cloud model would
+  catch more undone edits (it caught fewer, but was right more often).
 
 **How to trust it.** The test edits were frozen before any model saw them. The questions given to
-the models were saved and locked before the first one ran. Each model gets one try at the final test
-set, so nothing was tweaked until it looked good. Every number links to the file it came from, and
-everything that went wrong is written up in [`POSTMORTEM.md`](POSTMORTEM.md).
+the models were saved and locked before the first one ran. Each model got one try at the final test
+set, and the ladder's rules were chosen on separate practice edits, so nothing was tweaked until it
+looked good. Every number links to the file it came from, and everything that went wrong is written
+up in [`POSTMORTEM.md`](POSTMORTEM.md).
 
-## What is measured so far, in detail
+## What was measured, in detail
 
 **1. Most reverts are not vandalism — so this predicts reverts, and says so.**
 In a sample of 100 edits (50 reverted, 50 kept), **78% of the reverted edits were not vandalism**
@@ -63,43 +66,73 @@ Caveat: that sample was labelled by an AI model blind to revert status, not by h
 
 **2. A free filter removes most of the volume before any model runs.**
 Dropping bots and accounts at least 30 days old with at least 500 edits (Wikipedia's own trust
-level) removes **73–87% of edits** and loses **16–24% of the edits later reverted**. The reverts it
-gives up look like good-faith ones: in the sample above, all 12 reverted edits it dropped were not
-vandalism, and all 10 vandalism edits passed through.
-[`results/phase3/filter-eval.json`](results/phase3/filter-eval.json) · D10
+level) removes **67–87% of edits** and loses **13–24% of the edits later reverted**, over three
+measured hours, labelled by the project's own stream labeller. The reverts it gives up look like
+good-faith ones: in the sample above, all 12 reverted edits it dropped were not vandalism, and all 10
+vandalism edits passed through.
+[`results/phase3/filter-eval-stream-labels.json`](results/phase3/filter-eval-stream-labels.json) · D10
 
-**3. On what the filter lets through, a small local model barely beats flagging everything.**
-1,000 sealed edits, 16.7% of them reverted within 72 h. Precision and recall are for *revert*
-prediction, with Wilson 95% intervals:
+**3. The model grid — revert prediction on 1,000 sealed edits that pass the filter.**
+16.7% of them were reverted within 72 hours. Wilson 95% intervals; each model shown with its best
+prompt on the sealed set (all three prompts in the full table):
 
-| Configuration | Precision | Recall | Flags |
-|---|---|---|---|
-| Filter only (flag everything it passes) | 16.7% [14.5, 19.1] | 100% | 100% |
-| Filter + flag temporary accounts | 24.2% [20.5, 28.4] | 66.5% [59.0, 73.2] | 45.8% |
-| LiftWing revert-risk (Wikimedia) | 22.2% [19.2, 25.5] | 88.6% [82.9, 92.6] | 66.6% |
-| LiftWing `damaging` (ORES) | 40.5% [32.2, 49.4] | 29.3% [23.0, 36.6] | 12.1% |
-| `gemma3:4b` local, best of three prompts | 21.4% [18.2, 24.9] | 74.9% [67.8, 80.8] | 58.5% |
+| Configuration | Precision | Recall | F1 | Flags |
+|---|---|---|---|---|
+| Filter only (flag everything it passes) | 16.7% [14.5, 19.1] | 100% | 0.286 | 100% |
+| Filter + flag temporary accounts | 24.2% [20.5, 28.4] | 66.5% [59.0, 73.2] | 0.355 | 45.8% |
+| LiftWing revert-risk (Wikimedia) | 22.2% [19.2, 25.5] | 88.6% [82.9, 92.6] | 0.355 | 66.6% |
+| LiftWing `damaging` (ORES) | 40.5% [32.2, 49.4] | 29.3% [23.0, 36.6] | 0.340 | 12.1% |
+| `gemma3:4b`, local | 21.4% [18.2, 24.9] | 74.9% [67.8, 80.8] | 0.332 | 58.5% |
+| Gemini 3.5 Flash-Lite | 30.0% [25.0, 35.5] | 51.5% [44.0, 59.0] | 0.379 | 28.7% |
+| **Gemini 3.8 Flash** | **31.0% [26.0, 36.6]** | 53.9% [46.3, 61.3] | **0.394** | 29.0% |
 
-The local model is badly calibrated — when it says 90%, about 20% are reverted — but it still ranks
-reverted edits above kept ones better than chance (AUROC 0.60–0.63), which is what a router needs.
-Cloud rows (Groq `gpt-oss-120b`, Gemini 3.5 Flash-Lite) are pending.
-[`results/phase5/grid-sealed.md`](results/phase5/grid-sealed.md) ·
-[`results/phase6/sealed/`](results/phase6/sealed/) · D12
+[`results/phase5/grid-sealed.md`](results/phase5/grid-sealed.md) · D12
 
-*Every number in this section is about predicting reverts. Read it beside the 78% above.*
+**4. Does the model know when it is wrong?** Only the cloud ones.
 
-**4. Kafka earns its place through backpressure, not volume.**
+| Model | Calibration error (lower is better) | AUROC (ranking; 0.5 = chance) |
+|---|---|---|
+| `gemma3:4b` (local) | 0.40–0.54 | 0.60–0.63 |
+| Gemini 3.5 Flash-Lite | 0.18–0.20 | 0.69–0.70 |
+| Gemini 3.8 Flash | 0.16–0.20 | 0.72 |
+| LiftWing revert-risk / damaging | 0.46 / 0.09 | 0.74 / 0.72 |
+
+[`results/phase6/sealed/`](results/phase6/sealed/) · D18
+
+**5. The ladder did not beat the local model alone.** Chosen on 200 separate dev edits by rules
+written down first (D17): escalate to 3.8 Flash when the local model's confidence falls in [0.6, 0.7).
+
+| Policy | Precision | Recall | F1 | Sent to cloud | $ per 1,000 edits |
+|---|---|---|---|---|---|
+| Heuristics only | 16.7% | 100% | 0.286 | 0% | $0 |
+| Local only | 20.0% | 72.5% | 0.314 | 0% | $0 |
+| Cloud only (3.8 Flash) | 30.6% | 53.9% | 0.391 | 100% | $0.22 |
+| Ladder | 20.1% | 71.3% | 0.313 | 2.6% | $0.005 |
+
+The rule aimed to keep 95% of the cloud model's recall as cheaply as possible — but the local model
+already has *more* recall (it flags most edits), so the rule escalated almost nothing. The cloud
+model wins on precision, and the local model's confidence is too weak to say which edits to send
+up. Costs at list prices dated 2026-10-04; $ per 1,000 classifiable edits, after the filter.
+[`results/phase7/ladder.md`](results/phase7/ladder.md) · D17
+
+*Every number in sections 2–5 is about predicting reverts. Read it beside the 78% in section 1.*
+
+**6. Kafka earns its place through backpressure, not volume.**
 English Wikipedia's classifiable stream is about 1.1 edits a second — a file could carry it. But a
 model tier at a free-tier pace of 10 edits a minute fell **514 edits behind in 20 minutes** of live
 traffic; at full speed the backlog drained, and every one of 1,565 messages was handled exactly once.
 That backlog is also the signal the classifier autoscales on.
 [`results/phase2/backpressure-2026-10-04T0534Z.svg`](results/phase2/backpressure-2026-10-04T0534Z.svg) · D1, D13
 
-**5. The predictions made before any of this were often wrong — on the record.**
-Predictions were git-tagged (`phase0-predictions`) before any result existed. Wrong so far: the
-revert rate (predicted 10–25%, measured 6.2%), reverted-but-not-vandalism (predicted under 20%,
-measured 78%), and how much the filter removes (predicted 30–60%, measured 73–87%).
+**7. The predictions made before any of this were often wrong — on the record.**
+Predictions were git-tagged (`phase0-predictions`) before any result existed. Wrong: the revert rate
+(predicted 10–25%, measured 6.2%), reverted-but-not-vandalism (under 20% → 78%), how much the filter
+removes (30–60% → 67–87%), the recall the cloud model adds (+10–25 points → 17–36 points *fewer*),
+and whether confidence routes (yes → not for the local model).
 [`PREDICTIONS.md`](PREDICTIONS.md) · scorecard in [`DECISIONS.md`](DECISIONS.md)
+
+**Still running:** the 24-hour autoscaling run (Phase 8), and the first labels from the live
+cluster's own log (they need it to be 72 hours old).
 
 ## How it works
 
@@ -136,7 +169,7 @@ docker compose up -d redpanda && npm run test:kafka   # plus the Kafka tests
 Kubernetes: `deploy/k8s/` (with KEDA). `deploy/ci-smoke.sh` provisions a `kind` cluster, deploys,
 checks live edits reach predictions, and tears it down — CI runs it on every push.
 
-Evaluation: `npm run phase5:run`, `phase5:score`, `phase6:calibration`, `phase9:drift`
+Evaluation: `npm run phase5:run`, `phase5:score`, `phase6:calibration`, `phase7:ladder`, `phase9:drift`
 (model API keys in a git-ignored `.env`).
 
 ## Honest limits
@@ -146,8 +179,10 @@ Evaluation: `npm run phase5:run`, `phase5:score`, `phase6:calibration`, `phase9:
   project does not claim to beat it. Its question is cost and routing.
 - **English Wikipedia only.** Labels arrive 72 hours late; an edit reverted after that counts as kept.
 - **A local cluster, not production.** No served users, no live traffic at scale.
-- **Free tiers, list prices.** The runs cost nothing; every cost figure is computed from dated
-  published prices ([`results/prices/`](results/prices/)), never reported as $0.
+- **List prices, not invoices.** Every cost figure is computed from dated published prices
+  ([`results/prices/`](results/prices/)). Most runs used free tiers; the Gemini runs were finished on
+  the paid tier for about $3.13 at list price (D12). Groq `gpt-oss-120b` was left unfinished on its
+  free tier and is not in the table.
 
 ## Documents
 

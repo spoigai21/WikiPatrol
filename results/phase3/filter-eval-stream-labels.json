@@ -1,0 +1,220 @@
+{
+  "evaluatedAt": "2026-10-06T02:59:35.779Z",
+  "target": "reverted within 72h (DECISIONS.md D9)",
+  "tables": {
+    "stream-dev-2026-09-30T1200Z": {
+      "bots": {
+        "edits": 4756,
+        "dropped": 59,
+        "byRule": {
+          "bot": 59,
+          "trustedAccount": 0
+        },
+        "volumeRemoved": 0.0124,
+        "volumeRemovedNonBot": 0,
+        "revertedLost": {
+          "rate": 0,
+          "low": 0,
+          "high": 0.0136,
+          "n": 278
+        },
+        "revertRateBefore": 0.0585,
+        "revertRateAfter": 0.0592,
+        "revertedLostBy": {
+          "bot": 0,
+          "trustedAccount": 0
+        }
+      },
+      "autoconfirmed": {
+        "edits": 4756,
+        "dropped": 3998,
+        "byRule": {
+          "bot": 59,
+          "trustedAccount": 3939
+        },
+        "volumeRemoved": 0.8406,
+        "volumeRemovedNonBot": 0.8386,
+        "revertedLost": {
+          "rate": 0.3633,
+          "low": 0.309,
+          "high": 0.4214,
+          "n": 278
+        },
+        "revertRateBefore": 0.0585,
+        "revertRateAfter": 0.2335,
+        "revertedLostBy": {
+          "bot": 0,
+          "trustedAccount": 101
+        }
+      },
+      "extendedconfirmed": {
+        "edits": 4756,
+        "dropped": 3485,
+        "byRule": {
+          "bot": 59,
+          "trustedAccount": 3426
+        },
+        "volumeRemoved": 0.7328,
+        "volumeRemovedNonBot": 0.7294,
+        "revertedLost": {
+          "rate": 0.1619,
+          "low": 0.1232,
+          "high": 0.2097,
+          "n": 278
+        },
+        "revertRateBefore": 0.0585,
+        "revertRateAfter": 0.1833,
+        "revertedLostBy": {
+          "bot": 0,
+          "trustedAccount": 45
+        }
+      }
+    },
+    "stream-heldout-2026-09-30T0400Z": {
+      "bots": {
+        "edits": 6757,
+        "dropped": 3866,
+        "byRule": {
+          "bot": 3866,
+          "trustedAccount": 0
+        },
+        "volumeRemoved": 0.5721,
+        "volumeRemovedNonBot": 0,
+        "revertedLost": {
+          "rate": 0,
+          "low": 0,
+          "high": 0.0258,
+          "n": 145
+        },
+        "revertRateBefore": 0.0215,
+        "revertRateAfter": 0.0502,
+        "revertedLostBy": {
+          "bot": 0,
+          "trustedAccount": 0
+        }
+      },
+      "autoconfirmed": {
+        "edits": 6757,
+        "dropped": 6170,
+        "byRule": {
+          "bot": 3866,
+          "trustedAccount": 2304
+        },
+        "volumeRemoved": 0.9131,
+        "volumeRemovedNonBot": 0.797,
+        "revertedLost": {
+          "rate": 0.2897,
+          "low": 0.222,
+          "high": 0.3682,
+          "n": 145
+        },
+        "revertRateBefore": 0.0215,
+        "revertRateAfter": 0.1755,
+        "revertedLostBy": {
+          "bot": 0,
+          "trustedAccount": 42
+        }
+      },
+      "extendedconfirmed": {
+        "edits": 6757,
+        "dropped": 5883,
+        "byRule": {
+          "bot": 3866,
+          "trustedAccount": 2017
+        },
+        "volumeRemoved": 0.8707,
+        "volumeRemovedNonBot": 0.6977,
+        "revertedLost": {
+          "rate": 0.2414,
+          "low": 0.179,
+          "high": 0.3171,
+          "n": 145
+        },
+        "revertRateBefore": 0.0215,
+        "revertRateAfter": 0.1259,
+        "revertedLostBy": {
+          "bot": 0,
+          "trustedAccount": 35
+        }
+      }
+    },
+    "stream-sealed-2026-09-30T1000Z": {
+      "bots": {
+        "edits": 3428,
+        "dropped": 97,
+        "byRule": {
+          "bot": 97,
+          "trustedAccount": 0
+        },
+        "volumeRemoved": 0.0283,
+        "volumeRemovedNonBot": 0,
+        "revertedLost": {
+          "rate": 0.0045,
+          "low": 0.0008,
+          "high": 0.025,
+          "n": 223
+        },
+        "revertRateBefore": 0.0651,
+        "revertRateAfter": 0.0666,
+        "revertedLostBy": {
+          "bot": 1,
+          "trustedAccount": 0
+        }
+      },
+      "autoconfirmed": {
+        "edits": 3428,
+        "dropped": 2692,
+        "byRule": {
+          "bot": 97,
+          "trustedAccount": 2595
+        },
+        "volumeRemoved": 0.7853,
+        "volumeRemovedNonBot": 0.779,
+        "revertedLost": {
+          "rate": 0.2242,
+          "low": 0.1744,
+          "high": 0.2834,
+          "n": 223
+        },
+        "revertRateBefore": 0.0651,
+        "revertRateAfter": 0.2351,
+        "revertedLostBy": {
+          "bot": 1,
+          "trustedAccount": 49
+        }
+      },
+      "extendedconfirmed": {
+        "edits": 3428,
+        "dropped": 2296,
+        "byRule": {
+          "bot": 97,
+          "trustedAccount": 2199
+        },
+        "volumeRemoved": 0.6698,
+        "volumeRemovedNonBot": 0.6602,
+        "revertedLost": {
+          "rate": 0.1256,
+          "low": 0.0883,
+          "high": 0.1755,
+          "n": 223
+        },
+        "revertRateBefore": 0.0651,
+        "revertRateAfter": 0.1723,
+        "revertedLostBy": {
+          "bot": 1,
+          "trustedAccount": 27
+        }
+      }
+    }
+  },
+  "phase0VandalismRows": {
+    "note": "Early read only: AI-labelled (D9), and these rows lie in the dev table.",
+    "vandalismRows": 10,
+    "foundInTables": 10,
+    "droppedByPolicy": {
+      "bots": 0,
+      "autoconfirmed": 1,
+      "extendedconfirmed": 0
+    }
+  }
+}

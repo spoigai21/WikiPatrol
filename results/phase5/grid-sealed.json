@@ -1,5 +1,5 @@
 {
-  "scoredAt": "2026-10-04T17:27:01.415Z",
+  "scoredAt": "2026-10-06T03:00:15.319Z",
   "set": "sealed",
   "edits": 1000,
   "target": "reverted within 72h (D9); population: edits that pass the default filter (D10, D12)",
@@ -24,7 +24,7 @@
       "n": 49
     }
   },
-  "filterLoss": "the filter itself drops 16–24% of reverted edits before any row here sees them (D10)",
+  "filterLoss": "the filter itself drops 13–24% of reverted edits before any row here sees them (D10)",
   "rows": [
     {
       "config": "baseline:filter-only",
@@ -139,30 +139,185 @@
       "modelVersions": [
         "gemini-3.5-flash-lite"
       ],
-      "edits": 984,
-      "complete": false,
-      "flagged": 0.3079,
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.308,
       "invalid": 0,
       "precision": {
-        "rate": 0.2772,
-        "low": 0.2299,
-        "high": 0.3302,
-        "n": 303
+        "rate": 0.276,
+        "low": 0.229,
+        "high": 0.3284,
+        "n": 308
       },
       "recall": {
-        "rate": 0.503,
-        "low": 0.428,
-        "high": 0.5779,
+        "rate": 0.509,
+        "low": 0.4338,
+        "high": 0.5837,
         "n": 167
       },
-      "f1": 0.3574,
+      "f1": 0.3579,
       "latencyMs": {
-        "p50": 573,
-        "p95": 727
+        "p50": 574,
+        "p95": 755
       },
       "tokensPerEdit": {
-        "in": 463,
+        "in": 464,
         "out": 19
+      }
+    },
+    {
+      "config": "gemini:gemini-3.5-flash-lite__p2-guide",
+      "modelVersions": [
+        "gemini-3.5-flash-lite"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.287,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.2997,
+        "low": 0.2496,
+        "high": 0.355,
+        "n": 287
+      },
+      "recall": {
+        "rate": 0.515,
+        "low": 0.4397,
+        "high": 0.5896,
+        "n": 167
+      },
+      "f1": 0.3789,
+      "latencyMs": {
+        "p50": 623,
+        "p95": 1081
+      },
+      "tokensPerEdit": {
+        "in": 637,
+        "out": 21
+      }
+    },
+    {
+      "config": "gemini:gemini-3.5-flash-lite__p3-reason",
+      "modelVersions": [
+        "gemini-3.5-flash-lite"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.332,
+      "invalid": 0.001,
+      "precision": {
+        "rate": 0.2771,
+        "low": 0.2317,
+        "high": 0.3276,
+        "n": 332
+      },
+      "recall": {
+        "rate": 0.5509,
+        "low": 0.4752,
+        "high": 0.6244,
+        "n": 167
+      },
+      "f1": 0.3687,
+      "latencyMs": {
+        "p50": 916,
+        "p95": 2028
+      },
+      "tokensPerEdit": {
+        "in": 667,
+        "out": 69
+      }
+    },
+    {
+      "config": "gemini:gemini-3.8-flash__p1-plain",
+      "modelVersions": [
+        "gemini-3.8-flash"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.355,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.2817,
+        "low": 0.2374,
+        "high": 0.3306,
+        "n": 355
+      },
+      "recall": {
+        "rate": 0.5988,
+        "low": 0.523,
+        "high": 0.6701,
+        "n": 167
+      },
+      "f1": 0.3831,
+      "latencyMs": {
+        "p50": 1049,
+        "p95": 2159
+      },
+      "tokensPerEdit": {
+        "in": 464,
+        "out": 33
+      }
+    },
+    {
+      "config": "gemini:gemini-3.8-flash__p2-guide",
+      "modelVersions": [
+        "gemini-3.8-flash"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.294,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.3061,
+        "low": 0.2562,
+        "high": 0.361,
+        "n": 294
+      },
+      "recall": {
+        "rate": 0.5389,
+        "low": 0.4633,
+        "high": 0.6128,
+        "n": 167
+      },
+      "f1": 0.3905,
+      "latencyMs": {
+        "p50": 1083,
+        "p95": 2421
+      },
+      "tokensPerEdit": {
+        "in": 637,
+        "out": 53
+      }
+    },
+    {
+      "config": "gemini:gemini-3.8-flash__p3-reason",
+      "modelVersions": [
+        "gemini-3.8-flash"
+      ],
+      "edits": 1000,
+      "complete": true,
+      "flagged": 0.29,
+      "invalid": 0,
+      "precision": {
+        "rate": 0.3103,
+        "low": 0.2599,
+        "high": 0.3658,
+        "n": 290
+      },
+      "recall": {
+        "rate": 0.5389,
+        "low": 0.4633,
+        "high": 0.6128,
+        "n": 167
+      },
+      "f1": 0.3939,
+      "latencyMs": {
+        "p50": 1285,
+        "p95": 2741
+      },
+      "tokensPerEdit": {
+        "in": 667,
+        "out": 103
       }
     },
     {
@@ -170,29 +325,29 @@
       "modelVersions": [
         "openai/gpt-oss-120b"
       ],
-      "edits": 507,
+      "edits": 979,
       "complete": false,
-      "flagged": 0.497,
-      "invalid": 0.0099,
+      "flagged": 0.4709,
+      "invalid": 0.0143,
       "precision": {
-        "rate": 0.25,
-        "low": 0.2006,
-        "high": 0.3069,
-        "n": 252
+        "rate": 0.2256,
+        "low": 0.1898,
+        "high": 0.2659,
+        "n": 461
       },
       "recall": {
-        "rate": 0.3772,
-        "low": 0.3073,
-        "high": 0.4527,
+        "rate": 0.6228,
+        "low": 0.5473,
+        "high": 0.6927,
         "n": 167
       },
-      "f1": 0.3007,
+      "f1": 0.3312,
       "latencyMs": {
-        "p50": 387,
-        "p95": 658
+        "p50": 412,
+        "p95": 798
       },
       "tokensPerEdit": {
-        "in": 536,
+        "in": 527,
         "out": 55
       }
     },

@@ -1,0 +1,29 @@
+{
+  "name": "stream-sealed-2026-09-30T1000Z",
+  "capture": "data/phase0/capture-sealed-2026-09-30T1000Z.jsonl",
+  "editTimeRange": [
+    "2026-09-30T09:59:54.000Z",
+    "2026-09-30T10:59:56.000Z"
+  ],
+  "queriedAt": "2026-10-06T02:59:16.268Z",
+  "ageAtQueryHours": {
+    "min": 135.989,
+    "max": 136.9895
+  },
+  "edits": 3428,
+  "labels": {
+    "reverted": 223,
+    "kept": 3205,
+    "gone": 0
+  },
+  "registeredAccounts": {
+    "asked": 750,
+    "found": 750
+  },
+  "labelSource": "stream labeller over data/phase4/tags-enwiki-2026-09-30T0400Z-2026-10-03T1320Z.jsonl (D11)",
+  "columns": {
+    "registration": "account creation (ISO); 'null' = predates the field; empty = not a registered account",
+    "editcount": "edit count at queriedAt, not at the edit",
+    "reverted": "1 = reverted within 72h; 0 = not; gone = deleted, suppressed, or incomplete — excluded from rates"
+  }
+}

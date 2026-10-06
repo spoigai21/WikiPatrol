@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" width="360" height="360" role="img" aria-label="gemini:gemini-3.8-flash__p2-guide">
+<style>
+  :root { --surface-1: #fcfcfb; --text-primary: #0b0b0b; --text-secondary: #52514e; --grid: #e4e3df; --series-1: #2a78d6; }
+  @media (prefers-color-scheme: dark) { :root { --surface-1: #1a1a19; --text-primary: #ffffff; --text-secondary: #c3c2b7; --grid: #3a3a37; --series-1: #3987e5; } }
+  text { font: 11px system-ui, sans-serif; fill: var(--text-secondary); }
+  .title { font-size: 13px; font-weight: 600; fill: var(--text-primary); }
+</style>
+<rect width="360" height="360" fill="var(--surface-1)"/>
+<text class="title" x="52" y="22">gemini:gemini-3.8-flash__p2-guide</text>
+<line x1="52" x2="344" y1="312" y2="312" stroke="var(--grid)" stroke-width="1"/><text x="44" y="316" text-anchor="end">0</text><text x="52" y="328" text-anchor="middle">0</text>
+<line x1="52" x2="344" y1="244" y2="244" stroke="var(--grid)" stroke-width="1"/><text x="44" y="248" text-anchor="end">0.25</text><text x="125" y="328" text-anchor="middle">0.25</text>
+<line x1="52" x2="344" y1="176" y2="176" stroke="var(--grid)" stroke-width="1"/><text x="44" y="180" text-anchor="end">0.5</text><text x="198" y="328" text-anchor="middle">0.5</text>
+<line x1="52" x2="344" y1="108" y2="108" stroke="var(--grid)" stroke-width="1"/><text x="44" y="112" text-anchor="end">0.75</text><text x="271" y="328" text-anchor="middle">0.75</text>
+<line x1="52" x2="344" y1="40" y2="40" stroke="var(--grid)" stroke-width="1"/><text x="44" y="44" text-anchor="end">1</text><text x="344" y="328" text-anchor="middle">1</text>
+<line x1="52" y1="312" x2="344" y2="40" stroke="var(--text-secondary)" stroke-width="1" opacity="0.6"/>
+<text x="233.04" y="121.60000000000001" transform="rotate(-45 233.04 121.60000000000001)">perfectly calibrated</text>
+<polyline fill="none" stroke="var(--series-1)" stroke-width="2" points="66.746,292.7424 92.8216,276.232 122.0508,265.1888 151.6596,312 221.0096,290.24 244.1652,255.88639999999998 267.7004,227 298.448,271.336 333.8092,113.08640000000001"/>
+<circle cx="66.746" cy="292.7424" r="10.0" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.0–0.1: 325 edits, mean stated 0.0505, reverted 7.1% [4.8, 10.4]</title></circle>
+<circle cx="92.8216" cy="276.232" r="9.3" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.1–0.2: 251 edits, mean stated 0.1398, reverted 13.2% [9.5, 17.9]</title></circle>
+<circle cx="122.0508" cy="265.1888" r="7.7" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.2–0.3: 122 edits, mean stated 0.2399, reverted 17.2% [11.5, 24.9]</title></circle>
+<circle cx="151.6596" cy="312" r="4.9" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.3–0.4: 8 edits, mean stated 0.3413, reverted 0.0% [0.0, 32.4]</title></circle>
+<circle cx="221.0096" cy="290.24" r="5.7" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.5–0.6: 25 edits, mean stated 0.5788, reverted 8.0% [2.2, 25.0]</title></circle>
+<circle cx="244.1652" cy="255.88639999999998" r="6.6" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.6–0.7: 63 edits, mean stated 0.6581, reverted 20.6% [12.5, 32.2]</title></circle>
+<circle cx="267.7004" cy="227" r="5.9" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.7–0.8: 32 edits, mean stated 0.7387, reverted 31.3% [17.9, 48.6]</title></circle>
+<circle cx="298.448" cy="271.336" r="7.4" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.8–0.9: 107 edits, mean stated 0.844, reverted 14.9% [9.4, 22.9]</title></circle>
+<circle cx="333.8092" cy="113.08640000000001" r="6.7" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"><title>stated 0.9–1.0: 67 edits, mean stated 0.9651, reverted 73.1% [61.5, 82.3]</title></circle>
+<text x="198" y="350" text-anchor="middle">stated probability of revert (marker area = edits)</text>
+<text x="14" y="176" text-anchor="middle" transform="rotate(-90 14 176)">share actually reverted</text>
+</svg>

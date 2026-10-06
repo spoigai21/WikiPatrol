@@ -1,0 +1,261 @@
+{
+  "scoredAt": "2026-10-06T02:33:35.894Z",
+  "rules": "DECISIONS.md D17",
+  "prices": {
+    "file": "results/prices/2026-10-04.json",
+    "retrievedAt": "2026-10-04"
+  },
+  "population": "the 1000 sealed edits that pass the filter (D12); the filter sends 33.0% of classifiable edits to a model and itself loses 13–24% of reverted edits (D10)",
+  "labelNoise": {
+    "revertedNotVandalism": {
+      "rate": 0.7826,
+      "low": 0.6443,
+      "high": 0.8774,
+      "n": 46
+    },
+    "labeller": "claude-opus-5-5 (AI model, blind to revert status; not hand-labelled)"
+  },
+  "local": {
+    "model": "ollama:gemma3:4b",
+    "chosen": "p3-reason",
+    "devF1ByPrompt": {
+      "p3-reason": 0.3784,
+      "p2-guide": 0.3694,
+      "p1-plain": 0.3543
+    }
+  },
+  "ladders": [
+    {
+      "cloudModel": "gemini:gemini-3.8-flash",
+      "chosenOnDev": {
+        "localPrompt": "p3-reason",
+        "cloudPrompt": "p2-guide",
+        "cloudDevF1ByPrompt": {
+          "p2-guide": 0.5556,
+          "p3-reason": 0.5357,
+          "p1-plain": 0.5289
+        },
+        "band": {
+          "lo": 0.6,
+          "hi": 0.7
+        },
+        "devLadder": {
+          "recall": 0.7692,
+          "escalated": 0.045,
+          "f1": 0.411
+        },
+        "devCloudOnlyRecall": 0.7692
+      },
+      "sealed": [
+        {
+          "policy": "heuristics only",
+          "precision": {
+            "rate": 0.167,
+            "low": 0.1452,
+            "high": 0.1914,
+            "n": 1000
+          },
+          "recall": {
+            "rate": 1,
+            "low": 0.9775,
+            "high": 1,
+            "n": 167
+          },
+          "f1": 0.2862,
+          "escalated": 0,
+          "usdPer1000ClassifiableEdits": 0,
+          "latencyMs": {
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        {
+          "policy": "local only",
+          "precision": {
+            "rate": 0.2,
+            "low": 0.1701,
+            "high": 0.2337,
+            "n": 605
+          },
+          "recall": {
+            "rate": 0.7246,
+            "low": 0.6523,
+            "high": 0.7867,
+            "n": 167
+          },
+          "f1": 0.3135,
+          "escalated": 0,
+          "usdPer1000ClassifiableEdits": 0,
+          "latencyMs": {
+            "p50": 3068,
+            "p95": 4675
+          }
+        },
+        {
+          "policy": "cloud only",
+          "precision": {
+            "rate": 0.3061,
+            "low": 0.2562,
+            "high": 0.361,
+            "n": 294
+          },
+          "recall": {
+            "rate": 0.5389,
+            "low": 0.4633,
+            "high": 0.6128,
+            "n": 167
+          },
+          "f1": 0.3905,
+          "escalated": 1,
+          "usdPer1000ClassifiableEdits": 0.2235,
+          "latencyMs": {
+            "p50": 1083,
+            "p95": 2421
+          }
+        },
+        {
+          "policy": "ladder [0.6, 0.7)",
+          "precision": {
+            "rate": 0.2007,
+            "low": 0.1704,
+            "high": 0.2348,
+            "n": 593
+          },
+          "recall": {
+            "rate": 0.7126,
+            "low": 0.6398,
+            "high": 0.7758,
+            "n": 167
+          },
+          "f1": 0.3132,
+          "escalated": 0.026,
+          "usdPer1000ClassifiableEdits": 0.0054,
+          "latencyMs": {
+            "p50": 3086,
+            "p95": 4877
+          }
+        }
+      ],
+      "headline": {
+        "recallKept": 1.3223,
+        "costShare": 0.0242
+      }
+    },
+    {
+      "cloudModel": "gemini:gemini-3.5-flash-lite",
+      "chosenOnDev": {
+        "localPrompt": "p3-reason",
+        "cloudPrompt": "p2-guide",
+        "cloudDevF1ByPrompt": {
+          "p2-guide": 0.5053,
+          "p1-plain": 0.5047,
+          "p3-reason": 0.4706
+        },
+        "band": {
+          "lo": 0,
+          "hi": 0.05
+        },
+        "devLadder": {
+          "recall": 0.7179,
+          "escalated": 0,
+          "f1": 0.3784
+        },
+        "devCloudOnlyRecall": 0.6154
+      },
+      "sealed": [
+        {
+          "policy": "heuristics only",
+          "precision": {
+            "rate": 0.167,
+            "low": 0.1452,
+            "high": 0.1914,
+            "n": 1000
+          },
+          "recall": {
+            "rate": 1,
+            "low": 0.9775,
+            "high": 1,
+            "n": 167
+          },
+          "f1": 0.2862,
+          "escalated": 0,
+          "usdPer1000ClassifiableEdits": 0,
+          "latencyMs": {
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        {
+          "policy": "local only",
+          "precision": {
+            "rate": 0.2,
+            "low": 0.1701,
+            "high": 0.2337,
+            "n": 605
+          },
+          "recall": {
+            "rate": 0.7246,
+            "low": 0.6523,
+            "high": 0.7867,
+            "n": 167
+          },
+          "f1": 0.3135,
+          "escalated": 0,
+          "usdPer1000ClassifiableEdits": 0,
+          "latencyMs": {
+            "p50": 3068,
+            "p95": 4675
+          }
+        },
+        {
+          "policy": "cloud only",
+          "precision": {
+            "rate": 0.2997,
+            "low": 0.2496,
+            "high": 0.355,
+            "n": 287
+          },
+          "recall": {
+            "rate": 0.515,
+            "low": 0.4397,
+            "high": 0.5896,
+            "n": 167
+          },
+          "f1": 0.3789,
+          "escalated": 1,
+          "usdPer1000ClassifiableEdits": 0.0802,
+          "latencyMs": {
+            "p50": 623,
+            "p95": 1081
+          }
+        },
+        {
+          "policy": "ladder [0, 0.05)",
+          "precision": {
+            "rate": 0.2,
+            "low": 0.1701,
+            "high": 0.2337,
+            "n": 605
+          },
+          "recall": {
+            "rate": 0.7246,
+            "low": 0.6523,
+            "high": 0.7867,
+            "n": 167
+          },
+          "f1": 0.3135,
+          "escalated": 0,
+          "usdPer1000ClassifiableEdits": 0,
+          "latencyMs": {
+            "p50": 3068,
+            "p95": 4675
+          }
+        }
+      ],
+      "headline": {
+        "recallKept": 1.407,
+        "costShare": 0
+      }
+    }
+  ]
+}

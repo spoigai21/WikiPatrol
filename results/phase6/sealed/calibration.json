@@ -1,5 +1,5 @@
 {
-  "computedAt": "2026-10-04T06:31:38.525Z",
+  "computedAt": "2026-10-06T02:34:03.171Z",
   "set": "sealed",
   "note": "Complete runs with more than two distinct probabilities. Invalid answers have no probability and are excluded (counted).",
   "configs": {
@@ -754,6 +754,2058 @@
               "low": 0.3589,
               "high": 0.9178,
               "n": 7
+            }
+          }
+        ]
+      }
+    },
+    "gemini:gemini-3.5-flash-lite__p1-plain": {
+      "invalidExcluded": 0,
+      "overall": {
+        "n": 1000,
+        "distinctP": 15,
+        "ece": 0.1927,
+        "brier": 0.2314,
+        "auroc": 0.6958,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 272,
+            "meanP": 0.0488,
+            "observed": {
+              "rate": 0.0588,
+              "low": 0.0365,
+              "high": 0.0934,
+              "n": 272
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 415,
+            "meanP": 0.1284,
+            "observed": {
+              "rate": 0.1542,
+              "low": 0.1227,
+              "high": 0.1921,
+              "n": 415
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 5,
+            "meanP": 0.21,
+            "observed": {
+              "rate": 0.4,
+              "low": 0.1176,
+              "high": 0.7693,
+              "n": 5
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 9,
+            "meanP": 0.65,
+            "observed": {
+              "rate": 0.2222,
+              "low": 0.0632,
+              "high": 0.5474,
+              "n": 9
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 40,
+            "meanP": 0.75,
+            "observed": {
+              "rate": 0.275,
+              "low": 0.1611,
+              "high": 0.4284,
+              "n": 40
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 184,
+            "meanP": 0.8486,
+            "observed": {
+              "rate": 0.163,
+              "low": 0.1167,
+              "high": 0.2232,
+              "n": 184
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 75,
+            "meanP": 0.9507,
+            "observed": {
+              "rate": 0.56,
+              "low": 0.4475,
+              "high": 0.6667,
+              "n": 75
+            }
+          }
+        ]
+      },
+      "temporary": {
+        "n": 458,
+        "distinctP": 14,
+        "ece": 0.2328,
+        "brier": 0.2681,
+        "auroc": 0.7044,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 42,
+            "meanP": 0.049,
+            "observed": {
+              "rate": 0.0952,
+              "low": 0.0377,
+              "high": 0.2207,
+              "n": 42
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 218,
+            "meanP": 0.1285,
+            "observed": {
+              "rate": 0.1651,
+              "low": 0.1217,
+              "high": 0.2201,
+              "n": 218
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 3,
+            "meanP": 0.2167,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.5615,
+              "n": 3
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 8,
+            "meanP": 0.65,
+            "observed": {
+              "rate": 0.25,
+              "low": 0.0715,
+              "high": 0.5907,
+              "n": 8
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 26,
+            "meanP": 0.75,
+            "observed": {
+              "rate": 0.3462,
+              "low": 0.1941,
+              "high": 0.5378,
+              "n": 26
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 107,
+            "meanP": 0.8486,
+            "observed": {
+              "rate": 0.2056,
+              "low": 0.1399,
+              "high": 0.2917,
+              "n": 107
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 54,
+            "meanP": 0.9548,
+            "observed": {
+              "rate": 0.7037,
+              "low": 0.5717,
+              "high": 0.8086,
+              "n": 54
+            }
+          }
+        ]
+      },
+      "registered": {
+        "n": 542,
+        "distinctP": 14,
+        "ece": 0.1611,
+        "brier": 0.2005,
+        "auroc": 0.6274,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 230,
+            "meanP": 0.0488,
+            "observed": {
+              "rate": 0.0522,
+              "low": 0.0301,
+              "high": 0.089,
+              "n": 230
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 197,
+            "meanP": 0.1283,
+            "observed": {
+              "rate": 0.1421,
+              "low": 0.1002,
+              "high": 0.1978,
+              "n": 197
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 2,
+            "meanP": 0.2,
+            "observed": {
+              "rate": 1,
+              "low": 0.3424,
+              "high": 1,
+              "n": 2
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 1,
+            "meanP": 0.65,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.7935,
+              "n": 1
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 14,
+            "meanP": 0.75,
+            "observed": {
+              "rate": 0.1429,
+              "low": 0.0401,
+              "high": 0.3994,
+              "n": 14
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 77,
+            "meanP": 0.8487,
+            "observed": {
+              "rate": 0.1039,
+              "low": 0.0536,
+              "high": 0.1918,
+              "n": 77
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 21,
+            "meanP": 0.94,
+            "observed": {
+              "rate": 0.1905,
+              "low": 0.0767,
+              "high": 0.4,
+              "n": 21
+            }
+          }
+        ]
+      }
+    },
+    "gemini:gemini-3.5-flash-lite__p2-guide": {
+      "invalidExcluded": 0,
+      "overall": {
+        "n": 1000,
+        "distinctP": 14,
+        "ece": 0.1801,
+        "brier": 0.2139,
+        "auroc": 0.6917,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 365,
+            "meanP": 0.0475,
+            "observed": {
+              "rate": 0.0795,
+              "low": 0.0559,
+              "high": 0.1118,
+              "n": 365
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 337,
+            "meanP": 0.1228,
+            "observed": {
+              "rate": 0.1513,
+              "low": 0.117,
+              "high": 0.1935,
+              "n": 337
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 10,
+            "meanP": 0.2,
+            "observed": {
+              "rate": 0.1,
+              "low": 0.0179,
+              "high": 0.4042,
+              "n": 10
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 1,
+            "meanP": 0.3,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.7935,
+              "n": 1
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 6,
+            "meanP": 0.65,
+            "observed": {
+              "rate": 0.3333,
+              "low": 0.0968,
+              "high": 0.7,
+              "n": 6
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 41,
+            "meanP": 0.75,
+            "observed": {
+              "rate": 0.2683,
+              "low": 0.1569,
+              "high": 0.4193,
+              "n": 41
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 182,
+            "meanP": 0.8448,
+            "observed": {
+              "rate": 0.1813,
+              "low": 0.1321,
+              "high": 0.2437,
+              "n": 182
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 58,
+            "meanP": 0.9507,
+            "observed": {
+              "rate": 0.6897,
+              "low": 0.562,
+              "high": 0.7938,
+              "n": 58
+            }
+          }
+        ]
+      },
+      "temporary": {
+        "n": 458,
+        "distinctP": 13,
+        "ece": 0.2279,
+        "brier": 0.2566,
+        "auroc": 0.701,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 80,
+            "meanP": 0.0495,
+            "observed": {
+              "rate": 0.1125,
+              "low": 0.0603,
+              "high": 0.2002,
+              "n": 80
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 182,
+            "meanP": 0.125,
+            "observed": {
+              "rate": 0.1703,
+              "low": 0.1227,
+              "high": 0.2316,
+              "n": 182
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 7,
+            "meanP": 0.2,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.3543,
+              "n": 7
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 1,
+            "meanP": 0.3,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.7935,
+              "n": 1
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 2,
+            "meanP": 0.65,
+            "observed": {
+              "rate": 0.5,
+              "low": 0.0945,
+              "high": 0.9055,
+              "n": 2
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 30,
+            "meanP": 0.75,
+            "observed": {
+              "rate": 0.3,
+              "low": 0.1666,
+              "high": 0.4788,
+              "n": 30
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 113,
+            "meanP": 0.8442,
+            "observed": {
+              "rate": 0.2301,
+              "low": 0.1621,
+              "high": 0.3158,
+              "n": 113
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 43,
+            "meanP": 0.9581,
+            "observed": {
+              "rate": 0.814,
+              "low": 0.6738,
+              "high": 0.9026,
+              "n": 43
+            }
+          }
+        ]
+      },
+      "registered": {
+        "n": 542,
+        "distinctP": 13,
+        "ece": 0.1412,
+        "brier": 0.1779,
+        "auroc": 0.6135,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 285,
+            "meanP": 0.0469,
+            "observed": {
+              "rate": 0.0702,
+              "low": 0.0459,
+              "high": 0.1059,
+              "n": 285
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 155,
+            "meanP": 0.1203,
+            "observed": {
+              "rate": 0.129,
+              "low": 0.0851,
+              "high": 0.1909,
+              "n": 155
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 3,
+            "meanP": 0.2,
+            "observed": {
+              "rate": 0.3333,
+              "low": 0.0615,
+              "high": 0.7923,
+              "n": 3
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 4,
+            "meanP": 0.65,
+            "observed": {
+              "rate": 0.25,
+              "low": 0.0456,
+              "high": 0.6994,
+              "n": 4
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 11,
+            "meanP": 0.75,
+            "observed": {
+              "rate": 0.1818,
+              "low": 0.0514,
+              "high": 0.477,
+              "n": 11
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 69,
+            "meanP": 0.8457,
+            "observed": {
+              "rate": 0.1014,
+              "low": 0.05,
+              "high": 0.1949,
+              "n": 69
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 15,
+            "meanP": 0.9293,
+            "observed": {
+              "rate": 0.3333,
+              "low": 0.1518,
+              "high": 0.5829,
+              "n": 15
+            }
+          }
+        ]
+      }
+    },
+    "gemini:gemini-3.5-flash-lite__p3-reason": {
+      "invalidExcluded": 1,
+      "overall": {
+        "n": 999,
+        "distinctP": 19,
+        "ece": 0.1983,
+        "brier": 0.216,
+        "auroc": 0.6909,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 432,
+            "meanP": 0.0457,
+            "observed": {
+              "rate": 0.0903,
+              "low": 0.0667,
+              "high": 0.121,
+              "n": 432
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 177,
+            "meanP": 0.1175,
+            "observed": {
+              "rate": 0.1412,
+              "low": 0.0975,
+              "high": 0.2002,
+              "n": 177
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 40,
+            "meanP": 0.2013,
+            "observed": {
+              "rate": 0.175,
+              "low": 0.0875,
+              "high": 0.3195,
+              "n": 40
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 17,
+            "meanP": 0.3147,
+            "observed": {
+              "rate": 0.2353,
+              "low": 0.0955,
+              "high": 0.4726,
+              "n": 17
+            }
+          },
+          {
+            "from": 0.4,
+            "to": 0.5,
+            "n": 1,
+            "meanP": 0.4,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.7935,
+              "n": 1
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 3,
+            "meanP": 0.55,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.5615,
+              "n": 3
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 77,
+            "meanP": 0.6416,
+            "observed": {
+              "rate": 0.1948,
+              "low": 0.1218,
+              "high": 0.2969,
+              "n": 77
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 68,
+            "meanP": 0.75,
+            "observed": {
+              "rate": 0.1765,
+              "low": 0.1039,
+              "high": 0.2836,
+              "n": 68
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 132,
+            "meanP": 0.8481,
+            "observed": {
+              "rate": 0.1818,
+              "low": 0.1253,
+              "high": 0.2563,
+              "n": 132
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 52,
+            "meanP": 0.9587,
+            "observed": {
+              "rate": 0.7885,
+              "low": 0.6597,
+              "high": 0.8776,
+              "n": 52
+            }
+          }
+        ]
+      },
+      "temporary": {
+        "n": 457,
+        "distinctP": 19,
+        "ece": 0.2784,
+        "brier": 0.2768,
+        "auroc": 0.6756,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 91,
+            "meanP": 0.0488,
+            "observed": {
+              "rate": 0.1758,
+              "low": 0.1112,
+              "high": 0.2667,
+              "n": 91
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 103,
+            "meanP": 0.1175,
+            "observed": {
+              "rate": 0.165,
+              "low": 0.1057,
+              "high": 0.2485,
+              "n": 103
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 25,
+            "meanP": 0.202,
+            "observed": {
+              "rate": 0.08,
+              "low": 0.0222,
+              "high": 0.2497,
+              "n": 25
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 13,
+            "meanP": 0.3115,
+            "observed": {
+              "rate": 0.2308,
+              "low": 0.0818,
+              "high": 0.5026,
+              "n": 13
+            }
+          },
+          {
+            "from": 0.4,
+            "to": 0.5,
+            "n": 1,
+            "meanP": 0.4,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.7935,
+              "n": 1
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 3,
+            "meanP": 0.55,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.5615,
+              "n": 3
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 47,
+            "meanP": 0.6415,
+            "observed": {
+              "rate": 0.1915,
+              "low": 0.1042,
+              "high": 0.3254,
+              "n": 47
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 50,
+            "meanP": 0.75,
+            "observed": {
+              "rate": 0.16,
+              "low": 0.0834,
+              "high": 0.2851,
+              "n": 50
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 80,
+            "meanP": 0.8475,
+            "observed": {
+              "rate": 0.25,
+              "low": 0.1681,
+              "high": 0.3548,
+              "n": 80
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 44,
+            "meanP": 0.9584,
+            "observed": {
+              "rate": 0.8182,
+              "low": 0.6804,
+              "high": 0.9049,
+              "n": 44
+            }
+          }
+        ]
+      },
+      "registered": {
+        "n": 542,
+        "distinctP": 15,
+        "ece": 0.1407,
+        "brier": 0.1648,
+        "auroc": 0.6465,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 341,
+            "meanP": 0.0449,
+            "observed": {
+              "rate": 0.0674,
+              "low": 0.0454,
+              "high": 0.0992,
+              "n": 341
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 74,
+            "meanP": 0.1176,
+            "observed": {
+              "rate": 0.1081,
+              "low": 0.0558,
+              "high": 0.1991,
+              "n": 74
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 15,
+            "meanP": 0.2,
+            "observed": {
+              "rate": 0.3333,
+              "low": 0.1518,
+              "high": 0.5829,
+              "n": 15
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 4,
+            "meanP": 0.325,
+            "observed": {
+              "rate": 0.25,
+              "low": 0.0456,
+              "high": 0.6994,
+              "n": 4
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 30,
+            "meanP": 0.6417,
+            "observed": {
+              "rate": 0.2,
+              "low": 0.095,
+              "high": 0.3731,
+              "n": 30
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 18,
+            "meanP": 0.75,
+            "observed": {
+              "rate": 0.2222,
+              "low": 0.09,
+              "high": 0.4522,
+              "n": 18
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 52,
+            "meanP": 0.849,
+            "observed": {
+              "rate": 0.0769,
+              "low": 0.0303,
+              "high": 0.1817,
+              "n": 52
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 8,
+            "meanP": 0.96,
+            "observed": {
+              "rate": 0.625,
+              "low": 0.3057,
+              "high": 0.8632,
+              "n": 8
+            }
+          }
+        ]
+      }
+    },
+    "gemini:gemini-3.8-flash__p1-plain": {
+      "invalidExcluded": 0,
+      "overall": {
+        "n": 1000,
+        "distinctP": 65,
+        "ece": 0.2011,
+        "brier": 0.2229,
+        "auroc": 0.7238,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 279,
+            "meanP": 0.0541,
+            "observed": {
+              "rate": 0.0573,
+              "low": 0.0356,
+              "high": 0.0911,
+              "n": 279
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 237,
+            "meanP": 0.1411,
+            "observed": {
+              "rate": 0.135,
+              "low": 0.0973,
+              "high": 0.1844,
+              "n": 237
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 126,
+            "meanP": 0.2506,
+            "observed": {
+              "rate": 0.1508,
+              "low": 0.0987,
+              "high": 0.2235,
+              "n": 126
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 3,
+            "meanP": 0.36,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.5615,
+              "n": 3
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 40,
+            "meanP": 0.5753,
+            "observed": {
+              "rate": 0.2,
+              "low": 0.105,
+              "high": 0.3476,
+              "n": 40
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 48,
+            "meanP": 0.6498,
+            "observed": {
+              "rate": 0.25,
+              "low": 0.1492,
+              "high": 0.3878,
+              "n": 48
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 22,
+            "meanP": 0.7286,
+            "observed": {
+              "rate": 0.1364,
+              "low": 0.0475,
+              "high": 0.3334,
+              "n": 22
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 174,
+            "meanP": 0.84,
+            "observed": {
+              "rate": 0.1552,
+              "low": 0.1089,
+              "high": 0.2164,
+              "n": 174
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 71,
+            "meanP": 0.9678,
+            "observed": {
+              "rate": 0.7042,
+              "low": 0.5898,
+              "high": 0.7977,
+              "n": 71
+            }
+          }
+        ]
+      },
+      "temporary": {
+        "n": 458,
+        "distinctP": 50,
+        "ece": 0.2732,
+        "brier": 0.2771,
+        "auroc": 0.6845,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 32,
+            "meanP": 0.0672,
+            "observed": {
+              "rate": 0.1875,
+              "low": 0.0889,
+              "high": 0.3531,
+              "n": 32
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 122,
+            "meanP": 0.1479,
+            "observed": {
+              "rate": 0.1803,
+              "low": 0.1222,
+              "high": 0.258,
+              "n": 122
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 83,
+            "meanP": 0.2501,
+            "observed": {
+              "rate": 0.1084,
+              "low": 0.0581,
+              "high": 0.1934,
+              "n": 83
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 2,
+            "meanP": 0.365,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.6576,
+              "n": 2
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 22,
+            "meanP": 0.5775,
+            "observed": {
+              "rate": 0.2727,
+              "low": 0.1315,
+              "high": 0.4815,
+              "n": 22
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 29,
+            "meanP": 0.6483,
+            "observed": {
+              "rate": 0.2414,
+              "low": 0.1222,
+              "high": 0.4211,
+              "n": 29
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 11,
+            "meanP": 0.7273,
+            "observed": {
+              "rate": 0.0909,
+              "low": 0.0162,
+              "high": 0.3774,
+              "n": 11
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 103,
+            "meanP": 0.8438,
+            "observed": {
+              "rate": 0.165,
+              "low": 0.1057,
+              "high": 0.2485,
+              "n": 103
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 54,
+            "meanP": 0.9703,
+            "observed": {
+              "rate": 0.7963,
+              "low": 0.671,
+              "high": 0.8823,
+              "n": 54
+            }
+          }
+        ]
+      },
+      "registered": {
+        "n": 542,
+        "distinctP": 53,
+        "ece": 0.1657,
+        "brier": 0.1771,
+        "auroc": 0.7143,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 247,
+            "meanP": 0.0524,
+            "observed": {
+              "rate": 0.0405,
+              "low": 0.0221,
+              "high": 0.0729,
+              "n": 247
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 115,
+            "meanP": 0.134,
+            "observed": {
+              "rate": 0.087,
+              "low": 0.0479,
+              "high": 0.1527,
+              "n": 115
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 43,
+            "meanP": 0.2514,
+            "observed": {
+              "rate": 0.2326,
+              "low": 0.1315,
+              "high": 0.3774,
+              "n": 43
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 1,
+            "meanP": 0.35,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.7935,
+              "n": 1
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 18,
+            "meanP": 0.5728,
+            "observed": {
+              "rate": 0.1111,
+              "low": 0.031,
+              "high": 0.328,
+              "n": 18
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 19,
+            "meanP": 0.6521,
+            "observed": {
+              "rate": 0.2632,
+              "low": 0.1181,
+              "high": 0.4879,
+              "n": 19
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 11,
+            "meanP": 0.73,
+            "observed": {
+              "rate": 0.1818,
+              "low": 0.0514,
+              "high": 0.477,
+              "n": 11
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 71,
+            "meanP": 0.8345,
+            "observed": {
+              "rate": 0.1408,
+              "low": 0.0783,
+              "high": 0.2402,
+              "n": 71
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 17,
+            "meanP": 0.9597,
+            "observed": {
+              "rate": 0.4118,
+              "low": 0.2161,
+              "high": 0.6399,
+              "n": 17
+            }
+          }
+        ]
+      }
+    },
+    "gemini:gemini-3.8-flash__p2-guide": {
+      "invalidExcluded": 0,
+      "overall": {
+        "n": 1000,
+        "distinctP": 57,
+        "ece": 0.1642,
+        "brier": 0.1942,
+        "auroc": 0.7232,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 325,
+            "meanP": 0.0505,
+            "observed": {
+              "rate": 0.0708,
+              "low": 0.0476,
+              "high": 0.104,
+              "n": 325
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 251,
+            "meanP": 0.1398,
+            "observed": {
+              "rate": 0.1315,
+              "low": 0.0952,
+              "high": 0.1789,
+              "n": 251
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 122,
+            "meanP": 0.2399,
+            "observed": {
+              "rate": 0.1721,
+              "low": 0.1154,
+              "high": 0.2489,
+              "n": 122
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 8,
+            "meanP": 0.3413,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.3244,
+              "n": 8
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 25,
+            "meanP": 0.5788,
+            "observed": {
+              "rate": 0.08,
+              "low": 0.0222,
+              "high": 0.2497,
+              "n": 25
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 63,
+            "meanP": 0.6581,
+            "observed": {
+              "rate": 0.2063,
+              "low": 0.1248,
+              "high": 0.3217,
+              "n": 63
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 32,
+            "meanP": 0.7387,
+            "observed": {
+              "rate": 0.3125,
+              "low": 0.1795,
+              "high": 0.4857,
+              "n": 32
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 107,
+            "meanP": 0.844,
+            "observed": {
+              "rate": 0.1495,
+              "low": 0.0942,
+              "high": 0.2292,
+              "n": 107
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 67,
+            "meanP": 0.9651,
+            "observed": {
+              "rate": 0.7313,
+              "low": 0.6148,
+              "high": 0.8228,
+              "n": 67
+            }
+          }
+        ]
+      },
+      "temporary": {
+        "n": 458,
+        "distinctP": 51,
+        "ece": 0.2517,
+        "brier": 0.2586,
+        "auroc": 0.6718,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 60,
+            "meanP": 0.0617,
+            "observed": {
+              "rate": 0.2,
+              "low": 0.1183,
+              "high": 0.3178,
+              "n": 60
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 114,
+            "meanP": 0.1451,
+            "observed": {
+              "rate": 0.1754,
+              "low": 0.1165,
+              "high": 0.2555,
+              "n": 114
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 77,
+            "meanP": 0.2426,
+            "observed": {
+              "rate": 0.1299,
+              "low": 0.0721,
+              "high": 0.2228,
+              "n": 77
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 5,
+            "meanP": 0.342,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.4345,
+              "n": 5
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 16,
+            "meanP": 0.5781,
+            "observed": {
+              "rate": 0.0625,
+              "low": 0.0111,
+              "high": 0.2833,
+              "n": 16
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 44,
+            "meanP": 0.6568,
+            "observed": {
+              "rate": 0.2273,
+              "low": 0.1284,
+              "high": 0.3699,
+              "n": 44
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 21,
+            "meanP": 0.7395,
+            "observed": {
+              "rate": 0.2381,
+              "low": 0.1063,
+              "high": 0.4509,
+              "n": 21
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 69,
+            "meanP": 0.8433,
+            "observed": {
+              "rate": 0.1594,
+              "low": 0.0914,
+              "high": 0.2633,
+              "n": 69
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 52,
+            "meanP": 0.9668,
+            "observed": {
+              "rate": 0.8077,
+              "low": 0.681,
+              "high": 0.892,
+              "n": 52
+            }
+          }
+        ]
+      },
+      "registered": {
+        "n": 542,
+        "distinctP": 45,
+        "ece": 0.1109,
+        "brier": 0.1398,
+        "auroc": 0.7349,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 265,
+            "meanP": 0.048,
+            "observed": {
+              "rate": 0.0415,
+              "low": 0.0233,
+              "high": 0.0728,
+              "n": 265
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 137,
+            "meanP": 0.1355,
+            "observed": {
+              "rate": 0.0949,
+              "low": 0.0563,
+              "high": 0.1556,
+              "n": 137
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 45,
+            "meanP": 0.2353,
+            "observed": {
+              "rate": 0.2444,
+              "low": 0.1424,
+              "high": 0.3867,
+              "n": 45
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 3,
+            "meanP": 0.34,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.5615,
+              "n": 3
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 9,
+            "meanP": 0.58,
+            "observed": {
+              "rate": 0.1111,
+              "low": 0.0199,
+              "high": 0.435,
+              "n": 9
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 19,
+            "meanP": 0.6611,
+            "observed": {
+              "rate": 0.1579,
+              "low": 0.0552,
+              "high": 0.3757,
+              "n": 19
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 11,
+            "meanP": 0.7373,
+            "observed": {
+              "rate": 0.4545,
+              "low": 0.2127,
+              "high": 0.7199,
+              "n": 11
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 38,
+            "meanP": 0.8453,
+            "observed": {
+              "rate": 0.1316,
+              "low": 0.0575,
+              "high": 0.2733,
+              "n": 38
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 15,
+            "meanP": 0.9593,
+            "observed": {
+              "rate": 0.4667,
+              "low": 0.2481,
+              "high": 0.6988,
+              "n": 15
+            }
+          }
+        ]
+      }
+    },
+    "gemini:gemini-3.8-flash__p3-reason": {
+      "invalidExcluded": 0,
+      "overall": {
+        "n": 1000,
+        "distinctP": 56,
+        "ece": 0.1833,
+        "brier": 0.205,
+        "auroc": 0.7171,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 437,
+            "meanP": 0.0515,
+            "observed": {
+              "rate": 0.0892,
+              "low": 0.066,
+              "high": 0.1197,
+              "n": 437
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 172,
+            "meanP": 0.1435,
+            "observed": {
+              "rate": 0.1395,
+              "low": 0.0956,
+              "high": 0.1992,
+              "n": 172
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 61,
+            "meanP": 0.2493,
+            "observed": {
+              "rate": 0.1803,
+              "low": 0.1038,
+              "high": 0.2947,
+              "n": 61
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 25,
+            "meanP": 0.3536,
+            "observed": {
+              "rate": 0.08,
+              "low": 0.0222,
+              "high": 0.2497,
+              "n": 25
+            }
+          },
+          {
+            "from": 0.4,
+            "to": 0.5,
+            "n": 15,
+            "meanP": 0.4333,
+            "observed": {
+              "rate": 0.0667,
+              "low": 0.0119,
+              "high": 0.2982,
+              "n": 15
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 7,
+            "meanP": 0.5757,
+            "observed": {
+              "rate": 0.1429,
+              "low": 0.0257,
+              "high": 0.5131,
+              "n": 7
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 70,
+            "meanP": 0.6504,
+            "observed": {
+              "rate": 0.1571,
+              "low": 0.0901,
+              "high": 0.2599,
+              "n": 70
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 25,
+            "meanP": 0.7456,
+            "observed": {
+              "rate": 0.16,
+              "low": 0.064,
+              "high": 0.3465,
+              "n": 25
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 93,
+            "meanP": 0.8538,
+            "observed": {
+              "rate": 0.2581,
+              "low": 0.18,
+              "high": 0.3553,
+              "n": 93
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 95,
+            "meanP": 0.9682,
+            "observed": {
+              "rate": 0.5263,
+              "low": 0.4269,
+              "high": 0.6237,
+              "n": 95
+            }
+          }
+        ]
+      },
+      "temporary": {
+        "n": 458,
+        "distinctP": 52,
+        "ece": 0.2601,
+        "brier": 0.2653,
+        "auroc": 0.673,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 106,
+            "meanP": 0.0644,
+            "observed": {
+              "rate": 0.1981,
+              "low": 0.1334,
+              "high": 0.284,
+              "n": 106
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 105,
+            "meanP": 0.1442,
+            "observed": {
+              "rate": 0.1619,
+              "low": 0.1036,
+              "high": 0.2441,
+              "n": 105
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 31,
+            "meanP": 0.2503,
+            "observed": {
+              "rate": 0.129,
+              "low": 0.0513,
+              "high": 0.2885,
+              "n": 31
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 17,
+            "meanP": 0.3535,
+            "observed": {
+              "rate": 0.0588,
+              "low": 0.0105,
+              "high": 0.2698,
+              "n": 17
+            }
+          },
+          {
+            "from": 0.4,
+            "to": 0.5,
+            "n": 11,
+            "meanP": 0.4345,
+            "observed": {
+              "rate": 0.0909,
+              "low": 0.0162,
+              "high": 0.3774,
+              "n": 11
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 2,
+            "meanP": 0.58,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.6576,
+              "n": 2
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 42,
+            "meanP": 0.6512,
+            "observed": {
+              "rate": 0.1429,
+              "low": 0.0672,
+              "high": 0.2784,
+              "n": 42
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 16,
+            "meanP": 0.7381,
+            "observed": {
+              "rate": 0.125,
+              "low": 0.035,
+              "high": 0.3602,
+              "n": 16
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 58,
+            "meanP": 0.851,
+            "observed": {
+              "rate": 0.2931,
+              "low": 0.1918,
+              "high": 0.4201,
+              "n": 58
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 70,
+            "meanP": 0.9696,
+            "observed": {
+              "rate": 0.6,
+              "low": 0.4829,
+              "high": 0.7067,
+              "n": 70
+            }
+          }
+        ]
+      },
+      "registered": {
+        "n": 542,
+        "distinctP": 45,
+        "ece": 0.1253,
+        "brier": 0.1541,
+        "auroc": 0.7166,
+        "reliability": [
+          {
+            "from": 0,
+            "to": 0.1,
+            "n": 331,
+            "meanP": 0.0473,
+            "observed": {
+              "rate": 0.0544,
+              "low": 0.0347,
+              "high": 0.0843,
+              "n": 331
+            }
+          },
+          {
+            "from": 0.1,
+            "to": 0.2,
+            "n": 67,
+            "meanP": 0.1425,
+            "observed": {
+              "rate": 0.1045,
+              "low": 0.0515,
+              "high": 0.2003,
+              "n": 67
+            }
+          },
+          {
+            "from": 0.2,
+            "to": 0.3,
+            "n": 30,
+            "meanP": 0.2483,
+            "observed": {
+              "rate": 0.2333,
+              "low": 0.1179,
+              "high": 0.4093,
+              "n": 30
+            }
+          },
+          {
+            "from": 0.3,
+            "to": 0.4,
+            "n": 8,
+            "meanP": 0.3538,
+            "observed": {
+              "rate": 0.125,
+              "low": 0.0224,
+              "high": 0.4709,
+              "n": 8
+            }
+          },
+          {
+            "from": 0.4,
+            "to": 0.5,
+            "n": 4,
+            "meanP": 0.43,
+            "observed": {
+              "rate": 0,
+              "low": 0,
+              "high": 0.4899,
+              "n": 4
+            }
+          },
+          {
+            "from": 0.5,
+            "to": 0.6,
+            "n": 5,
+            "meanP": 0.574,
+            "observed": {
+              "rate": 0.2,
+              "low": 0.0362,
+              "high": 0.6245,
+              "n": 5
+            }
+          },
+          {
+            "from": 0.6,
+            "to": 0.7,
+            "n": 28,
+            "meanP": 0.6493,
+            "observed": {
+              "rate": 0.1786,
+              "low": 0.0788,
+              "high": 0.3559,
+              "n": 28
+            }
+          },
+          {
+            "from": 0.7,
+            "to": 0.8,
+            "n": 9,
+            "meanP": 0.7589,
+            "observed": {
+              "rate": 0.2222,
+              "low": 0.0632,
+              "high": 0.5474,
+              "n": 9
+            }
+          },
+          {
+            "from": 0.8,
+            "to": 0.9,
+            "n": 35,
+            "meanP": 0.8583,
+            "observed": {
+              "rate": 0.2,
+              "low": 0.1004,
+              "high": 0.3589,
+              "n": 35
+            }
+          },
+          {
+            "from": 0.9,
+            "to": 1,
+            "n": 25,
+            "meanP": 0.9644,
+            "observed": {
+              "rate": 0.32,
+              "low": 0.172,
+              "high": 0.5159,
+              "n": 25
             }
           }
         ]

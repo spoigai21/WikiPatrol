@@ -89,7 +89,7 @@ if (import.meta.main) {
     target: 'reverted within 72h (D9); population: edits that pass the default filter (D10, D12)',
     baseRate: wilson(reverted, decided),
     labelNoise: { labeller: noise.labeller, revertedNotVandalism: noise.revertedNotVandalism, keptButVandalism: noise.keptButVandalism },
-    filterLoss: 'the filter itself drops 16–24% of reverted edits before any row here sees them (D10)',
+    filterLoss: 'the filter itself drops 13–24% of reverted edits before any row here sees them (D10)',
     rows: scores,
   };
   writeJson(`results/phase5/grid-${set}.json`, report);
@@ -99,7 +99,7 @@ if (import.meta.main) {
     '',
     `${edits.length} edits that pass the filter; ${reverted} reverted within 72h (base rate ${ci(report.baseRate)}).`,
     `**Target is revert, not vandalism:** in the Phase 0 sample ${pct(noise.revertedNotVandalism.rate)} of reverted edits were not vandalism (${noise.labeller}).`,
-    `The filter in front of every row already drops 16–24% of reverted edits (D10).`,
+    `The filter in front of every row already drops 13–24% of reverted edits (D10).`,
     '',
     '| Configuration | Precision | Recall | F1 | Flagged | Invalid | Latency p50 / p95 | Tokens in / out | Complete |',
     '|---|---|---|---|---|---|---|---|---|',

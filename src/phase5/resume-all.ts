@@ -14,7 +14,7 @@ import { loadSet, readRun, runPath, runPredictor, SEALED } from './runner.ts';
 const LANES: { model: string; rpm?: number }[] = [
   { model: 'ollama:gemma3:4b' },
   { model: 'groq:openai/gpt-oss-120b', rpm: 10 },
-  { model: 'gemini:gemini-3.5-flash-lite', rpm: 10 },
+  // Gemini runs on the paid tier and is run directly (D12, 2026-10-06), not in this free-tier loop.
 ];
 
 const edits = loadSet(SEALED);
