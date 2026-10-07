@@ -1,9 +1,10 @@
 # The nightly drift check (Phase 9, D15) for the laptop cluster. Not in the default kustomization:
 # it reads the frozen sealed set and the Phase 5 answers from the repo checkout and writes its
-# results back there, so the cluster must mount that checkout. With k3d:
+# results back there, so the cluster must mount that checkout's results/:
 #
-#   k3d cluster create wikipatrol --volume "$PWD/results:/wikipatrol-results@all"
-#   kubectl -n wikipatrol create secret generic wikipatrol-keys --from-env-file=.env   # optional: cloud configs
+#   kind create cluster --name wikipatrol --config deploy/k8s/optional/kind-local.yaml
+#   (or k3d: k3d cluster create wikipatrol --volume "$PWD/results:/wikipatrol-results@all")
+#   kubectl -n wikipatrol create secret generic wikipatrol-keys --from-env-file=.env   # cloud configs
 #   kubectl apply -f deploy/k8s/optional/drift-cronjob.yaml
 #
 # A drift alert makes the Job fail (exit 1), appends to results/phase9/alerts.jsonl, and POSTs to
@@ -28,10 +29,10 @@ spec:
             - name: drift
               image: wikipatrol:local
               imagePullPolicy: IfNotPresent
-              args: ["src/phase9/main.ts"]
+              args: ["src/phase9/main.ts", "--rpm", "60"]
               env:
-                # The host's Ollama, as k3d exposes it to pods.
-                - { name: OLLAMA_HOST, value: "http://host.k3d.internal:11434" }
+                # The host's Ollama: Docker Desktop's name for the host (kind; k3d also has host.k3d.internal).
+                - { name: OLLAMA_HOST, value: "http://host.docker.internal:11434" }
               envFrom:
                 - secretRef: { name: wikipatrol-keys, optional: true }
               # Files in the mounted checkout belong to the host user; root in this one-shot Job

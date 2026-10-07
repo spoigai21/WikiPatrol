@@ -81,9 +81,12 @@ if (opts['measure-variance']) {
     per[config] = { vsOriginal: [a.check.agreement, b.check.agreement], runToRun: compare(config, ra, rb).agreement };
     log(`${config}: vs Phase 5 ${a.check.agreement} / ${b.check.agreement}; run to run ${per[config]!.runToRun}`);
   }
-  const lowest = Math.min(...Object.values(per).flatMap((p) => p.vsOriginal));
+  // Merge with configurations measured earlier: the threshold covers every configuration checked.
+  const earlier = existsSync(THRESHOLDS) ? ((JSON.parse(readFileSync(THRESHOLDS, 'utf8')) as { basis?: typeof per }).basis ?? {}) : {};
+  const basis = { ...earlier, ...per };
+  const lowest = Math.min(...Object.values(basis).flatMap((p) => p.vsOriginal));
   const minAgreement = round(Math.min(DEFAULT_THRESHOLDS.minAgreement, lowest - 0.05));
-  writeJson(THRESHOLDS, { measuredAt: new Date().toISOString(), minAgreement, maxInvalidRise: DEFAULT_THRESHOLDS.maxInvalidRise, basis: per, rule: 'min(0.90, lowest agreement with Phase 5 over two reruns - 0.05) (D15)' });
+  writeJson(THRESHOLDS, { measuredAt: new Date().toISOString(), minAgreement, maxInvalidRise: DEFAULT_THRESHOLDS.maxInvalidRise, basis, rule: 'min(0.90, lowest agreement with Phase 5 over two reruns - 0.05), over every configuration measured (D15)' });
   log(`threshold: agreement >= ${minAgreement} -> ${THRESHOLDS}`);
   process.exit(0);
 }

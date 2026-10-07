@@ -1,0 +1,17 @@
+{"t":"2026-10-06T17:31:16.862Z","replicas":6,"desired":6,"metric":50,"classifierLag":639,"raw":7802208,"scored":269608,"predictions":269034}
+{"t":"2026-10-06T17:32:17.113Z","replicas":6,"desired":6,"metric":50,"classifierLag":629,"raw":7805055,"scored":269703,"predictions":269139}
+{"t":"2026-10-06T17:33:17.124Z","replicas":6,"desired":6,"metric":50,"classifierLag":628,"raw":7808216,"scored":269791,"predictions":269227}
+{"t":"2026-10-06T17:34:17.138Z","replicas":6,"desired":6,"metric":50,"classifierLag":639,"raw":7811498,"scored":269888,"predictions":269314}
+{"t":"2026-10-06T17:35:17.158Z","replicas":6,"desired":6,"metric":50,"classifierLag":637,"raw":7815030,"scored":269971,"predictions":269398}
+{"t":"2026-10-06T17:36:17.190Z","replicas":6,"desired":6,"metric":50,"classifierLag":581,"raw":7819295,"scored":270048,"predictions":269532}
+{"t":"2026-10-06T17:37:17.219Z","replicas":6,"desired":6,"metric":50,"classifierLag":551,"raw":7823815,"scored":270128,"predictions":269642}
+{"t":"2026-10-06T17:38:17.254Z","replicas":6,"desired":6,"metric":50,"classifierLag":523,"raw":7828375,"scored":270218,"predictions":269760}
+{"t":"2026-10-06T17:39:17.265Z","replicas":6,"desired":6,"metric":50,"classifierLag":490,"raw":7833400,"scored":270295,"predictions":269870}
+{"t":"2026-10-06T17:40:17.291Z","replicas":6,"desired":6,"metric":50,"classifierLag":486,"raw":7838394,"scored":270377,"predictions":269956}
+{"t":"2026-10-06T17:41:17.317Z","replicas":6,"desired":6,"metric":50,"classifierLag":479,"raw":7842890,"scored":270453,"predictions":270039}
+{"t":"2026-10-06T17:42:17.328Z","replicas":6,"desired":6,"metric":50,"classifierLag":447,"raw":7847029,"scored":270514,"predictions":270132}
+{"t":"2026-10-06T17:43:17.342Z","replicas":6,"desired":6,"metric":50,"classifierLag":385,"raw":7850976,"scored":270582,"predictions":270260}
+{"t":"2026-10-06T17:44:17.366Z","replicas":6,"desired":6,"metric":50,"classifierLag":382,"raw":7854879,"scored":270656,"predictions":270339}
+{"t":"2026-10-06T17:45:17.373Z","replicas":6,"desired":6,"metric":50,"classifierLag":357,"raw":7859267,"scored":270740,"predictions":270446}
+{"t":"2026-10-06T17:46:17.422Z","replicas":6,"desired":6,"metric":53.334,"classifierLag":308,"raw":7862850,"scored":270811,"predictions":270575}
+{"t":"2026-10-06T17:47:17.478Z","replicas":6,"desired":6,"metric":51,"classifierLag":304,"raw":7867034,"scored":270913,"predictions":270675}

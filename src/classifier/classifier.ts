@@ -95,6 +95,8 @@ export interface ClassifierOptions {
    * for a per-replica quota (one API key each) in the Phase 8 run (D16).
    */
   paceMs?: number;
+  /** Tests shorten the group session to provoke an eviction; the default suits the cluster. */
+  sessionTimeoutMs?: number;
 }
 
 export async function runClassifier(opts: ClassifierOptions): Promise<void> {
@@ -107,7 +109,7 @@ export async function runClassifier(opts: ClassifierOptions): Promise<void> {
   // Short timeouts: the classifier heartbeats after every model call (seconds apart), and its
   // replicas come and go with the autoscaler. A long session would keep dead replicas in the group
   // for minutes, stalling every rebalance until liveness probes restart the live ones too (D16).
-  const consumer = kafka.consumer({ groupId: opts.groupId ?? 'wikipatrol-classifier', sessionTimeout: 45_000, rebalanceTimeout: 60_000, heartbeatInterval: 5_000 });
+  const consumer = kafka.consumer({ groupId: opts.groupId ?? 'wikipatrol-classifier', sessionTimeout: opts.sessionTimeoutMs ?? 45_000, rebalanceTimeout: 60_000, heartbeatInterval: Math.min(5_000, (opts.sessionTimeoutMs ?? 45_000) / 3) });
 
   await admin.connect();
   await ensureKeptTopic(admin, opts.output);
@@ -143,18 +145,30 @@ export async function runClassifier(opts: ClassifierOptions): Promise<void> {
         lastOffset = m.offset;
         // Model calls are slow: write and commit as we go, so a rebalance loses little work.
         if (rec.tier === 'model' || out.length >= 500) {
-          for (const chunk of chunkBySize(out.splice(0))) await producer.send({ topic: opts.output, acks: -1, messages: chunk });
-          resolveOffset(m.offset);
-          await consumer.commitOffsets([{ topic: opts.input, partition: batch.partition, offset: String(BigInt(m.offset) + 1n) }]);
-          opts.onProcessed?.(batch.partition, m.offset);
-          await heartbeat();
+          if (!(await flush(m.offset))) return;
         }
       }
-      if (out.length && lastOffset !== undefined) {
+      if (out.length && lastOffset !== undefined) await flush(lastOffset);
+
+      /**
+       * Write `out`, then commit through `offset`. False when the commit or heartbeat fails: a
+       * rebalance or a lost session is routine with an autoscaled group, so stop this batch and let
+       * kafkajs rejoin. Thrown, the error would stop the consumer for good, and the replica would sit
+       * idle until its liveness probe restarted it (D16). Outputs are written before the commit, so
+       * the cost is a re-read: a duplicate prediction under the same key, never a skipped edit.
+       */
+      async function flush(offset: string): Promise<boolean> {
         for (const chunk of chunkBySize(out.splice(0))) await producer.send({ topic: opts.output, acks: -1, messages: chunk });
-        resolveOffset(lastOffset);
-        await consumer.commitOffsets([{ topic: opts.input, partition: batch.partition, offset: String(BigInt(lastOffset) + 1n) }]);
-        opts.onProcessed?.(batch.partition, lastOffset);
+        resolveOffset(offset);
+        try {
+          await consumer.commitOffsets([{ topic: opts.input, partition: batch.partition, offset: String(BigInt(offset) + 1n) }]);
+          opts.onProcessed?.(batch.partition, offset);
+          await heartbeat();
+          return true;
+        } catch (err) {
+          log(`classifier: commit/heartbeat failed (${(err as { type?: string }).type ?? (err as Error).message}); rejoining`);
+          return false;
+        }
       }
     },
   });

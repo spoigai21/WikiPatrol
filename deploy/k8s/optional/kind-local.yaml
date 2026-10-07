@@ -1,0 +1,13 @@
+# A laptop kind cluster that can also run the nightly drift CronJob: it mounts this repo's
+# results/ into the node, where drift-cronjob.yaml reads the frozen sealed set and writes back.
+#
+#   kind create cluster --name wikipatrol --config deploy/k8s/optional/kind-local.yaml
+#
+# Run from the repo root: hostPath is relative to it.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraMounts:
+      - hostPath: ./results
+        containerPath: /wikipatrol-results

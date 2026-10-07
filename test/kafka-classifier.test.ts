@@ -4,6 +4,7 @@
 import { Kafka, logLevel } from 'kafkajs';
 import { afterEach, describe, expect, it } from 'vitest';
 import { runClassifier, type PredictionRecord } from '../src/classifier/classifier.ts';
+import { filterTemp, type Predictor } from '../src/phase5/predictors.ts';
 import type { ScoredRecord } from '../src/pipeline/stages.ts';
 
 const brokers = process.env.KAFKA_BROKERS?.split(',');
@@ -81,4 +82,46 @@ describe.skipIf(!brokers)('classifier replicas (Redpanda)', () => {
     }
     expect([...partitionsUsed.values()].reduce((a, s) => a + s.size, 0)).toBe(3);
   }, 120_000);
+
+  it('a replica evicted during a slow model call rejoins and finishes the topic', async () => {
+    // D16: a model call outlasting the group session gets the replica evicted; its next commit then
+    // fails ("the coordinator is not aware of this member"). That must send it back into the group,
+    // not stop its consumer for good.
+    const stamp = `${Date.now()}`;
+    const input = `test.scored.${stamp}`;
+    const output = `test.predictions.${stamp}`;
+    topics.push(input, output);
+    const admin = kafka!.admin();
+    await admin.connect();
+    await admin.createTopics({ waitForLeaders: true, topics: [{ topic: input, numPartitions: 1 }] });
+    await admin.disconnect();
+    // All kept by the filter, so every edit is a model call.
+    const ids = Array.from({ length: 36 }, (_, i) => 2000 + i).filter((id) => id % 5 !== 0);
+    const p = kafka!.producer();
+    await p.connect();
+    await p.send({ topic: input, messages: ids.map((id) => ({ key: String(id), value: JSON.stringify(scored(id)) })) });
+    await p.disconnect();
+
+    let calls = 0;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    // The third model call takes longer than the 6-second session.
+    const slow: Predictor = { ...filterTemp, predict: async (e) => { if (++calls === 3) await sleep(12_000); return filterTemp.predict(e); } };
+    const groupId = `test-classifier-${stamp}`;
+    const logs: string[] = [];
+    const ctl = new AbortController();
+    const run = runClassifier({ brokers: brokers!, input, output, config: 'heuristic', predictor: slow, groupId, signal: ctl.signal, sessionTimeoutMs: 6_000, log: (m) => logs.push(m) });
+    const consumedAll = async () => {
+      const ad = kafka!.admin(); await ad.connect();
+      const [c] = await ad.fetchOffsets({ groupId, topics: [input] });
+      const h = await ad.fetchTopicOffsets(input); await ad.disconnect();
+      return h.every((x) => c?.partitions.find((q) => q.partition === x.partition)?.offset === x.high);
+    };
+    const deadline = Date.now() + 90_000;
+    while (!(await consumedAll()) && Date.now() < deadline) await sleep(500);
+    const finished = await consumedAll();
+    ctl.abort();
+    await run;
+    expect(logs.some((m) => m.includes('commit/heartbeat failed'))).toBe(true);
+    expect(finished).toBe(true);
+  }, 150_000);
 });

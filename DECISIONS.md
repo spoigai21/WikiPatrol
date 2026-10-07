@@ -593,6 +593,13 @@ both reruns; `gemma3:4b` with `p3-reason` matched on 49 of 50 — the same edit 
 stable now but one answer differs from the sealed run made the day before. Threshold: the lower of
 90% and (98% − 5 points) = **90% agreement**.
 
+**Gemini added (2026-10-06)** — the same two back-to-back reruns for the six Gemini configurations
+(600 calls, $0.27 at list price). Flash-Lite matched its own sealed answers on all 50 edits with
+every prompt. 3.8 Flash matched on 49, 48 and 48 of 50 (98%, 96%, 96%) — and its two reruns agreed with
+each other completely, so the 1–2 answers that differ changed *between* the sealed run and a few hours
+later, not from call to call. A small, real shift: exactly what this check exists to see, and inside
+the threshold, which stays at **90%** (the lower of 90% and 96% − 5 points) across all 11 configurations.
+
 **The alert works** (`results/phase9/drift-2026-10-04T0640Z-degraded.json`): `gemma3:4b`/`p1-plain`
 with 30% of its decisions flipped scored 72% agreement (14 of 50 changed); the run exited 1 and
 wrote `results/phase9/alerts.jsonl` with nobody watching. The CronJob that runs this nightly is
@@ -655,6 +662,34 @@ predictions topics' sizes (whose minute-to-minute differences are the feed rates
   their liveness probes failed with 503 and Kubernetes restarted them (stages twice, classifiers
   once or twice each — 10 restarts in all), after which they recovered on their own. The probes did
   what they are for; it still breaks this window's "no restarts" bar, and is reported as such.
+- 2026-10-06 07:16 UTC: the recording stopped about 12 hours in, when the Mac restarted (uptime
+  shows a boot at ~08:27 UTC). The cluster came back on its own at ~16:00 UTC; the ingester resumed
+  from its checkpoint and replayed the missed hours, leaving the classifier ~27,800 behind. The
+  19:21 window is kept as a ~12-hour partial record (with the 62-minute gap and the 21:42 restarts above).
+- 2026-10-06 16:23–16:26 UTC, recovery, the same way as on 10-05 (owner's go-ahead): the classifier was
+  switched to the instant `heuristic` tier until lag reached 0 (those predictions are not used in any
+  evaluation), then the paced `gemma3:4b`/`p2-guide` tier (12 s pace) was restored; the group settled
+  to 6 members within two minutes. A new window started at 16:31 UTC (`diurnal-2026-10-06T1631Z.jsonl`).
+- 2026-10-06 16:44–16:49 UTC, a bug: a classifier replica was evicted from the group (a model call
+  outlasted its session while six replicas shared one Ollama) and its next offset commit failed with
+  "the coordinator is not aware of this member". The classifier did not catch commit failures, so
+  kafkajs stopped that consumer for good; the replica sat idle until its liveness probe restarted it.
+  Every scale event risks this, so the 16:31 window (40 minutes) is set aside. Fixed the way the
+  stages already handle it: a failed commit or heartbeat ends the batch and the replica rejoins
+  (`test/kafka-classifier.test.ts` provokes the eviction; it fails on the old code with the same error).
+  The image was rebuilt and the classifier redeployed at 17:12 UTC. A window started at 17:16 UTC
+  (`diurnal-2026-10-06T1716Z.jsonl`) was stopped after two minutes on the owner's request; the cluster
+  kept running, unchanged. A further window started at 17:31 UTC (`diurnal-2026-10-06T1731Z.jsonl`)
+  and was stopped at 17:48 UTC on the owner's request, with the cluster (`docker stop`) and Ollama.
+- 2026-10-07 00:12 UTC, restart: Ollama and the cluster were started again, the image rebuilt and
+  every deployment redeployed. The stages group then stuck rebalancing for ~20 minutes: the old pods'
+  members held their 5-minute sessions, the stage made no progress, its liveness probe restarted it,
+  and the restart left one more stale member — the classifier's D16 bug, in the stages. Cleared by
+  scaling stages to 0 until the group emptied, then back to 1 (settled 00:35). The ~6.5 missed hours
+  then reached the classifier (~33,000 behind), drained on the instant `heuristic` tier 00:43–00:45 as
+  before, and the paced `gemma3:4b`/`p2-guide` tier was restored. Not fixed in code yet: the stages'
+  5-minute session (Phase 2) is longer than a redeploy can wait. **The 25-hour window starts at
+  2026-10-07 00:48 UTC** (`diurnal-2026-10-07T0048Z.jsonl`).
 
 **Success** = over 24 hours, replicas rise when the feed rises and fall when it falls, with no
 container restarts and no gap in the record longer than the laptop was asleep — reported as it
