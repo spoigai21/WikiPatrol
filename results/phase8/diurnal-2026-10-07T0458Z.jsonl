@@ -1430,3 +1430,12 @@
 {"t":"2026-10-08T04:47:38.261Z","replicas":2,"desired":1,"metric":9.5,"classifierLag":44,"raw":13870344,"scored":445247,"predictions":445807}
 {"t":"2026-10-08T04:48:38.261Z","replicas":3,"desired":3,"metric":48.334,"classifierLag":146,"raw":13872705,"scored":445382,"predictions":445840}
 {"t":"2026-10-08T04:49:38.263Z","replicas":3,"desired":3,"metric":54,"classifierLag":160,"raw":13875014,"scored":445487,"predictions":445936}
+{"t":"2026-10-08T04:50:38.270Z","replicas":3,"desired":3,"metric":42.667,"classifierLag":109,"raw":13877047,"scored":445583,"predictions":446078}
+{"t":"2026-10-08T04:51:38.276Z","replicas":3,"desired":3,"metric":40.334,"classifierLag":129,"raw":13879463,"scored":445682,"predictions":446157}
+{"t":"2026-10-08T04:52:38.280Z","replicas":3,"desired":3,"metric":42,"classifierLag":133,"raw":13882143,"scored":445781,"predictions":446253}
+{"t":"2026-10-08T04:53:38.282Z","replicas":3,"desired":3,"metric":49,"classifierLag":155,"raw":13884427,"scored":445913,"predictions":446369}
+{"t":"2026-10-08T04:54:38.292Z","replicas":4,"desired":4,"metric":45,"classifierLag":179,"raw":13886768,"scored":446026,"predictions":446452}
+{"t":"2026-10-08T04:55:38.300Z","replicas":4,"desired":4,"metric":30,"classifierLag":135,"raw":13889051,"scored":446135,"predictions":446604}
+{"t":"2026-10-08T04:56:38.305Z","replicas":4,"desired":4,"metric":27,"classifierLag":106,"raw":13891682,"scored":446243,"predictions":446760}
+{"t":"2026-10-08T04:57:38.309Z","replicas":4,"desired":4,"metric":14.25,"classifierLag":72,"raw":13893939,"scored":446357,"predictions":446889}
+{"t":"2026-10-08T04:58:38.399Z","replicas":4,"desired":4,"metric":12.25,"classifierLag":34,"raw":13896706,"scored":446436,"predictions":447006}

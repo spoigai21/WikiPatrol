@@ -1,10 +1,58 @@
 # WikiPatrol
 
-**What does an expensive model actually buy you, when you cannot afford to call it on every edit?**
+### See the results: **[wikipatrol.vercel.app](https://wikipatrol.vercel.app/)**
 
-WikiPatrol watches English Wikipedia's live edit stream, predicts which edits will be reverted within
-72 hours, and measures what each step of a cheap-to-expensive model ladder is worth — in recall, in
-latency, and in dollars per thousand edits at published list prices.
+**Is an expensive AI worth paying for?**
+
+## In one minute
+
+Anyone can edit Wikipedia, and every day some edits get undone by other editors. This project asked
+two questions: **can AI spot those edits as they happen**, and **is a paid AI worth its cost compared
+with a free one?** To find out, it watched real Wikipedia edits live, let several AIs judge them, and
+checked three days later which edits had actually been undone.
+
+## What we found
+
+- **Most undone edits aren't vandalism.** About 4 in 5 are honest edits caught up in a disagreement
+  or a clean-up. So the project predicts "will this edit be undone?" rather than "is this vandalism?".
+- **A free first step does a lot of the work.** Skipping edits from bots and experienced editors
+  removes two-thirds or more of all edits, at no cost. It lets roughly 1 in 5 of the edits that later
+  get undone slip past, and those are mostly honest ones.
+- **The paid AI is the best judge, but only by a little.** When Google's Gemini says an edit will be
+  undone, it is right about 3 times in 10. A free AI running on a laptop is right about 2 times in 10.
+  A one-line rule ("flag edits from logged-out editors") is right about 1 time in 4.
+- **The paid AI costs about $0.22 per 1,000 edits**, roughly $17–28 a day for all of English
+  Wikipedia.
+- **Mixing the two to save money didn't work.** The plan was to let the free AI decide, and ask the
+  paid one only when the free one was unsure. But the free AI never knows when it's unsure, so it
+  almost never asked for help.
+- **The system adds helpers when it gets busy.** Over a full day of live Wikipedia edits, the number
+  of AI workers rose and fell with the amount of work, by itself.
+- **Our own guesses were often wrong, and we say so.** Predictions were written down before any
+  results existed. Five of them turned out wrong.
+
+## How we kept it fair
+
+- The test edits were frozen before any AI saw them, and each AI got exactly one try.
+- The questions given to the AIs were locked before the first one ran.
+- The "right answer" comes from Wikipedia itself: whether an edit was really undone within 3 days.
+  No AI marks another AI's work.
+- Everything that went wrong is written up in [`POSTMORTEM.md`](POSTMORTEM.md).
+
+## Words you'll see
+
+- **Undone (or "reverted")**: another editor reversed the edit.
+- **Vandalism**: an edit made on purpose to damage a page.
+- **AI model**: a program that reads an edit and guesses whether it will be undone.
+- **Free filter**: the first step, which skips edits from bots and experienced editors before any AI
+  looks.
+
+---
+
+## For technical readers
+
+Everything below is the same story with the exact numbers, their confidence intervals, and a link to
+the file each one comes from.
 
 > **The finding (2026-10-06):** on English Wikipedia edits, the expensive cloud model (Gemini 3.8
 > Flash) was the best judge of which edits get reverted — F1 0.39 against 0.33 for a small local
@@ -14,51 +62,7 @@ latency, and in dollars per thousand edits at published list prices.
 > is close to random), so it almost never handed anything up. A cheap model you want to route on has
 > to be good at knowing what it does not know — this one was not.
 
-## The short version
-
-**The problem.** People edit Wikipedia all the time, and some of those edits get undone — "reverted" —
-because they were vandalism, mistakes, or arguments. You could ask an AI model to look at every edit
-and guess which ones will be undone. But good AI models cost money for every question you ask, and
-English Wikipedia gets about 100,000 edits a day. So the real question is: **how little of the
-expensive model can you get away with?**
-
-**The idea.** Don't send everything to the expensive model. First, throw out edits that are
-obviously fine — bots, and people who have been editing for a long time. Then let a small free model
-running on a laptop look at what is left. Only when the small model is unsure, ask the expensive
-one. That chain is the "ladder". The project measures how much each step catches and what it costs.
-
-**What it found.**
-
-- *An undone edit is usually not vandalism.* In a sample of 100 edits, about 4 out of 5 undone edits
-  were honest edits caught up in someone else's cleanup. So the project predicts "will this be
-  undone?", and says so plainly, instead of claiming to catch vandals.
-- *The free first step does most of the work.* Just skipping bots and long-time editors removes
-  two-thirds or more of all edits, for nothing. It misses about one in five of the edits that later
-  get undone — mostly the honest ones. It also cuts the cloud bill to a third.
-- *The expensive model is the better judge.* Gemini 3.8 Flash is right about 3 times in 10 when it
-  says an edit will be undone; the small local model about 2 in 10, because it flags most of
-  everything. The cloud model's confidence also means something; the local model's does not.
-- *The ladder idea failed here, for a clear reason.* The plan was to ask the expensive model only
-  when the cheap one was unsure. But the cheap one is never usefully unsure — its confidence barely
-  tracks whether it is right — so the ladder ended up being the cheap model on its own. The rule for
-  the ladder was fixed before seeing the final results, and is reported as it came out.
-- *The pipeline needs a waiting room.* A rate-limited AI model falls behind even the quietest stream
-  of edits, so edits queue up in Kafka until the model gets to them — and nothing is lost or counted
-  twice while they wait.
-- *The extra machines follow the real work.* The classifier adds and removes copies of itself as
-  edits pile up. Over 12 hours it tracked the edits that actually need a model, not the total number
-  of edits — the free first step is what separates the two.
-- *Guesses made at the start were often wrong — on purpose, on the record.* Predictions were saved
-  before any results existed; five of them turned out wrong, including that the cloud model would
-  catch more undone edits (it caught fewer, but was right more often).
-
-**How to trust it.** The test edits were frozen before any model saw them. The questions given to
-the models were saved and locked before the first one ran. Each model got one try at the final test
-set, and the ladder's rules were chosen on separate practice edits, so nothing was tweaked until it
-looked good. Every number links to the file it came from, and everything that went wrong is written
-up in [`POSTMORTEM.md`](POSTMORTEM.md).
-
-## What was measured, in detail
+### What was measured, in detail
 
 **1. Most reverts are not vandalism — so this predicts reverts, and says so.**
 In a sample of 100 edits (50 reverted, 50 kept), **78% of the reverted edits were not vandalism**
@@ -127,16 +131,16 @@ traffic; at full speed the backlog drained, and every one of 1,565 messages was 
 That backlog is also the signal the classifier autoscales on.
 [`results/phase2/backpressure-2026-10-04T0534Z.svg`](results/phase2/backpressure-2026-10-04T0534Z.svg) · D1, D13
 
-**7. The autoscaler follows the model's work, not the raw edit volume — over 12 hours so far.**
+**7. The autoscaler follows the model's work, not the raw edit volume — over a full day.**
 Six classifier replicas at most, each paced to 5 model calls a minute, scaled by KEDA on consumer
-lag, fed live from Wikimedia. Over 11.9 hours the replica count tracked the edits the filter keeps
-— the only ones that cost a model call — at **r = 0.87** over 30-minute windows (0.81 on the clean
-overnight stretch): 22 kept edits a minute and 5.4 replicas in the evening, 12.7 and 2.9 before dawn.
-Against *all* edits it did not (r = −0.03), because overnight volume is mostly edits the filter drops
-for free. That was the measure planned first; the kept-edit one was chosen after seeing it, and both
-are reported. Short of the planned 24 hours, with a 62-minute gap and pod restarts while the laptop
-ran out of memory — a fresh 24-hour run is in progress.
-[`results/phase8/diurnal-2026-10-05T1921Z.svg`](results/phase8/diurnal-2026-10-05T1921Z.svg) · D16
+lag, fed live from Wikimedia for **24 hours with no gaps and no restarts** (2026-10-07 04:58 to
+2026-10-08 04:58 UTC). The replica count tracked the edits the filter keeps — the only ones that cost
+a model call — at **r = 0.92** over 30-minute windows: 25 kept edits a minute and 5.6 replicas on
+average in the busiest hour (20:00 UTC), 13 and 2.9 in the quietest (05:00 UTC), using the whole
+1–6 range. Against *all* edits it barely did (r = 0.18), because overnight volume is mostly edits the
+filter drops for free. The kept-edit measure was chosen after an earlier 12-hour window showed the
+total-edit one failing (r = −0.03, r = 0.87 on kept edits); this fresh day is its independent check.
+[`results/phase8/diurnal-2026-10-07T0458Z.svg`](results/phase8/diurnal-2026-10-07T0458Z.svg) · D16
 
 **8. The drift check catches a broken model, and saw a small real shift.**
 50 fixed sealed edits per configuration, rerun and compared with each configuration's own sealed
@@ -153,12 +157,11 @@ removes (30–60% → 67–87%), the recall the cloud model adds (+10–25 point
 and whether confidence routes (yes → not for the local model).
 [`PREDICTIONS.md`](PREDICTIONS.md) · scorecard in [`DECISIONS.md`](DECISIONS.md)
 
-**Not finished:** the full 24-hour autoscaling run (Phase 8, in progress; section 7 is its
-11.9-hour predecessor), the nightly drift schedule on the cluster (the check and its alert are shown;
-the CronJob is written but not yet scheduled), and labels from the live cluster's own log (they need
-it to be 72 hours old).
+**Not finished:** the nightly drift schedule on the cluster (the check and its alert are shown; the
+CronJob is written but not yet scheduled), and labels from the live cluster's own log (they need it
+to be 72 hours old).
 
-## How it works
+### How it works
 
 ![Architecture](docs/architecture.svg)
 
@@ -177,7 +180,7 @@ it to be 72 hours old).
 - **Drift** — a check, written as a nightly CronJob, reruns 50 fixed sealed edits per configuration
   and alerts when answers change; a deliberately degraded configuration trips it.
 
-## Run it
+### Run it
 
 ```bash
 docker compose up -d --build     # Redpanda, ingester, pipeline stages, classifier
@@ -196,7 +199,7 @@ checks live edits reach predictions, and tears it down — CI runs it on every p
 Evaluation: `npm run phase5:run`, `phase5:score`, `phase6:calibration`, `phase7:ladder`, `phase9:drift`
 (model API keys in a git-ignored `.env`).
 
-## Honest limits
+### Honest limits
 
 - **Revert prediction, not vandalism detection** — see finding 1.
 - **ORES/LiftWing is the baseline, not the target.** It has more resources and better data; this
@@ -208,7 +211,7 @@ Evaluation: `npm run phase5:run`, `phase5:score`, `phase6:calibration`, `phase7:
   the paid tier for about $3.13 at list price (D12). Groq `gpt-oss-120b` was left unfinished on its
   free tier and is not in the table.
 
-## Documents
+### Documents
 
 [`SPEC.md`](SPEC.md) — the plan · [`DECISIONS.md`](DECISIONS.md) — every choice and the number
 behind it · [`POSTMORTEM.md`](POSTMORTEM.md) — what went wrong and what changed ·

@@ -111,7 +111,8 @@ The Phase 8 recorder measured "the feed" as every edit reaching the classifier, 
 replicas should follow it. Over 11.9 hours they did not (r = −0.03). The replicas only spend time on
 the edits the free filter keeps, and overnight the feed grew with edits the filter drops. Against the
 kept edits, read back from the broker afterwards, r = 0.87. That second measure was chosen after
-seeing the first, and D16 says so beside both numbers. The lesson is the same as the label's: name
+seeing the first, and D16 says so beside both numbers; the full 24-hour run that followed was its
+independent check (r = 0.92 on kept edits, 0.18 on all). The lesson is the same as the label's: name
 what is actually being measured — here, the model's workload, not edit volume.
 
 ## 5. Engineering failures

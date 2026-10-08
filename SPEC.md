@@ -212,8 +212,8 @@ $0.22 per 1,000 edits — D17, `results/phase7/ladder.md`.)*
 
 *(Built: `deploy/k8s/`, `deploy/ci-smoke.sh`, `.github/workflows/ci.yml`; the classifier scales 1 → 6 on
 lag over a 6-partition `wiki.scored`; CI validated on a local `kind` cluster — `DECISIONS.md` D14.
-The 24-hour run: 11.9 hours recorded so far, in which the replicas followed the kept-edit load at
-r = 0.87 but not the total feed (r = −0.03) — D16 results; a fresh 24-hour window is running.)*
+The 24-hour run: done 2026-10-08, 24 hours with no gaps or restarts; the replicas followed the
+kept-edit load at r = 0.92, not the total feed (r = 0.18) — D16 results.)*
 
 ### Describe it honestly
 

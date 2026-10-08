@@ -704,12 +704,26 @@ predictions topics' sizes (whose minute-to-minute differences are the feed rates
 container restarts and no gap in the record longer than the laptop was asleep — reported as it
 comes out, including if the swing is too small to move the replica count.
 
-### D16 results so far — 11.9 hours, not 24: replicas follow the model work, not the raw feed (2026-10-07)
+### D16 results — 24 hours, clean: replicas follow the model work, not the raw feed (2026-10-08)
 
-The longest window recorded is `diurnal-2026-10-05T1921Z.jsonl`: 2026-10-05 19:21 to 2026-10-06 07:16
-UTC, 653 minutes, with the 62-minute gap and the 21:42 restarts logged above. **It does not meet the
-bar set above**: it is half the length, it has a gap while the laptop was awake, and it has restarts.
-A fresh 25-hour window is running (from 2026-10-07 04:58 UTC); these numbers will be replaced by it.
+**The full window** (`diurnal-2026-10-07T0458Z.jsonl`): 2026-10-07 04:58 to 2026-10-08 04:58 UTC,
+1,440 minutes, **no gaps and no container restarts** (the recorder was stopped at exactly 24 hours,
+not 25). **It meets the bar set above** — on the kept-edit load defined below, which was chosen after
+the earlier window and before this one:
+
+- **Kept edits vs replicas: r = 0.92** over 30-minute windows. Kept edits rose from 13 a minute
+  (05:00 UTC, 2.9 replicas on average) to 25 (20:00 UTC, 5.6 replicas) and fell back to 14 by 23:00
+  (3.1 replicas); the HPA used the whole 1–6 range. Peak lag 854, at 19:00 UTC, drained within the hour.
+- **All edits reaching the classifier vs replicas: r = 0.18.** From 02:00 to 04:00 UTC the feed was at
+  its highest (102–138 a minute) while kept edits stayed at 14–16, because that volume was edits the
+  filter drops — the same pattern as below.
+- **The swing:** about 1.9x in kept edits over the day, a little more than D8's ~1.5x hour-to-hour.
+
+`results/phase8/diurnal-2026-10-07T0458Z.{report.json,svg,kept.json}` · `npm run phase8:kept`, `npm run phase8:report`
+
+**The earlier window**, kept as the record of how the measure was chosen
+(`diurnal-2026-10-05T1921Z.jsonl`): 2026-10-05 19:21 to 2026-10-06 07:16 UTC, 653 minutes, with the
+62-minute gap and the 21:42 restarts logged above, so it did not meet the bar.
 
 - **As planned, against the feed the recorder measures** (wiki.scored's growth: every edit reaching
   the classifier): **r = −0.03** over 30-minute windows. The replica count does not follow it. The
@@ -730,7 +744,7 @@ A fresh 25-hour window is running (from 2026-10-07 04:58 UTC); these numbers wil
   12 hours, consistent with D8's ~1.5x; the replica range comes from the pace chosen in advance, not
   from the swing being large.
 
-`results/phase8/diurnal-2026-10-05T1921Z.{report.json,svg}` · `npm run phase8:report`
+`results/phase8/diurnal-2026-10-05T1921Z.{report.json,svg,kept.json}`
 
 ## D17 — The Phase 7 ladder: everything chosen on the dev set, then scored once (DECIDED 2026-10-06)
 
