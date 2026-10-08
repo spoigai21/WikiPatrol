@@ -45,6 +45,9 @@ one. That chain is the "ladder". The project measures how much each step catches
 - *The pipeline needs a waiting room.* A rate-limited AI model falls behind even the quietest stream
   of edits, so edits queue up in Kafka until the model gets to them — and nothing is lost or counted
   twice while they wait.
+- *The extra machines follow the real work.* The classifier adds and removes copies of itself as
+  edits pile up. Over 12 hours it tracked the edits that actually need a model, not the total number
+  of edits — the free first step is what separates the two.
 - *Guesses made at the start were often wrong — on purpose, on the record.* Predictions were saved
   before any results existed; five of them turned out wrong, including that the cloud model would
   catch more undone edits (it caught fewer, but was right more often).
@@ -124,15 +127,36 @@ traffic; at full speed the backlog drained, and every one of 1,565 messages was 
 That backlog is also the signal the classifier autoscales on.
 [`results/phase2/backpressure-2026-10-04T0534Z.svg`](results/phase2/backpressure-2026-10-04T0534Z.svg) · D1, D13
 
-**7. The predictions made before any of this were often wrong — on the record.**
+**7. The autoscaler follows the model's work, not the raw edit volume — over 12 hours so far.**
+Six classifier replicas at most, each paced to 5 model calls a minute, scaled by KEDA on consumer
+lag, fed live from Wikimedia. Over 11.9 hours the replica count tracked the edits the filter keeps
+— the only ones that cost a model call — at **r = 0.87** over 30-minute windows (0.81 on the clean
+overnight stretch): 22 kept edits a minute and 5.4 replicas in the evening, 12.7 and 2.9 before dawn.
+Against *all* edits it did not (r = −0.03), because overnight volume is mostly edits the filter drops
+for free. That was the measure planned first; the kept-edit one was chosen after seeing it, and both
+are reported. Short of the planned 24 hours, with a 62-minute gap and pod restarts while the laptop
+ran out of memory — a fresh 24-hour run is in progress.
+[`results/phase8/diurnal-2026-10-05T1921Z.svg`](results/phase8/diurnal-2026-10-05T1921Z.svg) · D16
+
+**8. The drift check catches a broken model, and saw a small real shift.**
+50 fixed sealed edits per configuration, rerun and compared with each configuration's own sealed
+answers. A deliberately degraded local configuration (30% of answers flipped) scored 72% agreement
+and tripped the alert with nobody watching. Two reruns of Gemini 3.8 Flash agreed with each other
+completely but differed from its sealed run on 1–2 of 50 edits a few hours earlier — a provider-side
+shift, inside the 90% threshold.
+[`results/phase9/`](results/phase9/) · D15
+
+**9. The predictions made before any of this were often wrong — on the record.**
 Predictions were git-tagged (`phase0-predictions`) before any result existed. Wrong: the revert rate
 (predicted 10–25%, measured 6.2%), reverted-but-not-vandalism (under 20% → 78%), how much the filter
 removes (30–60% → 67–87%), the recall the cloud model adds (+10–25 points → 17–36 points *fewer*),
 and whether confidence routes (yes → not for the local model).
 [`PREDICTIONS.md`](PREDICTIONS.md) · scorecard in [`DECISIONS.md`](DECISIONS.md)
 
-**Still running:** the 24-hour autoscaling run (Phase 8), and the first labels from the live
-cluster's own log (they need it to be 72 hours old).
+**Not finished:** the full 24-hour autoscaling run (Phase 8, in progress; section 7 is its
+11.9-hour predecessor), the nightly drift schedule on the cluster (the check and its alert are shown;
+the CronJob is written but not yet scheduled), and labels from the live cluster's own log (they need
+it to be 72 hours old).
 
 ## How it works
 
@@ -150,8 +174,8 @@ cluster's own log (they need it to be 72 hours old).
 - **Evaluation** — offline, on replayed hours frozen as checksummed snapshots. Prompts were
   git-tagged before any ran; the sealed set is scored once per configuration; no model grades
   another — the label is the revert.
-- **Drift** — a nightly job reruns 50 fixed sealed edits per configuration and alerts when answers
-  change; a deliberately degraded configuration trips it.
+- **Drift** — a check, written as a nightly CronJob, reruns 50 fixed sealed edits per configuration
+  and alerts when answers change; a deliberately degraded configuration trips it.
 
 ## Run it
 

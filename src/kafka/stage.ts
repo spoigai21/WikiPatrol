@@ -66,6 +66,17 @@ async function lastWrittenSource(kafka: Kafka, admin: Admin, topic: string, part
   return sources.reduce((a, b) => (b < a ? b : a));
 }
 
+/** The stages' group session and rebalance timeouts: long, because an enrich batch can wait minutes. */
+export const STAGE_SESSION_MS = 300_000;
+export const STAGE_REBALANCE_MS = 300_000;
+/**
+ * The longest a stage can wait for its group to re-form when members died without leaving (a pod
+ * killed, a cluster stopped): their sessions expire, then the rebalance waits out its timeout. A
+ * liveness check that gives up sooner restarts the stage mid-wait, and each restart leaves one more
+ * dead member behind, so the group never settles (D16, 2026-10-07).
+ */
+export const STAGE_GROUP_SETTLE_MS = STAGE_SESSION_MS + STAGE_REBALANCE_MS;
+
 export async function runStage(opts: StageRunOptions): Promise<StageRunStats> {
   const log = opts.log ?? (() => {});
   const replay = opts.fromOffset !== undefined;
@@ -75,7 +86,7 @@ export async function runStage(opts: StageRunOptions): Promise<StageRunStats> {
   const groupId = replay ? `wikipatrol-replay-${opts.stage.name}-${process.pid}-${randomUUID()}` : (opts.groupId ?? `wikipatrol-stage-${opts.stage.name}`);
   // A batch can wait on the Action API (enrich) for minutes when it is lagged; do not let the group
   // decide the consumer is dead meanwhile.
-  const consumer = kafka.consumer({ groupId, sessionTimeout: 300_000, rebalanceTimeout: 300_000, heartbeatInterval: 10_000 });
+  const consumer = kafka.consumer({ groupId, sessionTimeout: STAGE_SESSION_MS, rebalanceTimeout: STAGE_REBALANCE_MS, heartbeatInterval: 10_000 });
   const stats: StageRunStats = { read: 0, written: 0, skippedAlreadyWritten: 0 };
 
   await admin.connect();

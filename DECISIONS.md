@@ -687,13 +687,50 @@ predictions topics' sizes (whose minute-to-minute differences are the feed rates
   and the restart left one more stale member — the classifier's D16 bug, in the stages. Cleared by
   scaling stages to 0 until the group emptied, then back to 1 (settled 00:35). The ~6.5 missed hours
   then reached the classifier (~33,000 behind), drained on the instant `heuristic` tier 00:43–00:45 as
-  before, and the paced `gemma3:4b`/`p2-guide` tier was restored. Not fixed in code yet: the stages'
-  5-minute session (Phase 2) is longer than a redeploy can wait. **The 25-hour window starts at
-  2026-10-07 00:48 UTC** (`diurnal-2026-10-07T0048Z.jsonl`).
+  before, and the paced `gemma3:4b`/`p2-guide` tier was restored. Fixed in code the same day, deployed
+  only after this run: a stage's liveness check now waits out the group's worst-case settle time
+  (session + rebalance timeouts, 10 minutes) plus two, instead of giving up at 5 (`STAGE_GROUP_SETTLE_MS`). A window started at
+  2026-10-07 00:48 UTC (`diurnal-2026-10-07T0048Z.jsonl`).
+- 2026-10-07 ~02:05–03:10 UTC: an unrelated job on the same laptop exhausted its memory (swap 23.7 of
+  24 GB). Model calls slowed to 13–22 s with multi-minute stalls; classifier sessions expired from
+  02:12 and the replicas rejoined each time (the fix above working), but with no model answers they made
+  no progress, and liveness probes restarted five of them at 02:17–02:18, then the stages and the
+  ingester around 03:05. Lag peaked at 2,206 and recovered on its own. The 00:48 window (4.2 hours) is
+  set aside for its restarts. The other job was paused on the owner's request, and **the 25-hour window
+  starts at 2026-10-07 04:58 UTC** (`diurnal-2026-10-07T0458Z.jsonl`), with a low-memory alert added to
+  the watch.
 
 **Success** = over 24 hours, replicas rise when the feed rises and fall when it falls, with no
 container restarts and no gap in the record longer than the laptop was asleep — reported as it
 comes out, including if the swing is too small to move the replica count.
+
+### D16 results so far — 11.9 hours, not 24: replicas follow the model work, not the raw feed (2026-10-07)
+
+The longest window recorded is `diurnal-2026-10-05T1921Z.jsonl`: 2026-10-05 19:21 to 2026-10-06 07:16
+UTC, 653 minutes, with the 62-minute gap and the 21:42 restarts logged above. **It does not meet the
+bar set above**: it is half the length, it has a gap while the laptop was awake, and it has restarts.
+A fresh 25-hour window is running (from 2026-10-07 04:58 UTC); these numbers will be replaced by it.
+
+- **As planned, against the feed the recorder measures** (wiki.scored's growth: every edit reaching
+  the classifier): **r = −0.03** over 30-minute windows. The replica count does not follow it. The
+  busiest hour by that measure (04:00 UTC, 159 edits a minute) averaged 4.0 replicas; the evening,
+  at 88, averaged 5.4.
+- **Why, and the measure chosen after seeing that number.** About 85% of those edits are dropped by
+  the filter at no cost and never reach a model; the paced replicas spend their time only on the kept
+  ones, so the lag the HPA scales on is made of kept edits. Overnight, the feed's growth was mostly
+  edits the filter drops (bots and established accounts). The kept-edit rate was not recorded, so it
+  was read back from wiki.scored's broker timestamps and filter decisions (`npm run phase8:kept`,
+  `results/phase8/diurnal-2026-10-05T1921Z.kept.json`). This measure was chosen **after** the
+  r = −0.03 above, and is reported as such. Against it: **r = 0.87** over 30-minute windows (0.81 on
+  the clean stretch after 23:00 UTC alone, so not just the recovery spikes). Kept edits fell from
+  22 a minute (20:00 UTC, 5.4 replicas on average) to 12.7 (05:00 UTC, 2.9 replicas), and the
+  replicas fell with them, within 2–6.
+- **What it shows, honestly sized.** The autoscaler follows the work the model tier has to do, which
+  the free filter decouples from raw edit volume. The swing measured is about 1.7x in kept edits over
+  12 hours, consistent with D8's ~1.5x; the replica range comes from the pace chosen in advance, not
+  from the swing being large.
+
+`results/phase8/diurnal-2026-10-05T1921Z.{report.json,svg}` · `npm run phase8:report`
 
 ## D17 — The Phase 7 ladder: everything chosen on the dev set, then scored once (DECIDED 2026-10-06)
 

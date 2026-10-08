@@ -212,7 +212,8 @@ $0.22 per 1,000 edits — D17, `results/phase7/ladder.md`.)*
 
 *(Built: `deploy/k8s/`, `deploy/ci-smoke.sh`, `.github/workflows/ci.yml`; the classifier scales 1 → 6 on
 lag over a 6-partition `wiki.scored`; CI validated on a local `kind` cluster — `DECISIONS.md` D14.
-Not yet done: the 24-hour run on the real diurnal swing.)*
+The 24-hour run: 11.9 hours recorded so far, in which the replicas followed the kept-edit load at
+r = 0.87 but not the total feed (r = −0.03) — D16 results; a fresh 24-hour window is running.)*
 
 ### Describe it honestly
 
@@ -232,8 +233,9 @@ Not yet done: the 24-hour run on the real diurnal swing.)*
 
 **Done when:** a deliberately degraded config is caught by the alert without you looking.
 *(Built and shown: a 50-edit subset per configuration, because a nightly full rerun does not fit
-the free tiers; a 30%-degraded config tripped the alert — `DECISIONS.md` D15. Cloud configurations
-join once their sealed runs finish.)*
+the free tiers; a 30%-degraded config tripped the alert — `DECISIONS.md` D15. All 11 configurations, the Gemini
+ones included, now have measured thresholds. Not yet done: scheduling the CronJob on the cluster
+(`deploy/k8s/optional/drift-cronjob.yaml`, which needs the cluster created with `kind-local.yaml`).)*
 
 ## Phase 10 — ship it and write the postmortem
 
@@ -247,7 +249,8 @@ join once their sealed runs finish.)*
 *(Started 2026-10-04: `README.md` leads with what is measured and marks the headline as pending;
 `POSTMORTEM.md` is written as it happens; `docs/architecture.svg`; a static dashboard built from
 the committed results — `npm run dashboard:build`, served by Vercel via `vercel.json`, labelled as
-replayed data. Waiting on Phase 7 for the headline and the cost counter. No video, by the owner's
+replayed data. The headline and the cost table are in (2026-10-06); the Phase 8 and Phase 9 results
+joined the README and dashboard on 2026-10-07. No video, by the owner's
 decision (2026-10-04); the plain-language write-up lives in the README instead.)*
 
 ---

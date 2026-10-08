@@ -34,6 +34,7 @@
     "dashboard:build": "tsx src/dashboard/build.ts",
     "phase8:record": "tsx src/phase8/record.ts",
     "phase8:report": "tsx src/phase8/report.ts",
+    "phase8:kept": "tsx src/phase8/kept.ts",
     "phase4:live": "tsx src/phase4/live.ts",
     "phase7:ladder": "tsx src/phase7/run.ts"
   },

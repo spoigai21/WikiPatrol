@@ -6,7 +6,7 @@
 
 import { parseArgs } from 'node:util';
 import { Kafka, logLevel } from 'kafkajs';
-import { runStage, type Stage } from '../kafka/stage.ts';
+import { runStage, STAGE_GROUP_SETTLE_MS, type Stage } from '../kafka/stage.ts';
 import { runKafkaLabeller } from '../labels/kafka-labeller.ts';
 import { Health, Progress } from '../ops/health.ts';
 import { dlqStage, enrichStage, filterStage, parseStage, SCORED_PARTITIONS, TOPICS } from './stages.ts';
@@ -37,7 +37,9 @@ const healthServer = health.serve();
 
 function tracked(name: string, input: string) {
   let lastOffset = -1n;
-  const progress = new Progress(5 * 60_000, async () => (await highWatermark(input)) <= lastOffset + 1n);
+  // Longer than the group can take to re-form after a hard stop, plus two minutes, or the probe
+  // restarts a stage that is only waiting for its group (D16).
+  const progress = new Progress(STAGE_GROUP_SETTLE_MS + 2 * 60_000, async () => (await highWatermark(input)) <= lastOffset + 1n);
   health.add({ name, live: () => progress.live(), ready: () => progress.ready() });
   return {
     started: () => progress.start(),

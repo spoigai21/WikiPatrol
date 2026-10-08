@@ -1,0 +1,127 @@
+{
+  "file": "results/phase8/diurnal-2026-10-05T1921Z.jsonl",
+  "from": "2026-10-05T19:21:46.994Z",
+  "to": "2026-10-06T07:16:56.131Z",
+  "hoursSpanned": 11.9192,
+  "minutesRecorded": 653,
+  "gaps": [
+    {
+      "from": "2026-10-05T21:10:49.352Z",
+      "to": "2026-10-05T22:12:48.867Z",
+      "minutes": 62
+    }
+  ],
+  "feedVsReplicas30min": -0.0334,
+  "keptFile": "results/phase8/diurnal-2026-10-05T1921Z.kept.json",
+  "keptVsReplicas30min": 0.8723,
+  "replicasRange": {
+    "min": 2,
+    "max": 6
+  },
+  "quietestHour": {
+    "start": "2026-10-06T06:00:00.000Z",
+    "minutes": 60,
+    "feed": 55.7104,
+    "replicas": 3.3167,
+    "maxLag": 207,
+    "kept": 15.0833
+  },
+  "busiestHour": {
+    "start": "2026-10-06T04:00:00.000Z",
+    "minutes": 60,
+    "feed": 158.5936,
+    "replicas": 3.9833,
+    "maxLag": 232,
+    "kept": 13.4333
+  },
+  "quietestKeptHour": {
+    "start": "2026-10-06T05:00:00.000Z",
+    "minutes": 60,
+    "feed": 90.658,
+    "replicas": 2.85,
+    "maxLag": 188,
+    "kept": 12.73
+  },
+  "busiestKeptHour": {
+    "start": "2026-10-05T20:00:00.000Z",
+    "minutes": 60,
+    "feed": 88.2039,
+    "replicas": 5.4333,
+    "maxLag": 580,
+    "kept": 21.99
+  },
+  "hourly": [
+    {
+      "start": "2026-10-05T20:00:00.000Z",
+      "minutes": 60,
+      "feed": 88.2039,
+      "replicas": 5.4333,
+      "maxLag": 580,
+      "kept": 21.99
+    },
+    {
+      "start": "2026-10-05T23:00:00.000Z",
+      "minutes": 60,
+      "feed": 111.7995,
+      "replicas": 4.4333,
+      "maxLag": 260,
+      "kept": 15.9233
+    },
+    {
+      "start": "2026-10-06T00:00:00.000Z",
+      "minutes": 60,
+      "feed": 133.9253,
+      "replicas": 4.2333,
+      "maxLag": 249,
+      "kept": 16.5633
+    },
+    {
+      "start": "2026-10-06T01:00:00.000Z",
+      "minutes": 60,
+      "feed": 105.2897,
+      "replicas": 4.5833,
+      "maxLag": 278,
+      "kept": 16.4567
+    },
+    {
+      "start": "2026-10-06T02:00:00.000Z",
+      "minutes": 60,
+      "feed": 130.3067,
+      "replicas": 3.8667,
+      "maxLag": 259,
+      "kept": 15.2333
+    },
+    {
+      "start": "2026-10-06T03:00:00.000Z",
+      "minutes": 60,
+      "feed": 137.2519,
+      "replicas": 3.3167,
+      "maxLag": 217,
+      "kept": 13.29
+    },
+    {
+      "start": "2026-10-06T04:00:00.000Z",
+      "minutes": 60,
+      "feed": 158.5936,
+      "replicas": 3.9833,
+      "maxLag": 232,
+      "kept": 13.4333
+    },
+    {
+      "start": "2026-10-06T05:00:00.000Z",
+      "minutes": 60,
+      "feed": 90.658,
+      "replicas": 2.85,
+      "maxLag": 188,
+      "kept": 12.73
+    },
+    {
+      "start": "2026-10-06T06:00:00.000Z",
+      "minutes": 60,
+      "feed": 55.7104,
+      "replicas": 3.3167,
+      "maxLag": 207,
+      "kept": 15.0833
+    }
+  ]
+}

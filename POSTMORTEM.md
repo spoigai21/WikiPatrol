@@ -105,6 +105,15 @@ thing to protect. For revert prediction, where 78% of reverts are not vandalism,
 advantage was precision — being right when it flags. The objective should have been chosen with
 that in mind; it is now on the record why it was not.
 
+## 4c. The autoscaling result was first measured against the wrong load
+
+The Phase 8 recorder measured "the feed" as every edit reaching the classifier, and the plan said
+replicas should follow it. Over 11.9 hours they did not (r = −0.03). The replicas only spend time on
+the edits the free filter keeps, and overnight the feed grew with edits the filter drops. Against the
+kept edits, read back from the broker afterwards, r = 0.87. That second measure was chosen after
+seeing the first, and D16 says so beside both numbers. The lesson is the same as the label's: name
+what is actually being measured — here, the model's workload, not edit volume.
+
 ## 5. Engineering failures
 
 Each of these was caught, fixed, and given a test that fails without the fix.
@@ -122,6 +131,8 @@ Each of these was caught, fixed, and given a test that fails without the fix.
 | Two stages starting in the same millisecond shared a temporary consumer group; one waited forever | Two stages never logged their start | Unique group per call; a test reproduces the hang (D13) |
 | The ingester could not start in a container (it created a local folder it did not need) | `docker compose` smoke test | Folder created only for the file sink |
 | Classifier replicas replaced during a recovery stayed in the consumer group for 5 minutes (a session length chosen for slow stages), so rebalances never finished, liveness probes restarted the live replicas, and the group never settled | 18 group members for 6 pods, backlog not moving | The classifier uses a 45-second session; it heartbeats after every model call (D16) |
+| An autoscaled classifier replica, evicted from its group while a slow model call ran, hit "the coordinator is not aware of this member" on its next commit; the uncaught error stopped its consumer for good, until the liveness probe restarted it | A pod restart 18 minutes into a fresh 24-hour window | A failed commit or heartbeat ends the batch and the replica rejoins; a test provokes the eviction and fails on the old code with the same error (D16) |
+| After the cluster was stopped and started, the stages' group waited out dead members' 5-minute sessions; the liveness probe gave up at 5 minutes, and each restart left another dead member, so the group never re-formed | No parsing for 20 minutes; raw lag climbing past 800,000; group stuck rebalancing | Cleared by scaling the stages to 0 and back; a stage's liveness now waits out the group's worst-case settle time (D16) |
 | The laptop slept on battery overnight, mid-run | A 5.4-hour hole in the Phase 8 record; `pmset` log | Run restarted; the rule is now "plugged in", because `caffeinate` cannot stop a low-battery sleep (D16) |
 | KEDA could not resolve the broker from its own namespace | `ScaledObject` not ready on the local cluster | Fully qualified broker address everywhere (D14) |
 

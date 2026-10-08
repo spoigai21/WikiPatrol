@@ -4,9 +4,10 @@
 //
 //   npm run phase8:report -- --file results/phase8/diurnal-2026-10-05T1921Z.jsonl
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { args, log, writeJson } from '../phase0/cli.ts';
 import { round } from '../phase0/stats.ts';
+import type { KeptMinute } from './kept.ts';
 
 export interface Sample {
   t: string;
@@ -25,6 +26,8 @@ export interface Minute {
   feed: number;
   replicas: number;
   lag: number;
+  /** Kept edits (one model call each) reaching the classifier per minute, when measured (kept.ts). */
+  kept?: number;
 }
 
 const MAX_STEP_S = 180;
@@ -40,6 +43,20 @@ export function toMinutes(samples: readonly Sample[]): Minute[] {
     out.push({ t: Date.parse(b.t), feed: ((b.scored - a.scored) * 60) / dt, replicas: b.replicas, lag: b.classifierLag });
   }
   return out;
+}
+
+/**
+ * Each minute's kept-edit rate: the mean over the `trailing` whole minutes before its sample, since
+ * the lag the HPA sees at a sample is built by the arrivals just before it.
+ */
+export function attachKept(minutes: readonly Minute[], perMinute: readonly KeptMinute[], trailing = 5): Minute[] {
+  const kept = new Map(perMinute.map(([m, , k]) => [m, k]));
+  return minutes.map((m) => {
+    const start = Math.floor(m.t / 60_000) * 60_000;
+    let sum = 0;
+    for (let i = 1; i <= trailing; i++) sum += kept.get(start - i * 60_000) ?? 0;
+    return { ...m, kept: sum / trailing };
+  });
 }
 
 /** Means over fixed windows (e.g. 30 minutes), keeping only windows with enough minutes in them. */
@@ -59,6 +76,7 @@ export function windows(minutes: readonly Minute[], sizeMin: number, minCoverage
       feed: round(ms.reduce((a, m) => a + m.feed, 0) / ms.length),
       replicas: round(ms.reduce((a, m) => a + m.replicas, 0) / ms.length),
       maxLag: Math.max(...ms.map((m) => m.lag)),
+      ...(ms.every((m) => m.kept !== undefined) ? { kept: round(ms.reduce((a, m) => a + m.kept!, 0) / ms.length) } : {}),
     }));
 }
 
@@ -112,7 +130,9 @@ export function chartSvg(minutes: readonly Minute[], wins: ReturnType<typeof win
 ${[0, maxY / 2, maxY].map((v) => `<line x1="${left}" x2="${W - right}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${left - 8}" y="${y(v) + 4}" text-anchor="end">${Math.round(v).toLocaleString('en-US')}</text>`).join('')}
 ${segs.filter((s) => s.split(' ').length > 1).map((s) => `<polyline fill="none" stroke="var(--series-1)" stroke-width="2" points="${s}"/>`).join('\n')}`;
   };
-  const feedPts = wins.length ? minutes.map((m) => [m.t, m.feed] as [number, number]) : [];
+  // The model work (kept edits) when measured; otherwise everything reaching the classifier.
+  const withKept = minutes.every((m) => m.kept !== undefined);
+  const feedPts = wins.length ? minutes.map((m) => [m.t, withKept ? m.kept! : m.feed] as [number, number]) : [];
   // Smooth the noisy per-minute feed with a 15-minute trailing mean for readability.
   const smooth = feedPts.map(([t], i) => {
     const w = feedPts.slice(Math.max(0, i - 14), i + 1).filter(([tt]) => t - tt <= 15 * 60_000);
@@ -130,9 +150,9 @@ ${segs.filter((s) => s.split(' ').length > 1).map((s) => `<polyline fill="none" 
 </style>
 <rect width="${W}" height="${H}" fill="var(--surface-1)"/>
 <text class="title" x="${left}" y="22">${esc(title)}</text>
-${panel(0, 'Edits reaching the classifier, per minute (15-min mean)', smooth, nice(Math.max(...smooth.map(([, v]) => v), 1)), false)}
-${panel(1, 'Classifier replicas (set by the HPA from consumer lag)', minutes.map((m) => [m.t, m.replicas]), 6, true)}
-${panel(2, 'Consumer lag (messages waiting)', minutes.map((m) => [m.t, m.lag]), nice(Math.max(...minutes.map((m) => m.lag), 1)), false)}
+${panel(0, withKept ? 'Edits needing the AI, per minute (15-minute average)' : 'Edits reaching the AI step, per minute (15-minute average)', smooth, nice(Math.max(...smooth.map(([, v]) => v), 1)), false)}
+${panel(1, 'Copies of the AI worker running (the autoscaler adds them as edits wait)', minutes.map((m) => [m.t, m.replicas]), 6, true)}
+${panel(2, 'Edits waiting in line', minutes.map((m) => [m.t, m.lag]), nice(Math.max(...minutes.map((m) => m.lag), 1)), false)}
 ${hours.map((h) => `<text x="${x(h)}" y="${H - 14}" text-anchor="middle">${new Date(h).toISOString().slice(11, 16)} UTC</text>`).join('\n')}
 </svg>
 `;
@@ -143,7 +163,9 @@ if (import.meta.main) {
   if (!opts.file) throw new Error('--file is required');
   const file = String(opts.file);
   const samples = readFileSync(file, 'utf8').trim().split('\n').map((l) => JSON.parse(l) as Sample);
-  const minutes = toMinutes(samples);
+  const keptFile = file.replace(/\.jsonl$/, '.kept.json');
+  const perMinute = existsSync(keptFile) ? (JSON.parse(readFileSync(keptFile, 'utf8')) as { perMinute: KeptMinute[] }).perMinute : undefined;
+  const minutes = perMinute ? attachKept(toMinutes(samples), perMinute) : toMinutes(samples);
   const half = windows(minutes, 30);
   const hourly = windows(minutes, 60);
   const gaps: { from: string; to: string; minutes: number }[] = [];
@@ -161,13 +183,19 @@ if (import.meta.main) {
     gaps,
     // Over 30-minute windows: does the replica count move with the feed?
     feedVsReplicas30min: correlation(half.map((w) => w.feed), half.map((w) => w.replicas)),
+    // The same against the model work only: the kept edits, which the paced replicas spend their time on.
+    ...(perMinute ? { keptFile, keptVsReplicas30min: correlation(half.map((w) => w.kept!), half.map((w) => w.replicas)) } : {}),
     replicasRange: { min: Math.min(...minutes.map((m) => m.replicas)), max: Math.max(...minutes.map((m) => m.replicas)) },
     quietestHour: hourly.reduce((a, w) => (w.feed < a.feed ? w : a), hourly[0]!),
     busiestHour: hourly.reduce((a, w) => (w.feed > a.feed ? w : a), hourly[0]!),
+    ...(perMinute ? {
+      quietestKeptHour: hourly.reduce((a, w) => (w.kept! < a.kept! ? w : a), hourly[0]!),
+      busiestKeptHour: hourly.reduce((a, w) => (w.kept! > a.kept! ? w : a), hourly[0]!),
+    } : {}),
     hourly,
   };
   const out = file.replace(/\.jsonl$/, '');
   writeJson(`${out}.report.json`, report);
-  writeFileSync(`${out}.svg`, chartSvg(minutes, half, `Phase 8: the classifier's replicas against the live feed (${report.from.slice(0, 16)} to ${report.to.slice(0, 16)} UTC)`));
-  log(`${minutes.length} minutes over ${report.hoursSpanned} h; feed vs replicas (30-min) r = ${report.feedVsReplicas30min}; replicas ${report.replicasRange.min}-${report.replicasRange.max} -> ${out}.{report.json,svg}`);
+  writeFileSync(`${out}.svg`, chartSvg(minutes, half, `AI workers following a day of Wikipedia edits (${report.from.slice(0, 16).replace('T', ' ')} to ${report.to.slice(0, 16).replace('T', ' ')} UTC)`));
+  log(`${minutes.length} minutes over ${report.hoursSpanned} h; feed vs replicas (30-min) r = ${report.feedVsReplicas30min};${perMinute ? ` kept vs replicas r = ${report.keptVsReplicas30min};` : ''} replicas ${report.replicasRange.min}-${report.replicasRange.max} -> ${out}.{report.json,svg}`);
 }
