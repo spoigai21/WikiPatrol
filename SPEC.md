@@ -234,8 +234,9 @@ kept-edit load at r = 0.92, not the total feed (r = 0.18) — D16 results.)*
 **Done when:** a deliberately degraded config is caught by the alert without you looking.
 *(Built and shown: a 50-edit subset per configuration, because a nightly full rerun does not fit
 the free tiers; a 30%-degraded config tripped the alert — `DECISIONS.md` D15. All 11 configurations, the Gemini
-ones included, now have measured thresholds. Not yet done: scheduling the CronJob on the cluster
-(`deploy/k8s/optional/drift-cronjob.yaml`, which needs the cluster created with `kind-local.yaml`).)*
+ones included, now have measured thresholds. Deliberately left out (2026-10-08, owner's decision):
+scheduling the CronJob nightly, which needs an always-on machine; the job is written
+(`deploy/k8s/optional/drift-cronjob.yaml`, with `kind-local.yaml`) and the checks were run by hand.)*
 
 ## Phase 10 — ship it and write the postmortem
 

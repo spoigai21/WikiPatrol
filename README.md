@@ -157,9 +157,11 @@ removes (30–60% → 67–87%), the recall the cloud model adds (+10–25 point
 and whether confidence routes (yes → not for the local model).
 [`PREDICTIONS.md`](PREDICTIONS.md) · scorecard in [`DECISIONS.md`](DECISIONS.md)
 
-**Not finished:** the nightly drift schedule on the cluster (the check and its alert are shown; the
-CronJob is written but not yet scheduled), and labels from the live cluster's own log (they need it
-to be 72 hours old).
+**Deliberately left out:** running the drift check on a nightly schedule. The check and its alert are
+built and shown (section 8), and the CronJob is written (`deploy/k8s/optional/drift-cronjob.yaml`),
+but a schedule needs a machine that is on every night, which a laptop project does not have; the
+checks were run by hand instead. **Not done:** labels from the live cluster's own log, which need
+edits at least 72 hours old.
 
 ### How it works
 
